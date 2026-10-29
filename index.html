@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemática Quiz - Fundamental</title>
+    <style>
+        /* Estilos visuais do site */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; color: #333; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; font-size: 24px; }
+        .header-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .btn-login { background-color: #db4437; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-ranking { background-color: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .quiz-card { background: #e8f4f8; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .pergunta { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        .opcao { display: block; width: 100%; background: white; border: 2px solid #bdc3c7; padding: 12px; margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .opcao:hover { background: #ecf0f1; border-color: #3498db; }
+        .correta { background: #2ecc71 !important; color: white; border-color: #27ae60 !important; }
+        .errada { background: #e74c3c !important; color: white; border-color: #c0392b !important; }
+        .controles { margin-top: 20px; }
+        .btn-proximo { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; }
+        .resultado { display: none; text-align: center; }
+        .resultado h2 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧮 Matemática Quiz</h1>
+    
+    <div class="header-buttons">
+        <button class="btn-login">Entrar com Google</button>
+        <button class="btn-ranking">🏆 Ranking</button>
+    </div>
+
+    <div id="tela-inicio">
+        <p>Bem-vindo! Teste seus conhecimentos de matemática.</p>
+        <button class="btn-proximo" style="display:block; margin: 0 auto; background:#2ecc71;" onclick="iniciarQuiz()">Começar Quiz</button>
+    </div>
+
+    <div id="tela-quiz" style="display: none;">
+        <div class="quiz-card">
+            <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
+            <div id="opcoes-container"></div>
+        </div>
+        <div class="controles">
+            <button class="btn-proximo" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
+        </div>
+    </div>
+
+    <div id="tela-resultado" class="resultado">
+        <h2>Fim do Quiz! 🎉</h2>
+        <p>Sua pontuação: <strong id="pontuacao-final">0</strong> de <span id="total-perguntas">0</span></p>
+        <button class="btn-proximo" style="display:block; margin: 0 auto;" onclick="location.reload()">Jogar de Novo</button>
+    </div>
+</div>
+
+<script>
+    // Banco de perguntas (Nível 5º e 6º ano como exemplo inicial)
+    const perguntas = [
+        { pergunta: "Quanto é 15 + 27?", opcoes: ["32", "42", "52", "38"], correta: 1 },
+        { pergunta: "Qual o resultado de 8 x 7?", opcoes: ["48", "56", "64", "54"], correta: 1 },
+        { pergunta: "Quanto é a metade de 50?", opcoes: ["20", "25", "30", "15"], correta: 1 },
+        { pergunta: "Se um triângulo tem 3 lados iguais, ele é:", opcoes: ["Isósceles", "Escaleno", "Equilátero", "Retângulo"], correta: 2 }
+    ];
+
+    let indiceAtual = 0;
+    let pontuacao = 0;
+
+    function iniciarQuiz() {
+        document.getElementById('tela-inicio').style.display = 'none';
+        document.getElementById('tela-quiz').style.display = 'block';
+        carregarPergunta();
+    }
+
+    function carregarPergunta() {
+        const container = document.getElementById('opcoes-container');
+        container.innerHTML = ''; // Limpa opções anteriores
+        document.getElementById('btn-proximo').style.display = 'none';
+
+        const perguntaAtual = perguntas[indiceAtual];
+        document.getElementById('texto-pergunta').innerText = perguntaAtual.pergunta;
+
+        perguntaAtual.opcoes.forEach((opcao, index) => {
+            const botao = document.createElement('button');
+            botao.innerText = opcao;
+            botao.classList.add('opcao');
+            botao.onclick = () => verificarResposta(index, botao);
+            container.appendChild(botao);
+        });
+    }
+
+    function verificarResposta(indexEscolhido, botaoClicado) {
+        const perguntaAtual = perguntas[indiceAtual];
+        const todosBotoes = document.querySelectorAll('.opcao');
+        
+        // Desabilita todos os botões após responder
+        todosBotoes.forEach(btn => btn.disabled = true);
+
+        if (indexEscolhido === perguntaAtual.correta) {
+            botaoClicado.classList.add('correta');
+            pontuacao++;
+        } else {
+            botaoClicado.classList.add('errada');
+            // Mostra qual era a correta
+            todosBotoes[perguntaAtual.correta].classList.add('correta');
+        }
+
+        document.getElementById('btn-proximo').style.display = 'inline-block';
+    }
+
+    function proximaPergunta() {
+        indiceAtual++;
+        if (indiceAtual < perguntas.length) {
+            carregarPergunta();
+        } else {
+            mostrarResultado();
+        }
+    }
+
+    function mostrarResultado() {
+        document.getElementById('tela-quiz').style.display = 'none';
+        document.getElementById('tela-resultado').style.display = 'block';
+        document.getElementById('pontuacao-final').innerText = pontuacao;
+        document.getElementById('total-perguntas').innerText = perguntas.length;
+        
+        // Aqui no futuro entra o código para salvar no Supabase e enviar pro Ranking!
+    }
+</script>
+
+</body>
+</html>
