@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matemática Quiz - Fundamental</title>
+    <!-- Biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Estilos visuais do site */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; color: #333; }
         .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         h1 { color: #2c3e50; font-size: 24px; }
         .header-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .btn-login { background-color: #db4437; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-login { background-color: #db4437; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; opacity: 0.6; }
         .btn-ranking { background-color: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
         .quiz-card { background: #e8f4f8; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
         .pergunta { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .opcao { display: block; width: 100%; background: white; border: 2px solid #bdc3c7; padding: 12px; margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .opcao { display: block; width: 100%; background: white; border: 2px solid #bdc3c7; padding: 12px; margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; box-sizing: border-box;}
         .opcao:hover { background: #ecf0f1; border-color: #3498db; }
         .correta { background: #2ecc71 !important; color: white; border-color: #27ae60 !important; }
         .errada { background: #e74c3c !important; color: white; border-color: #c0392b !important; }
         .controles { margin-top: 20px; }
-        .btn-proximo { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; }
+        .btn-principal { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; width: 100%; box-sizing: border-box;}
+        .btn-verde { background: #2ecc71; }
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 16px; box-sizing: border-box;}
         .resultado { display: none; text-align: center; }
-        .resultado h2 { color: #2c3e50; }
+        .ranking-lista { text-align: left; margin-top: 20px; }
+        .ranking-item { background: #f8f9fa; padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 16px; }
+        .ranking-item:nth-child(1) { background: #ffeaa7; font-weight: bold; }
+        .ranking-item:nth-child(2) { background: #dfe6e9; font-weight: bold; }
+        .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -30,45 +37,76 @@
     <h1>🧮 Matemática Quiz</h1>
     
     <div class="header-buttons">
-        <button class="btn-login">Entrar com Google</button>
-        <button class="btn-ranking">🏆 Ranking</button>
+        <button class="btn-login" onclick="alert('O login com Google será ativado em breve!')">Entrar com Google</button>
+        <button class="btn-ranking" onclick="abrirRanking()">🏆 Ranking</button>
     </div>
 
+    <!-- TELA DE INÍCIO -->
     <div id="tela-inicio">
         <p>Bem-vindo! Teste seus conhecimentos de matemática.</p>
-        <button class="btn-proximo" style="display:block; margin: 0 auto; background:#2ecc71;" onclick="iniciarQuiz()">Começar Quiz</button>
+        <input type="text" id="nome-aluno" placeholder="Digite seu nome para o Ranking">
+        <button class="btn-principal btn-verde" style="display:block; margin: 0 auto;" onclick="iniciarQuiz()">Começar Quiz</button>
     </div>
 
+    <!-- TELA DO QUIZ -->
     <div id="tela-quiz" style="display: none;">
         <div class="quiz-card">
             <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
             <div id="opcoes-container"></div>
         </div>
         <div class="controles">
-            <button class="btn-proximo" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
+            <button class="btn-principal" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
         </div>
     </div>
 
+    <!-- TELA DE RESULTADO -->
     <div id="tela-resultado" class="resultado">
         <h2>Fim do Quiz! 🎉</h2>
         <p>Sua pontuação: <strong id="pontuacao-final">0</strong> de <span id="total-perguntas">0</span></p>
-        <button class="btn-proximo" style="display:block; margin: 0 auto;" onclick="location.reload()">Jogar de Novo</button>
+        <p id="status-salvamento" style="font-size: 14px; color: #7f8c8d;"></p>
+        <button class="btn-principal btn-verde" style="display:block; margin: 10px auto;" onclick="abrirRanking()">Ver Ranking</button>
+        <button class="btn-principal" style="display:block; margin: 0 auto; background:#95a5a6;" onclick="location.reload()">Jogar de Novo</button>
+    </div>
+
+    <!-- TELA DE RANKING -->
+    <div id="tela-ranking" style="display: none;">
+        <h2>🏆 Top 10 Ranking</h2>
+        <div class="ranking-lista" id="lista-ranking">
+            <p>Carregando ranking...</p>
+        </div>
+        <button class="btn-principal" style="display:block; margin: 20px auto 0; background:#3498db;" onclick="voltarAoInicio()">Voltar ao Quiz</button>
     </div>
 </div>
 
 <script>
-    // Banco de perguntas (Nível 5º e 6º ano como exemplo inicial)
+    // ==========================================
+    // CONFIGURAÇÃO DO SUPABASE
+    // ==========================================
+    const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
+    const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
+    const banco = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ==========================================
+    // LÓGICA DO QUIZ
+    // ==========================================
     const perguntas = [
         { pergunta: "Quanto é 15 + 27?", opcoes: ["32", "42", "52", "38"], correta: 1 },
         { pergunta: "Qual o resultado de 8 x 7?", opcoes: ["48", "56", "64", "54"], correta: 1 },
         { pergunta: "Quanto é a metade de 50?", opcoes: ["20", "25", "30", "15"], correta: 1 },
-        { pergunta: "Se um triângulo tem 3 lados iguais, ele é:", opcoes: ["Isósceles", "Escaleno", "Equilátero", "Retângulo"], correta: 2 }
+        { pergunta: "Se um triângulo tem 3 lados iguais, ele é:", opcoes: ["Isósceles", "Escaleno", "Equilátero", "Retângulo"], correta: 2 },
+        { pergunta: "Quanto é 100 - 45?", opcoes: ["45", "55", "65", "35"], correta: 1 }
     ];
 
     let indiceAtual = 0;
     let pontuacao = 0;
+    let nomeDoAluno = "";
 
     function iniciarQuiz() {
+        nomeDoAluno = document.getElementById('nome-aluno').value.trim();
+        if (nomeDoAluno === "") {
+            alert("Por favor, digite seu nome primeiro!");
+            return;
+        }
         document.getElementById('tela-inicio').style.display = 'none';
         document.getElementById('tela-quiz').style.display = 'block';
         carregarPergunta();
@@ -76,7 +114,7 @@
 
     function carregarPergunta() {
         const container = document.getElementById('opcoes-container');
-        container.innerHTML = ''; // Limpa opções anteriores
+        container.innerHTML = ''; 
         document.getElementById('btn-proximo').style.display = 'none';
 
         const perguntaAtual = perguntas[indiceAtual];
@@ -94,8 +132,6 @@
     function verificarResposta(indexEscolhido, botaoClicado) {
         const perguntaAtual = perguntas[indiceAtual];
         const todosBotoes = document.querySelectorAll('.opcao');
-        
-        // Desabilita todos os botões após responder
         todosBotoes.forEach(btn => btn.disabled = true);
 
         if (indexEscolhido === perguntaAtual.correta) {
@@ -103,11 +139,9 @@
             pontuacao++;
         } else {
             botaoClicado.classList.add('errada');
-            // Mostra qual era a correta
             todosBotoes[perguntaAtual.correta].classList.add('correta');
         }
-
-        document.getElementById('btn-proximo').style.display = 'inline-block';
+        document.getElementById('btn-proximo').style.display = 'block';
     }
 
     function proximaPergunta() {
@@ -119,13 +153,74 @@
         }
     }
 
-    function mostrarResultado() {
+    async function mostrarResultado() {
         document.getElementById('tela-quiz').style.display = 'none';
         document.getElementById('tela-resultado').style.display = 'block';
         document.getElementById('pontuacao-final').innerText = pontuacao;
         document.getElementById('total-perguntas').innerText = perguntas.length;
         
-        // Aqui no futuro entra o código para salvar no Supabase e enviar pro Ranking!
+        const status = document.getElementById('status-salvamento');
+        status.innerText = "Salvando pontuação...";
+        status.style.color = "#f39c12";
+
+        // Salvar no Banco de Dados (Supabase)
+        const { data, error } = await banco
+            .from('ranking')
+            .insert([{ nome: nomeDoAluno, pontuacao: pontuacao }]);
+
+        if (error) {
+            console.error(error);
+            status.innerText = "Erro ao salvar no ranking.";
+            status.style.color = "#e74c3c";
+        } else {
+            status.innerText = "Pontuação salva no ranking com sucesso!";
+            status.style.color = "#2ecc71";
+        }
+    }
+
+    // ==========================================
+    // LÓGICA DO RANKING
+    // ==========================================
+    async function abrirRanking() {
+        document.getElementById('tela-inicio').style.display = 'none';
+        document.getElementById('tela-quiz').style.display = 'none';
+        document.getElementById('tela-resultado').style.display = 'none';
+        document.getElementById('tela-ranking').style.display = 'block';
+
+        const lista = document.getElementById('lista-ranking');
+        lista.innerHTML = '<p>Carregando ranking...</p>';
+
+        // Buscar os top 10 no Banco de Dados
+        const { data, error } = await banco
+            .from('ranking')
+            .select('nome, pontuacao')
+            .order('pontuacao', { ascending: false })
+            .limit(10);
+
+        if (error) {
+            lista.innerHTML = '<p>Erro ao carregar o ranking.</p>';
+            console.error(error);
+            return;
+        }
+
+        if (data.length === 0) {
+            lista.innerHTML = '<p>Ninguém jogou ainda. Seja o primeiro!</p>';
+            return;
+        }
+
+        lista.innerHTML = '';
+        data.forEach((aluno, index) => {
+            const item = document.createElement('div');
+            item.classList.add('ranking-item');
+            item.innerHTML = `<span>${index + 1}º ${aluno.nome}</span> <span>${aluno.pontuacao} pts</span>`;
+            lista.appendChild(item);
+        });
+    }
+
+    function voltarAoInicio() {
+        document.getElementById('tela-ranking').style.display = 'none';
+        document.getElementById('tela-inicio').style.display = 'block';
+        document.getElementById('nome-aluno').value = ""; 
     }
 </script>
 
