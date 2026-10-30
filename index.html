@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MATH ARENA - Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div id="modal-conquista">
+        <div class="medalha-3d" id="modal-icone">🏆</div>
+        <h3 class="text-gradient" style="font-size: 24px; text-align: center;" id="modal-titulo">Nova Conquista!</h3>
+        <p class="raridade-lendaria" id="modal-raridade">LENDÁRIA</p>
+    </div>
+
+    <div class="main-content">
+        <!-- TELA: LOGIN -->
+        <div id="tela-auth" class="screen active">
+            <div class="glass">
+                <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
+                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Faça login ou crie sua conta VIP.</p>
+                <input type="email" id="auth-email" placeholder="Seu E-mail">
+                <input type="password" id="auth-password" placeholder="Sua Senha">
+                <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+                <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
+            </div>
+        </div>
+
+        <!-- TELA: HOME -->
+        <div id="tela-home" class="screen">
+            <div class="user-header">
+                <div class="user-info">
+                    <div class="avatar-wrapper">
+                        <div class="frame" id="home-frame"></div>
+                        <div class="avatar-img" id="home-avatar">🧑‍🚀</div>
+                    </div>
+                    <div>
+                        <div class="user-name" id="home-nome">Jogador</div>
+                        <div class="user-level" id="home-nivel">NÍVEL 1 - NOVATO</div>
+                        <div class="user-divisao" id="home-divisao">🥉 BRONZE</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="bell-icon" onclick="mudarAba('tela-configuracoes')">⚙️</div>
+                    <div class="bell-icon" onclick="mudarAba('tela-notificacoes')">🔔</div>
+                    <div class="header-stats">
+                        <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
+                        <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="season-banner" onclick="mudarAba('tela-temporada')">
+                <div>
+                    <h3 style="color: var(--gold);">Temporada Atual</h3>
+                    <p style="font-size: 12px; color: var(--text-muted);">Termina em 15 dias</p>
+                </div>
+                <button class="btn-small">VER</button>
+            </div>
+
+            <div class="glass">
+                <div class="xp-container">
+                    <div class="xp-text"><span>PROGRESSO VIP</span><span id="home-xp-txt">0 / 100 XP</span></div>
+                    <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
+                </div>
+            </div>
+
+            <div id="box-multiplier" class="multiplier-box hidden">
+                <div class="multiplier-text">🚀 MULTIPLICADOR ATIVO</div>
+                <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
+            </div>
+
+            <div class="chest-banner" id="box-chest" onclick="resgatarBau()">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="chest-icon">🎁</div>
+                    <div>
+                        <h4 style="font-size: 14px; color: var(--gold);">Baú Diário</h4>
+                        <p style="font-size: 11px; color: var(--text-muted);" id="chest-status">Resgate suas moedas grátis!</p>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--gold); font-size: 16px;">+300 🪙</div>
+            </div>
+
+            <div class="grid-buttons">
+                <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
+                <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
+            </div>
+
+            <button class="btn-duel" onclick="mudarAba('tela-duelo-menu')">⚔️ DUELO 1v1</button>
+            <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO</button>
+
+            <div class="glass">
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">MODO CLÁSSICO</h3>
+                <h3 style="font-size: 14px; margin-top: 15px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">DIFICULDADE</h3>
+                <select id="select-dificuldade">
+                    <option value="1">Fácil</option>
+                    <option value="2" selected>Médio</option>
+                    <option value="3">Difícil</option>
+                </select>
+                <select id="select-serie">
+                    <option value="5">5º Ano Fundamental</option>
+                    <option value="6">6º Ano Fundamental</option>
+                    <option value="7">7º Ano Fundamental</option>
+                    <option value="8">8º Ano Fundamental</option>
+                    <option value="9">9º Ano Fundamental</option>
+                    <option value="1em">1º Ano EM</option>
+                    <option value="2em">2º Ano EM</option>
+                    <option value="3em">3º Ano EM</option>
+                </select>
+                <button class="btn-primary" onclick="prepararJogo('classico')">▶ JOGAR CLÁSSICO</button>
+            </div>
+        </div>
+
+        <!-- TELA: CONFIGURAÇÕES -->
+        <div id="tela-configuracoes" class="screen">
+            <h2 class="text-gradient text-center mb-20">CONFIGURAÇÕES</h2>
+            <div class="glass">
+                <div class="config-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h4 style="font-size: 15px;">Efeitos Sonoros</h4>
+                        <p style="font-size: 12px; color: var(--text-muted);">Sons de acerto e erro.</p>
+                    </div>
+                    <div class="multiplier-toggle" id="toggle-som" onclick="toggleSom()" style="margin: 0;"></div>
+                </div>
+                <div class="config-row" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="font-size: 15px;">Animações e Confetes</h4>
+                        <p style="font-size: 12px; color: var(--text-muted);">Desligue se o jogo estiver travando.</p>
+                    </div>
+                    <div class="multiplier-toggle" id="toggle-animacoes" onclick="toggleAnimacoes()" style="margin: 0;"></div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
+        </div>
+
+        <!-- TELA: ACADEMIA -->
+        <div id="tela-academia" class="screen">
+            <h2 class="text-gradient text-center mb-20">ACADEMIA</h2>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Trilhas de aprendizado</p>
+            <div id="lista-academia"></div>
+            <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: DUELO MENU -->
+        <div id="tela-duelo-menu" class="screen">
+            <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
+            <div class="glass">
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">CRIAR UM DESAFIO</h3>
+                <select id="select-serie-duelo">
+                    <option value="5">5º Ano Fundamental</option>
+                    <option value="6">6º Ano Fundamental</option>
+                    <option value="7">7º Ano Fundamental</option>
+                    <option value="8">8º Ano Fundamental</option>
+                    <option value="9">9º Ano Fundamental</option>
+                    <option value="1em">1º Ano EM</option>
+                    <option value="2em">2º Ano EM</option>
+                    <option value="3em">3º Ano EM</option>
+                </select>
+                <button class="btn-duel" id="btn-criar-duelo" onclick="criarDuelo()">➕ CRIAR DUELO</button>
+                <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">ENTRAR COM CÓDIGO</h3>
+                <input type="text" id="input-codigo-duelo" placeholder="Ex: DUELO-1234" style="text-transform: uppercase;">
+                <button class="btn-primary" id="btn-entrar-duelo" onclick="entrarDuelo()">▶ ENTRAR NO DUELO</button>
+            </div>
+            <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: DUELO ESPERA -->
+        <div id="tela-duelo-espera" class="screen">
+            <div class="glass text-center">
+                <h2 class="text-gradient">DUELO CRIADO!</h2>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 10px;">Mande este código para seu amigo:</p>
+                <div class="codigo-duelo" id="codigo-gerado">----</div>
+                <button class="btn-primary" onclick="iniciarDueloHost()">JOGAR MINHA PARTE AGORA</button>
+                <button class="btn-secondary" style="margin-top: 10px;" onclick="mudarAba('tela-home')">SAIR</button>
+            </div>
+        </div>
+
+        <!-- TELA: MISSÕES -->
+        <div id="tela-missoes" class="screen">
+            <h2 class="text-gradient text-center mb-20">MISSÕES DIÁRIAS</h2>
+            <div id="lista-missoes"></div>
+            <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: LOJA -->
+        <div id="tela-loja" class="screen">
+            <h2 class="text-gradient text-center mb-20">LOJA VIP</h2>
+            <p class="text-center" style="font-size: 14px; color: var(--gold); font-weight: 800; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3);">Suas moedas: 🪙 <span id="loja-moedas">0</span></p>
+            <div id="lista-loja"></div>
+            <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: JOGO -->
+        <div id="tela-jogo" class="screen">
+            <div id="timer-box" class="timer-display hidden">60s</div>
+            <div class="hud">
+                <span id="hud-pontos">🏆 0 PTS</span>
+                <span id="hud-sequencia" style="color: var(--accent);">🔥 0</span>
+                <span id="hud-questao">∞</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            
+            <div class="glass" style="border-radius: 20px; padding: 25px;">
+                <div class="question-text" id="question-text">Carregando...</div>
+                <div class="options-grid" id="options-container"></div>
+            </div>
+            
+            <div class="feedback" id="feedback-box">
+                <strong id="feedback-title"></strong><br>
+                <span id="feedback-explanation"></span>
+            </div>
+            
+            <button class="btn-primary" id="btn-next" style="display: none; margin-top: 15px;" onclick="proximaQuestao()">PRÓXIMA ➡</button>
+            <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
+        </div>
+
+        <!-- TELA: RESULTADO -->
+        <div id="tela-resultado" class="screen">
+            <div class="glass text-center">
+                <h2 id="result-title" style="font-size: 28px; color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.5);">FIM DE JOGO</h2>
+                <div style="font-size: 70px; margin: 20px 0;" id="result-emoji">🎉</div>
+                <div style="font-size: 56px; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(0,242,254,0.4);" id="result-score">0</div>
+                <p style="color: var(--text-muted); margin-bottom: 25px; letter-spacing: 2px;">PONTOS</p>
+                
+                <div id="duel-result-box" class="hidden glass" style="background: rgba(0,0,0,0.6); border-color: var(--accent);">
+                    <h3 style="margin-bottom: 10px; color: var(--accent);">RESULTADO DO DUELO</h3>
+                    <p id="duel-result-text" style="font-size: 16px; font-weight: bold;"></p>
+                </div>
+
+                <div style="display: flex; justify-content: space-around; margin-bottom: 30px;">
+                    <div><span style="color: var(--success); font-size: 28px; font-weight: 900;" id="result-acertos">0</span><br><small style="font-weight: bold;">ACERTOS</small></div>
+                    <div><span style="color: var(--danger); font-size: 28px; font-weight: 900;" id="result-erros">0</span><br><small style="font-weight: bold;">ERROS</small></div>
+                </div>
+                <button class="btn-primary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
+            </div>
+        </div>
+
+        <!-- TELA: CONQUISTAS -->
+        <div id="tela-conquistas" class="screen">
+            <h2 class="text-gradient text-center mb-20">CONQUISTAS</h2>
+            <div id="lista-conquistas"></div>
+            <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: ESTATÍSTICAS -->
+        <div id="tela-estatisticas" class="screen">
+            <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
+            <div class="glass">
+                <h3 style="font-size: 15px; margin-bottom: 20px; color: var(--text-muted); text-align: center;">APROVEITAMENTO POR MATÉRIA</h3>
+                <div id="container-stats"></div>
+            </div>
+            <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: RANKING -->
+        <div id="tela-ranking" class="screen">
+            <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
+            <div class="rank-tabs">
+                <div class="rank-tab active" onclick="carregarRanking('geral', this)">GERAL</div>
+                <div class="rank-tab" onclick="carregarRanking('semanal', this)">SEMANAL</div>
+                <div class="rank-tab" onclick="carregarRanking('mensal', this)">MENSAL</div>
+            </div>
+            <div id="rank-list-container" class="glass" style="max-height: 450px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- TELA: PERFIL -->
+        <div id="tela-perfil" class="screen">
+            <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL VIP</h2>
+            <div class="glass text-center" style="border-color: var(--accent); box-shadow: 0 0 30px rgba(168,85,247,0.15);">
+                <div class="avatar-wrapper" style="width: 100px; height: 100px; margin: 0 auto 15px auto;">
+                    <div class="frame frame-padrao" id="perfil-frame"></div>
+                    <div class="avatar-img" id="perfil-avatar" style="width: 80px; height: 80px; font-size: 46px;">🧑‍🚀</div>
+                </div>
+                <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 20px; font-weight: 900; border: none; background: transparent; color: #fff; margin-bottom: 5px; width: 250px; border-bottom: 2px dashed rgba(255,255,255,0.2); outline: none; padding: 5px;">
+                <p style="color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; margin-top: 10px;" id="perfil-nivel-txt">NÍVEL 1 - NOVATO</p>
+                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                    <div class="badge" style="background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid var(--success);">XP: <span id="profile-xp-display" style="font-weight: 900;">0</span></div>
+                </div>
+            </div>
+            <div class="glass">
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">ESCOLHA SEU AVATAR</h3>
+                <div class="avatar-selector" id="avatar-selector"></div>
+            </div>
+            <div class="glass">
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">🔥 OFENSIVA</h3>
+                <div class="calendario-grid" id="calendario-streak"></div>
+            </div>
+            <div class="glass">
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">📜 HISTÓRICO</h3>
+                <div id="lista-historico"><p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p></div>
+            </div>
+            <button class="btn-secondary" style="border-color: var(--primary); color: var(--primary);" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
+            <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER CONQUISTAS</button>
+            <button class="btn-danger" style="margin-top: 20px;" onclick="sair()">SAIR DA CONTA</button>
+        </div>
+    </div>
+
+    <!-- MENU INFERIOR -->
+    <div class="bottom-nav" id="bottom-nav" style="display: none;">
+        <div class="nav-item active" onclick="mudarAba('tela-home', this)"><span class="nav-icon">🏠</span><span>Início</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-academia', this)"><span class="nav-icon">📖</span><span>Academia</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-ranking', this)"><span class="nav-icon">🏆</span><span>Ranking</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
