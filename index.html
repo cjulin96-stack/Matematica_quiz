@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 3</title>
+    <title>MATH ARENA - Módulo 4</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -76,6 +76,9 @@
         .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 6px 0 #00a8b5, 0 10px 20px rgba(0, 242, 254, 0.2); }
         .btn-primary:active { transform: translateY(6px); box-shadow: 0 0 0 #00a8b5; }
         
+        .btn-rankeado { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 6px 0 #b8860b, 0 10px 20px rgba(255, 215, 0, 0.2); margin-bottom: 10px;}
+        .btn-rankeado:active { transform: translateY(6px); box-shadow: 0 0 0 #b8860b; }
+
         .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.5); margin-bottom: 10px;}
         .btn-secondary:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
 
@@ -104,7 +107,6 @@
         .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
         .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
 
-        /* BOTTOM NAVIGATION BAR */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(10px);
@@ -148,7 +150,6 @@
 <body>
 
     <div class="main-content">
-        <!-- TELA: HOME -->
         <div id="tela-home" class="screen active">
             <div class="user-header">
                 <div class="user-info">
@@ -166,6 +167,9 @@
                     <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
                 </div>
             </div>
+            
+            <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO (MIX)</button>
+
             <div class="glass">
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted);">JOGO CLÁSSICO</h3>
                 <select id="select-serie">
@@ -174,19 +178,20 @@
                     <option value="7">7º Ano Fundamental</option>
                     <option value="8">8º Ano Fundamental</option>
                     <option value="9">9º Ano Fundamental</option>
+                    <option value="1em">1º Ano EM</option>
+                    <option value="2em">2º Ano EM</option>
+                    <option value="3em">3º Ano EM</option>
                 </select>
                 <button class="btn-primary" onclick="prepararJogo('classico')">▶ JOGAR CLÁSSICO</button>
             </div>
         </div>
 
-        <!-- TELA: ARENA DE DESAFIOS (Nova) -->
         <div id="tela-desafios" class="screen">
             <h2 class="text-gradient text-center mb-20">ARENA DE DESAFIOS</h2>
-            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Quanto mais avançado o nível, menos tempo você tem!</p>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Tempo limitado. Questões infinitas!</p>
             <div id="lista-desafios"></div>
         </div>
 
-        <!-- TELA: JOGO -->
         <div id="tela-jogo" class="screen">
             <div id="timer-box" class="timer-display hidden">60s</div>
             <div class="hud">
@@ -210,7 +215,6 @@
             <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
         </div>
 
-        <!-- TELA: RESULTADO -->
         <div id="tela-resultado" class="screen">
             <div class="glass text-center">
                 <h2 id="result-title">FIM DE JOGO</h2>
@@ -225,13 +229,11 @@
             </div>
         </div>
 
-        <!-- TELA: CONQUISTAS -->
         <div id="tela-conquistas" class="screen">
             <h2 class="text-gradient text-center mb-20">MEDALHAS</h2>
             <div id="lista-conquistas"></div>
         </div>
 
-        <!-- TELA: ESTATÍSTICAS -->
         <div id="tela-estatisticas" class="screen">
             <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
             <div class="glass">
@@ -240,13 +242,11 @@
             </div>
         </div>
 
-        <!-- TELA: RANKING -->
         <div id="tela-ranking" class="screen">
             <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
             <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
 
-        <!-- TELA: PERFIL -->
         <div id="tela-perfil" class="screen">
             <h2 class="text-gradient text-center mb-20">PERFIL</h2>
             <div class="glass text-center">
@@ -259,7 +259,6 @@
         </div>
     </div>
 
-    <!-- MENU INFERIOR -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="mudarAba('tela-home', this)">
             <span class="nav-icon">🏠</span><span>Início</span>
@@ -299,9 +298,6 @@
             { id: 'modo_turbo', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou um desafio de tempo.' }
         ];
 
-        // ==========================================
-        // CONFIGURAÇÃO DOS DESAFIOS (Etapas)
-        // ==========================================
         const DESAFIOS_DB = [
             { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' },
             { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' },
@@ -311,42 +307,94 @@
         ];
 
         // ==========================================
-        // BANCO DE QUESTÕES EXPANDIDO E SEPARADO
+        // GERADOR INFINITO DE QUESTÕES
         // ==========================================
-        const BANCO_QUESTOES = [
-            // 5º ANO
-            { q: "Quanto é 15 + 27?", o: ["32", "42", "52", "38"], c: 1, exp: "15 + 27 = 42.", serie: "5", mat: "Soma" },
-            { q: "Qual o resultado de 8 x 7?", o: ["48", "56", "64", "54"], c: 1, exp: "8 x 7 = 56.", serie: "5", mat: "Multiplicação" },
-            { q: "Quanto é 45 - 18?", o: ["27", "33", "23", "37"], c: 0, exp: "45 - 18 = 27.", serie: "5", mat: "Subtração" },
-            { q: "Quanto é a metade de 50?", o: ["20", "25", "30", "15"], c: 1, exp: "50 / 2 = 25.", serie: "5", mat: "Divisão" },
-            { q: "Se um caderno custa R$ 12, quanto custam 3 cadernos?", o: ["R$ 24", "R$ 36", "R$ 48", "R$ 15"], c: 1, exp: "12 x 3 = 36.", serie: "5", mat: "Multiplicação" },
-            { q: "Qual é o valor de 100 - 45?", o: ["45", "55", "65", "35"], c: 1, exp: "100 - 45 = 55.", serie: "5", mat: "Subtração" },
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
-            // 6º ANO
-            { q: "Quanto é (-5) + 8?", o: ["-3", "3", "13", "-13"], c: 1, exp: "-5 + 8 = 3.", serie: "6", mat: "Números Inteiros" },
-            { q: "Quanto é 30% de 200?", o: ["50", "60", "70", "80"], c: 1, exp: "30/100 * 200 = 60.", serie: "6", mat: "Porcentagem" },
-            { q: "Qual o resultado de 2,5 + 1,75?", o: ["3,25", "4,25", "4,50", "3,75"], c: 1, exp: "2,50 + 1,75 = 4,25.", serie: "6", mat: "Decimais" },
-            { q: "Quanto é 3/4 de 100?", o: ["25", "50", "75", "100"], c: 2, exp: "100 / 4 = 25. 25 x 3 = 75.", serie: "6", mat: "Frações" },
-            { q: "Qual é o resultado de 12 x 12?", o: ["124", "144", "134", "154"], c: 1, exp: "12 x 12 = 144.", serie: "6", mat: "Multiplicação" },
+        function gerarQuestao(serie) {
+            let pergunta = "", resp = 0, opcoes = [], exp = "", mat = "";
+            
+            if (serie === "5") {
+                const op = rand(1,3); // 1 soma, 2 sub, 3 mult
+                if(op === 1) {
+                    let a = rand(10, 50), b = rand(10, 40);
+                    pergunta = `Quanto é ${a} + ${b}?`; resp = a + b;
+                    exp = `${a} + ${b} = ${resp}.`; mat = "Soma";
+                } else if(op === 2) {
+                    let a = rand(30, 99), b = rand(10, 30);
+                    pergunta = `Quanto é ${a} - ${b}?`; resp = a - b;
+                    exp = `${a} - ${b} = ${resp}.`; mat = "Subtração";
+                } else {
+                    let a = rand(2, 10), b = rand(2, 10);
+                    pergunta = `Quanto é ${a} x ${b}?`; resp = a * b;
+                    exp = `${a} x ${b} = ${resp}.`; mat = "Multiplicação";
+                }
+            } else if (serie === "6") {
+                const op = rand(1,2);
+                if(op === 1) {
+                    let a = rand(2, 20), b = rand(2, 20);
+                    pergunta = `Quanto é (-${a}) + ${b}?`; resp = -a + b;
+                    exp = `Devendo ${a} e pagando ${b}, sobram ${resp}.`; mat = "Números Inteiros";
+                } else {
+                    let a = rand(1, 10) * 10;
+                    pergunta = `Quanto é ${a}% de ${rand(2,10)*100}?`; resp = (a/100) * (Math.floor(resp)); // logic fix
+                    // logic fix:
+                    let total = rand(2,10)*100;
+                    pergunta = `Quanto é ${a}% de ${total}?`;
+                    resp = (a/100) * total;
+                    exp = `${a}/100 x ${total} = ${resp}.`; mat = "Porcentagem";
+                }
+            } else if (serie === "7") {
+                let x = rand(2, 10), b = rand(1, 10), c = (2*x) + b;
+                pergunta = `Se 2x + ${b} = ${c}, qual o valor de x?`; resp = x;
+                exp = `2x = ${c} - ${b} = ${c-b}. Então x = ${x}.`; mat = "Equações";
+            } else if (serie === "8") {
+                let a = rand(2, 10);
+                pergunta = `Quanto é ${a}²?`; resp = a*a;
+                exp = `${a} x ${a} = ${resp}.`; mat = "Potenciação";
+            } else if (serie === "9") {
+                let b = rand(2, 5), c = rand(2, 5);
+                // Pitágoras simples
+                let a2 = b*b + c*c;
+                pergunta = `Num triângulo retângulo, os catetos são ${b} e ${c}. Qual a hipotenusa?`;
+                resp = Math.sqrt(a2);
+                exp = `a² = ${b}² + ${c}² = ${a2}. A raiz é ${resp}.`; mat = "Geometria";
+            } else if (serie === "1em") {
+                let a = rand(2, 5), b = rand(1, 10), x = rand(1, 5);
+                pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`; resp = a*x + b;
+                exp = `f(${x}) = ${a}(${x}) + ${b} = ${resp}.`; mat = "Funções";
+            } else if (serie === "2em") {
+                pergunta = `Quanto é sen(30º)?`;
+                opcoes = ["1/2", "√2/2", "√3/2", "1"]; resp = "1/2";
+                exp = `O seno de 30º é sempre 1/2.`; mat = "Trigonometria";
+            } else if (serie === "3em") {
+                let a = rand(2, 5);
+                pergunta = `Quanto é log₁₀(10^${a})?`; resp = a;
+                exp = `O log de base 10 de 10 elevado a ${a} é ${a}.`; mat = "Logaritmos";
+            } else {
+                // Rankeado (Mix) - Pega um nível aleatório
+                return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]);
+            }
 
-            // 7º ANO
-            { q: "Se 2x + 5 = 15, qual o valor de x?", o: ["5", "10", "15", "20"], c: 0, exp: "2x = 15 - 5 -> 2x = 10 -> x = 5.", serie: "7", mat: "Equações" },
-            { q: "Quanto é (-3) * (-4)?", o: ["-12", "12", "-7", "7"], c: 1, exp: "Menos com menos dá mais. 3 x 4 = 12.", serie: "7", mat: "Números Inteiros" },
-            { q: "Qual é a área de um quadrado de lado 5cm?", o: ["10 cm²", "20 cm²", "25 cm²", "15 cm²"], c: 2, exp: "Área = lado x lado = 5 x 5 = 25.", serie: "7", mat: "Geometria" },
-            { q: "Quanto é 2⁴?", o: ["8", "16", "24", "32"], c: 1, exp: "2 x 2 x 2 x 2 = 16.", serie: "7", mat: "Potenciação" },
-
-            // 8º ANO
-            { q: "Quanto é 2³?", o: ["6", "8", "9", "12"], c: 1, exp: "2 x 2 x 2 = 8.", serie: "8", mat: "Potenciação" },
-            { q: "Qual o valor de √81?", o: ["7", "8", "9", "10"], c: 2, exp: "9 x 9 = 81, logo a raiz é 9.", serie: "8", mat: "Radiciação" },
-            { q: "Se b=3 e c=4, qual o valor de a no Teorema de Pitágoras?", o: ["5", "6", "7", "25"], c: 0, exp: "a² = 9 + 16 = 25. a = √25 = 5.", serie: "8", mat: "Geometria" },
-            { q: "Quanto é 5² + 3²?", o: ["16", "34", "64", "28"], c: 1, exp: "25 + 9 = 34.", serie: "8", mat: "Potenciação" },
-
-            // 9º ANO
-            { q: "Na função f(x) = 2x + 1, qual o valor de f(3)?", o: ["5", "6", "7", "8"], c: 2, exp: "f(3) = 2(3) + 1 = 6 + 1 = 7.", serie: "9", mat: "Funções" },
-            { q: "Quais são as raízes de x² - 5x + 6 = 0?", o: ["1 e 6", "2 e 3", "-2 e -3", "0 e 5"], c: 1, exp: "Soma = 5, Produto = 6. Os números são 2 e 3.", serie: "9", mat: "Equações" },
-            { q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é sempre 1/2.", serie: "9", mat: "Trigonometria" },
-            { q: "Se um triângulo tem lados 3, 4 e 5, ele é:", o: ["Equilátero", "Isósceles", "Retângulo", "Obtusângulo"], c: 2, exp: "3² + 4² = 5² (9+16=25). É um triângulo retângulo.", serie: "9", mat: "Geometria" }
-        ];
+            // Gerar opções erradas falsas
+            let opcoesSet = new Set([resp]);
+            while(opcoesSet.size < 4) {
+                let erro = resp + rand(-10, 10);
+                if(erro !== resp && erro >= 0) opcoesSet.add(erro);
+            }
+            
+            opcoes = Array.from(opcoesSet).map(String);
+            // Se for a questão de trigonometria que usa string nas opções, não embaralha os números
+            if(typeof resp === 'number') {
+                opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String);
+            }
+            
+            // Descobre o index da resposta correta
+            let indexCorreta = opcoes.indexOf(String(resp));
+            
+            return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
+        }
 
         // Áudio
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -416,13 +464,9 @@
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
         }
 
-        // ==========================================
-        // RENDERIZAR DESAFIOS (Nova Tela)
-        // ==========================================
         function renderizarDesafios() {
             const container = document.getElementById('lista-desafios');
             container.innerHTML = '';
-
             DESAFIOS_DB.forEach(d => {
                 container.innerHTML += `
                     <div class="challenge-card">
@@ -436,23 +480,15 @@
             });
         }
 
-        // ==========================================
-        // INICIAR JOGO (Clássico ou Desafio)
-        // ==========================================
         function prepararJogo(modo) {
             if (!jogador.nome) { alert("Por favor, digite seu Nickname no Perfil!"); mudarAba('tela-perfil', document.querySelectorAll('.nav-item')[4]); return; }
 
             const serie = document.getElementById('select-serie').value;
-            let filtro = BANCO_QUESTOES.filter(q => q.serie === serie);
+            filaPerguntas = [];
             
-            // Embaralha e garante que não repita questões na mesma rodada
-            filtro = filtro.sort(() => 0.5 - Math.random());
-            
-            // Se tiver menos de 10 questões, preenche com outras
-            if(filtro.length < 10) filtro = filtro.concat(BANCO_QUESTOES.sort(() => 0.5 - Math.random()));
-
-            // Remove duplicatas por segurança
-            filaPerguntas = [...new Set(filtro.map(q => JSON.stringify(q)))].map(q => JSON.parse(q)).slice(0, 10);
+            for(let i=0; i<10; i++) {
+                filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
+            }
 
             estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
             
@@ -467,20 +503,14 @@
             if (!jogador.nome) { alert("Por favor, digite seu Nickname no Perfil!"); return; }
             
             const desafio = DESAFIOS_DB.find(d => d.id === idDesafio);
-            
-            let filtro = BANCO_QUESTOES.filter(q => q.serie === desafio.serie);
-            filtro = filtro.sort(() => 0.5 - Math.random());
-            
-            // Modo desafio puxa um bloco grande de questões aleatórias daquela série
             filaPerguntas = [];
-            for(let i=0; i<30; i++) filaPerguntas = filaPerguntas.concat(filtro.sort(() => 0.5 - Math.random()));
+            for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(desafio.serie));
 
             estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
             
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('tela-jogo').classList.add('active');
             
-            // Configura Timer
             const timerBox = document.getElementById('timer-box');
             timerBox.classList.remove('hidden');
             tempoRestante = desafio.tempo;
@@ -501,6 +531,11 @@
 
         function carregarQuestao() {
             estado.respondidas = false;
+            // Se no modo tempo, gera uma nova questão a cada rodada para ser infinito
+            if(estado.modo === 'tempo' && estado.questaoAtual >= filaPerguntas.length) {
+                filaPerguntas.push(gerarQuestao(document.getElementById('select-serie').value));
+            }
+            
             perguntaAtual = filaPerguntas[estado.questaoAtual];
             
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
@@ -571,7 +606,7 @@
         }
 
         function proximaQuestao() {
-            if (estado.modo === 'classico' && estado.questaoAtual >= 9) return finalizarJogo();
+            if (estado.modo !== 'tempo' && estado.questaoAtual >= 9) return finalizarJogo();
             estado.questaoAtual++;
             carregarQuestao();
         }
@@ -607,7 +642,6 @@
 
         async function salvarPartida() {
             if (estado.pontos === 0 && estado.acertos === 0) return;
-            
             try {
                 const hoje = new Date().toISOString().split('T')[0];
                 const { data } = await banco.from('ranking').select('last_played, streak').eq('nome', jogador.nome).order('id', { ascending: true }).limit(1);
@@ -642,7 +676,6 @@
             await carregarPerfil();
             const container = document.getElementById('lista-conquistas');
             container.innerHTML = '';
-
             CONQUISTAS_DB.forEach(c => {
                 const unlocked = jogador.conquistas.includes(c.id);
                 container.innerHTML += `
@@ -661,18 +694,15 @@
             await carregarPerfil();
             const container = document.getElementById('container-stats');
             container.innerHTML = '';
-
             const keys = Object.keys(jogador.stats);
             if(keys.length === 0) {
                 container.innerHTML = '<p style="text-align:center; font-size:12px;">Jogue partidas para gerar estatísticas.</p>';
                 return;
             }
-
             keys.forEach(mat => {
                 const s = jogador.stats[mat];
                 const pct = Math.round((s.acertos / s.total) * 100);
                 let cor = pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--gold)' : 'var(--danger)';
-                
                 container.innerHTML += `
                     <div class="stat-row">
                         <div class="stat-label-row"><span>${mat}</span><span>${pct}%</span></div>
