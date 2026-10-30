@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 11</title>
+    <title>MATH ARENA - Módulo 11.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -326,7 +326,6 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Fallback local para não perder o nome nunca
         let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
@@ -398,9 +397,11 @@
 
         async function carregarPerfil() {
             if (!jogador.id) return;
-            const { data } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+            // CORREÇÃO AQUI: limit(1) em vez de maybeSingle() para evitar erro com duplicatas
+            const { data: arrayData } = await banco.from('ranking').select('*').eq('user_id', jogador.id).limit(1);
+            const data = arrayData && arrayData.length > 0 ? arrayData[0] : null;
+            
             if (data) {
-                // Se o banco não tiver nome, usa o local
                 jogador.nome = data.nome || jogador.nome || '';
                 jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
                 jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; jogador.avatar = data.avatar || '🧑‍🚀';
@@ -449,7 +450,7 @@
                 carregarPerfil().then(() => {
                     document.getElementById('perfil-nome-input').value = jogador.nome;
                     renderizarCalendario();
-                    renderizarHistorico(); // Chama o histórico
+                    renderizarHistorico();
                 });
             }
             if (idTela === 'tela-missoes') renderizarMissoes();
@@ -472,11 +473,18 @@
             document.getElementById('home-nome').innerText = jogador.nome;
 
             if (jogador.id) {
-                const { data } = await banco.from('ranking').select('id').eq('user_id', jogador.id).maybeSingle();
-                if (data) { 
+                // CORREÇÃO: Verifica com limit(1) em vez de maybeSingle()
+                const { data: arrayData } = await banco.from('ranking').select('id').eq('user_id', jogador.id).limit(1);
+                const existe = arrayData && arrayData.length > 0;
+
+                if (existe) { 
                     await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
                 } else { 
-                    await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0 }]); 
+                    // Se o usuário é novo, cria o perfil completo com valores padrão para não dar erro de Not Null
+                    await banco.from('ranking').insert([{ 
+                        user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0,
+                        conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
+                    }]); 
                 }
             }
         }
@@ -615,9 +623,10 @@
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
                 jogador.moedas = (jogador.moedas || 0) + pontosFinais;
 
-                const { data } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia').eq('user_id', jogador.id).maybeSingle();
-                let novoStreak = jogador.streak || 0;
+                const { data: arrayData } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia').eq('user_id', jogador.id).limit(1);
+                const data = arrayData && arrayData.length > 0 ? arrayData[0] : null;
                 
+                let novoStreak = jogador.streak || 0;
                 let totalAcertos = (data?.acertos || 0) + estado.acertos;
                 let totalErros = (data?.erros || 0) + estado.erros;
                 let melhorSeq = Math.max(data?.melhor_sequencia || 0, estado.melhorSequencia);
@@ -833,14 +842,12 @@
                 jogador.id = session.user.id; 
                 jogador.email = session.user.email;
                 
-                // Se tiver nome no celular, já mostra na tela logo de cara
                 if (jogador.nome) {
                     document.getElementById('home-nome').innerText = jogador.nome;
                 }
 
                 await carregarPerfil(); 
                 
-                // Se o banco tiver vazio, preenche a caixinha com o nome local
                 if(!jogador.nome) {
                     jogador.nome = localStorage.getItem('mathArenaNome') || '';
                 }
