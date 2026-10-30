@@ -540,6 +540,52 @@ const ACADEMIA_DB = [
     { titulo: 'Porcentagem', conteudo: 'Porcentagem é uma fração com denominador 100. <br><br>Ex: 20% de 150. Basta multiplicar 20/100 por 150. <br>20 x 150 = 3000. 3000 / 100 = 30. <br><br>Dica: 10% é só andar com a vírgula uma casa para a esquerda.' },
     { titulo: 'Regra de Três Simples', conteudo: 'Usada para resolver proporções.<br><br>Ex: Se 2 canetas custam R$ 5, quanto custam 6 canetas?<br>2 --- 5<br>6 --- x<br>Multiplique cruzado: 2x = 30 -> x = 15.' }
 ];
+        const CONQUISTAS_DB = [
+    { id: 'c1', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.', meta: 1, tipo: 'jogos' },
+    { id: 'c2', icone: '🧐', titulo: 'Mente Curiosa', desc: 'Respondeu 10 questões.', meta: 10, tipo: 'acertos' },
+    { id: 'c3', icone: '🌱', titulo: 'Iniciante', desc: 'Respondeu 50 questões.', meta: 50, tipo: 'acertos' },
+    { id: 'c4', icone: '📚', titulo: 'Aprendiz', desc: 'Respondeu 100 questões.', meta: 100, tipo: 'acertos' },
+    { id: 'c5', icone: '🎓', titulo: 'Dedicado', desc: 'Respondeu 500 questões.', meta: 500, tipo: 'acertos' },
+    { id: 'c6', icone: '🏛️', titulo: 'Veterano', desc: 'Respondeu 1000 questões.', meta: 1000, tipo: 'acertos' },
+    { id: 'c7', icone: '🎯', titulo: 'Atirador de Elite', desc: 'Acertou 10 seguidas.', meta: 10, tipo: 'sequencia' },
+    { id: 'c8', icone: '🔪', titulo: 'Precisão Absoluta', desc: 'Acertou 25 seguidas.', meta: 25, tipo: 'sequencia' },
+    { id: 'c9', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos numa partida.', meta: 80, tipo: 'pontos_partida' },
+    { id: 'c10', icone: '💎', titulo: 'Perfeição', desc: 'Completou 10 questões sem errar.', meta: 10, tipo: 'perfeicao' },
+    { id: 'c11', icone: '🧮', titulo: 'Calculadora Humana', desc: 'Atingiu 95% de aproveitamento.', meta: 95, tipo: 'taxa' },
+    { id: 'c12', icone: '🔥', titulo: 'Chama Inicial', desc: '3 dias consecutivos.', meta: 3, tipo: 'streak' },
+    { id: 'c13', icone: '☄️', titulo: 'Uma Semana de Fogo', desc: '7 dias consecutivos.', meta: 7, tipo: 'streak' },
+    { id: 'c14', icone: '🌋', titulo: 'Duas Semanas', desc: '14 dias consecutivos.', meta: 14, tipo: 'streak' },
+    { id: 'c15', icone: '🛡️', titulo: 'Disciplina de Ferro', desc: '30 dias consecutivos.', meta: 30, tipo: 'streak' },
+    { id: 'c16', icone: '🚀', titulo: 'Imparável', desc: '60 dias consecutivos.', meta: 60, tipo: 'streak' },
+    { id: 'c17', icone: '💯', titulo: 'Centenário', desc: '100 dias consecutivos.', meta: 100, tipo: 'streak' },
+    { id: 'c18', icone: '👑', titulo: 'Lenda', desc: '365 dias consecutivos.', meta: 365, tipo: 'streak' },
+    { id: 'c19', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou um desafio de tempo.', meta: 1, tipo: 'desafio' },
+    { id: 'c20', icone: '⏱️', titulo: 'Reflexos Matemáticos', desc: 'Jogou o Desafio Hardcore.', meta: 1, tipo: 'hardcore' },
+    { id: 'c21', icone: '⭐', titulo: 'Subindo na Vida', desc: 'Alcançou o Nível 5.', meta: 5, tipo: 'nivel' },
+    { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou o Nível 10.', meta: 10, tipo: 'nivel' },
+    { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou o Nível 20.', meta: 20, tipo: 'nivel' },
+    { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou o Nível 50.', meta: 50, tipo: 'nivel' },
+    { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.', meta: 5, tipo: 'materias' }
+];
+
+const LOJA_DB = [ 
+    { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
+    { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
+    { id: 'frame-ouro', icone: '👑', nome: 'Moldura de Ouro', desc: 'Brilho dourado VIP', preco: 800, tipo: 'frame' },
+    { id: 'frame-fogo', icone: '🔥', nome: 'Moldura de Fogo', desc: 'Chamas ardentes', preco: 1500, tipo: 'frame' },
+    { id: 'frame-gelo', icone: '❄️', nome: 'Moldura de Gelo', desc: 'Congelante e brilhante', preco: 1500, tipo: 'frame' },
+    { id: 'frame-neon', icone: '🔮', nome: 'Moldura Neon', desc: 'Energia roxa infinita', preco: 2000, tipo: 'frame' },
+    { id: 'frame-galaxy', icone: '🌌', nome: 'Moldura Galáxia', desc: 'Estrelas giratórias', preco: 2500, tipo: 'frame' },
+    { id: 'frame-matrix', icone: '💻', nome: 'Moldura Matrix', desc: 'Código verde piscante', preco: 3000, tipo: 'frame' },
+    { id: 'frame-diamante', icone: '💎', nome: 'Moldura Diamante', desc: 'Brilho raro e ofuscante', preco: 4000, tipo: 'frame' },
+    { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' },
+    { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
+    { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
+    { id: 'av_cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar VIP', preco: 2000, tipo: 'avatar' },
+    { id: 'av_ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar VIP', preco: 2500, tipo: 'avatar' },
+    { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar VIP', preco: 5000, tipo: 'avatar' }
+];
+
     function mostrarToast(mensagem, tipo = 'primary') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
