@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Frames</title>
+    <title>MATH ARENA - VIP</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -32,28 +32,27 @@
         .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
         .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
         
-        /* O Frame é a moldura em volta */
         .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; pointer-events: none; }
-        
-        /* Moldura Padrão (Neon Giratório) */
         .frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; filter: blur(2px); opacity: 0.8; }
-        
-        /* Moldura de Ouro */
         .frame-ouro { border: 3px solid #ffd700; box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffd700; animation: pulse-gold 2s infinite; }
-        
-        /* Moldura de Fogo */
         .frame-fogo { border: 3px solid #ff4500; box-shadow: 0 0 20px #ff4500, 0 0 40px #ff0000; animation: pulse-fire 1.5s infinite alternate; }
-        
-        /* Moldura de Gelo */
         .frame-gelo { border: 3px solid #00ffff; box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00ffff; animation: pulse-ice 3s infinite; }
+        .frame-neon { border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent), inset 0 0 15px var(--accent); animation: pulse-neon 2s infinite; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 25px #ffd700, 0 0 10px #fff; } 100% { box-shadow: 0 0 10px #ffd700; } }
         @keyframes pulse-fire { 0% { box-shadow: 0 0 15px #ff4500, 0 0 30px #ff4500; } 100% { box-shadow: 0 0 30px #ff4500, 0 0 50px #ff0000; border-color: #ff0000; } }
         @keyframes pulse-ice { 0% { box-shadow: 0 0 10px #00ffff; } 50% { box-shadow: 0 0 25px #00ffff, inset 0 0 15px #00ffff; } 100% { box-shadow: 0 0 10px #00ffff; } }
+        @keyframes pulse-neon { 0% { box-shadow: 0 0 10px var(--accent); } 50% { box-shadow: 0 0 25px var(--accent), inset 0 0 15px var(--accent); } 100% { box-shadow: 0 0 10px var(--accent); } }
 
         .user-name { font-weight: 800; font-size: 18px; }
         .user-level { font-size: 12px; color: var(--primary); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        
+        /* XP BAR (CORRIGIDA) */
+        .xp-container { margin-top: 10px; }
+        .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
+        .xp-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.5s; border-radius: 4px; box-shadow: 0 0 10px var(--primary); }
         
         .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .badge { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
@@ -500,18 +499,15 @@
             { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.' }
         ];
 
-        // LOJA ATUALIZADA COM MOLDURAS
         const LOJA_DB = [ 
             { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
             { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
             
-            // MOLDURAS
             { id: 'frame-ouro', icone: '👑', nome: 'Moldura de Ouro', desc: 'Brilho dourado VIP', preco: 800, tipo: 'frame' },
             { id: 'frame-fogo', icone: '🔥', nome: 'Moldura de Fogo', desc: 'Chamas ardentes', preco: 1500, tipo: 'frame' },
             { id: 'frame-gelo', icone: '❄️', nome: 'Moldura de Gelo', desc: 'Congelante e brilhante', preco: 1500, tipo: 'frame' },
             { id: 'frame-neon', icone: '🔮', nome: 'Moldura Neon', desc: 'Energia roxa infinita', preco: 2000, tipo: 'frame' },
 
-            // AVATARES
             { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' },
             { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
             { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
@@ -604,12 +600,10 @@
         }
 
         function aplicarMolduras() {
-            // Home
             const homeFrame = document.getElementById('home-frame');
             homeFrame.className = `frame ${jogador.moldura}`;
             document.getElementById('home-avatar').innerText = jogador.avatar;
             
-            // Perfil
             const perfilFrame = document.getElementById('perfil-frame');
             perfilFrame.className = `frame ${jogador.moldura}`;
             document.getElementById('perfil-avatar').innerText = jogador.avatar;
@@ -1202,7 +1196,6 @@
                 if(isEquipado) { btnTexto = 'EQUIPADO'; } 
                 else if (!podeComprar) { btnTexto = 'FALTA 🪙'; }
                 
-                // Pequeno preview visual do frame na loja
                 let iconVisual = item.tipo === 'frame' ? `<div class="frame ${item.id}" style="position:relative; width:40px; height:40px; border-radius:50%; display:flex; justify-content:center; align-items:center;"><span style="font-size:20px; z-index:5;">${item.icone}</span></div>` : item.icone;
 
                 container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${iconVisual}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
