@@ -46,7 +46,7 @@
         <button class="btn-ranking" onclick="abrirRanking()">🏆 Ranking</button>
     </div>
 
-    <!-- TELA DE INÍCIO (Só aparece na primeira vez) -->
+    <!-- TELA DE INÍCIO -->
     <div id="tela-inicio">
         <p>Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
         <input type="text" id="nome-aluno" placeholder="Digite seu nome" oninput="salvarPerfilRapido()">
@@ -108,7 +108,7 @@
     let combo = 0;
     let nomeDoAluno = "";
     let nivelAluno = "5";
-    let jogoEmAndamento = false; // NOVO: Controla se o quiz está rolando
+    let jogoEmAndamento = false;
 
     const mensagensAcerto = [
         "Parabéns, você acertou! 🎉",
@@ -371,16 +371,14 @@
         });
     }
 
-    // --- NOVA LÓGICA DE NAVEGAÇÃO INTELIGENTE ---
-    
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
         
-        // Se o jogo já tinha acabado, começa um novo automaticamente
+        // Força o jogo a começar imediatamente se ele já tinha acabado
         if (!jogoEmAndamento) {
             iniciarQuiz();
         } else {
-            // Se estava no meio do jogo (clicou no ranking), apenas volta
+            document.getElementById('tela-inicio').style.display = 'none';
             document.getElementById('tela-quiz').style.display = 'block';
             carregarPergunta();
         }
