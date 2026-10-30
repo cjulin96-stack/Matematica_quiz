@@ -957,3 +957,72 @@ banco.auth.onAuthStateChange((event, session) => {
         document.getElementById('tela-auth').classList.add('active');
     }
 });
+function renderizarAcademia() {
+    const container = document.getElementById('lista-academia');
+    if (!container) return;
+    container.innerHTML = '';
+    ACADEMIA_DB.forEach((aula, index) => {
+        container.innerHTML += `<div class="trilha-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);"><div onclick="toggleAula(${index})" style="cursor:pointer; display:flex; justify-content:space-between;"><span style="font-weight: 800; font-size: 15px; color:var(--primary);">${aula.titulo}</span><span style="color: var(--primary); font-size: 18px;">▼</span></div><div class="aula-conteudo" id="aula-${index}" style="display:none; margin-top: 10px; font-size: 14px; color: #ddd;">${aula.conteudo}</div></div>`;
+    });
+}
+
+function toggleAula(index) {
+    const conteudo = document.getElementById(`aula-${index}`);
+    if(conteudo.style.display === 'none') {
+        conteudo.style.display = 'block';
+    } else {
+        conteudo.style.display = 'none';
+    }
+}
+
+function renderizarConquistas() {
+    const container = document.getElementById('lista-conquistas'); 
+    if (!container) return;
+    container.innerHTML = '';
+    CONQUISTAS_DB.forEach(c => { 
+        const unlocked = jogador.conquistas.includes(c.id); 
+        container.innerHTML += `
+            <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                <div class="ach-info">
+                    <h4>${c.titulo}</h4>
+                    <p>${c.desc}</p>
+                </div>
+            </div>
+        `; 
+    });
+}
+
+async function carregarRanking(tipo, element) {
+    const lista = document.getElementById('rank-list-container');
+    if (!lista) return;
+    lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
+    
+    const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+    
+    if (!data || data.length === 0) { 
+        lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogador encontrado.</p>'; 
+        return; 
+    }
+    
+    lista.innerHTML = '';
+    data.forEach((user, index) => { 
+        let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; 
+        lista.innerHTML += `
+            <div class="ranking-list-item">
+                <div style="display:flex; gap: 10px; align-items:center;">
+                    <span style="font-size:18px; width:30px;">${medalha}</span>
+                    <div class="avatar-wrapper" style="width:50px; height:50px;">
+                        <div class="frame ${user.moldura||'frame-padrao'}"></div>
+                        <div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${user.avatar || '🧑‍🚀'}</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:800; font-size:15px;">${user.nome}</div>
+                        <div style="font-size:11px; color:var(--text-muted);">Nível ${getNivel(user.xp||0).nivel}</div>
+                    </div>
+                </div>
+                <div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div>
+            </div>
+        `; 
+    });
+}
