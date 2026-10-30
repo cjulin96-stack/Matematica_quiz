@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Ultimate</title>
+    <title>MATH ARENA - Módulo 11</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -32,6 +32,7 @@
         .badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-weight: 800; font-size: 12px; }
         .badge-fire { background: rgba(255, 69, 0, 0.2); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.3); }
         .badge-coin { background: rgba(255, 215, 0, 0.2); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .bell-icon { font-size: 20px; cursor: pointer; margin-right: 10px; filter: drop-shadow(0 0 5px var(--primary)); }
 
         .xp-container { margin-top: 10px; }
         .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
@@ -110,7 +111,6 @@
         .multiplier-toggle.on { background: var(--accent); }
         .multiplier-toggle.on::after { transform: translateX(18px); }
 
-        /* CALENDÁRIO E RANKING */
         .calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 15px; }
         .dia-semana { font-size: 10px; color: var(--text-muted); text-align: center; font-weight: bold; }
         .dia-calendario { width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
@@ -119,6 +119,8 @@
         .rank-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .rank-tab { flex: 1; padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
         .rank-tab.active { background: rgba(0, 242, 254, 0.2); color: var(--primary); border: 1px solid var(--primary); }
+
+        .historico-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
 
         .hidden { display: none !important; }
         .text-center { text-align: center; }
@@ -151,9 +153,12 @@
                         <div class="user-level" id="home-nivel">NÍVEL 1</div>
                     </div>
                 </div>
-                <div class="header-stats">
-                    <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
-                    <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                <div style="display: flex; align-items: center;">
+                    <div class="bell-icon" onclick="mostrarNotificacoes()">🔔</div>
+                    <div class="header-stats">
+                        <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
+                        <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                    </div>
                 </div>
             </div>
             <div class="glass">
@@ -277,12 +282,13 @@
             <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
 
-        <!-- TELA: PERFIL COM CALENDÁRIO -->
+        <!-- TELA: PERFIL COM CALENDÁRIO E HISTÓRICO -->
         <div id="tela-perfil" class="screen">
             <h2 class="text-gradient text-center mb-20">PERFIL</h2>
             <div class="glass text-center">
                 <div class="avatar" id="perfil-avatar" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 40px;">🧑‍🚀</div>
-                <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" onchange="salvarNome()" onblur="salvarNome()" style="text-align: center; font-size: 18px; font-weight: bold;">
+                <!-- O SEGREDO ESTÁ AQUI: oninput chamando a função com delay -->
+                <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 18px; font-weight: bold;">
                 <p style="color: var(--accent); font-weight: 800;" id="perfil-nivel-txt">NÍVEL 1</p>
             </div>
 
@@ -290,6 +296,14 @@
             <div class="glass">
                 <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">🔥 CALENDÁRIO DE ESTUDOS</h3>
                 <div class="calendario-grid" id="calendario-streak"></div>
+            </div>
+
+            <!-- HISTÓRICO DE PARTIDAS -->
+            <div class="glass">
+                <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">📜 ÚLTIMAS PARTIDAS</h3>
+                <div id="lista-historico">
+                    <p style="text-align: center; color: var(--text-muted); font-size: 12px;">Carregando...</p>
+                </div>
             </div>
 
             <button class="btn-secondary" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
@@ -312,7 +326,8 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { id: null, email: '', nome: '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
+        // Fallback local para não perder o nome nunca
+        let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
         let perguntaAtual = null;
@@ -374,7 +389,7 @@
             }
         }
 
-        async function sair() { await banco.auth.signOut(); location.reload(); }
+        async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
 
         function mostrarApp() {
             document.getElementById('bottom-nav').style.display = 'flex';
@@ -385,7 +400,9 @@
             if (!jogador.id) return;
             const { data } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
             if (data) {
-                jogador.nome = data.nome || ''; jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
+                // Se o banco não tiver nome, usa o local
+                jogador.nome = data.nome || jogador.nome || '';
+                jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
                 jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; jogador.avatar = data.avatar || '🧑‍🚀';
                 jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
                 jogador.missoes = data.missoes || { acertos: 0, jogos: 0, desafios: 0 };
@@ -432,21 +449,35 @@
                 carregarPerfil().then(() => {
                     document.getElementById('perfil-nome-input').value = jogador.nome;
                     renderizarCalendario();
+                    renderizarHistorico(); // Chama o histórico
                 });
             }
             if (idTela === 'tela-missoes') renderizarMissoes();
             if (idTela === 'tela-loja') renderizarLoja();
         }
 
+        // --- CORREÇÃO DO NOME (SALVA ENQUANTO DIGITA) ---
+        let timerSalvar;
+        function salvarNomeDelay() {
+            clearTimeout(timerSalvar);
+            timerSalvar = setTimeout(salvarNome, 1000); // Espera 1s depois de parar de digitar
+        }
+
         async function salvarNome() { 
             const novoNome = document.getElementById('perfil-nome-input').value.trim();
             if(novoNome === "") return;
+            
             jogador.nome = novoNome;
+            localStorage.setItem('mathArenaNome', jogador.nome); // Salva no celular na hora!
             document.getElementById('home-nome').innerText = jogador.nome;
+
             if (jogador.id) {
                 const { data } = await banco.from('ranking').select('id').eq('user_id', jogador.id).maybeSingle();
-                if (data) { await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); } 
-                else { await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0 }]); }
+                if (data) { 
+                    await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
+                } else { 
+                    await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0 }]); 
+                }
             }
         }
 
@@ -454,6 +485,18 @@
             const toggle = document.getElementById('toggle-multiplier');
             usarMultiplicador = !usarMultiplicador;
             if (usarMultiplicador) toggle.classList.add('on'); else toggle.classList.remove('on');
+        }
+
+        // --- NOTIFICAÇÕES (NOVO) ---
+        function mostrarNotificacoes() {
+            let notificacoes = [];
+            if(jogador.missoes.jogos === 0) notificacoes.push("Bem-vindo ao MATH ARENA!");
+            if(jogador.missoes.acertos < 10) notificacoes.push("Missão pendente: Acerte 10 questões.");
+            if(jogador.moedas >= 500) notificacoes.push("Você já pode comprar o Multiplicador na Loja!");
+            
+            if(notificacoes.length === 0) notificacoes.push("Você está em dia! Bora jogar?");
+            
+            alert("🔔 NOTIFICAÇÕES:\n\n" + notificacoes.join("\n\n"));
         }
 
         // --- CALENDÁRIO DE STREAK ---
@@ -483,6 +526,29 @@
                 if (dia === hoje.getDate()) classes += ' hoje';
                 container.innerHTML += `<div class="${classes}">${dia}</div>`;
             }
+        }
+
+        // --- HISTÓRICO DE PARTIDAS (NOVO) ---
+        async function renderizarHistorico() {
+            const container = document.getElementById('lista-historico');
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Carregando...</p>';
+
+            const { data: partidas } = await banco.from('partidas')
+                .select('pontos, data')
+                .eq('user_id', jogador.id)
+                .order('data', { ascending: false })
+                .limit(5);
+
+            if (!partidas || partidas.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Nenhuma partida jogada ainda.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            partidas.forEach(p => {
+                const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: bold;">${p.pontos} pts</span></div>`;
+            });
         }
 
         // --- RANKING (GERAL, SEMANAL, MENSAL) ---
@@ -537,7 +603,7 @@
             }
         }
 
-        // --- SALVAR PARTIDA E HISTÓRICO ---
+        // --- SALVAR PARTIDA ---
         async function salvarPartida(pontosFinais) {
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
@@ -571,7 +637,7 @@
             } catch (e) { console.error(e); }
         }
 
-        // --- FUNÇÕES DO JOGO (LOJA, QUESTÕES, ETC) ---
+        // --- FUNÇÕES DO JOGO ---
         const DESAFIOS_DB = [ { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' }, { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' }, { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' }, { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' }, { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' } ];
         const LOJA_DB = [ { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' }, { id: 'mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar', preco: 500, tipo: 'avatar' }, { id: 'robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar', preco: 1000, tipo: 'avatar' }, { id: 'alien', icone: '👽', nome: 'Gênio', desc: 'Avatar', preco: 1500, tipo: 'avatar' }, { id: 'cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar', preco: 2000, tipo: 'avatar' }, { id: 'ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar', preco: 2500, tipo: 'avatar' }, { id: 'dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar', preco: 5000, tipo: 'avatar' } ];
 
@@ -764,8 +830,22 @@
         window.onload = async () => {
             const { data: { session } } = await banco.auth.getSession();
             if (session) {
-                jogador.id = session.user.id; jogador.email = session.user.email;
-                await carregarPerfil(); mostrarApp();
+                jogador.id = session.user.id; 
+                jogador.email = session.user.email;
+                
+                // Se tiver nome no celular, já mostra na tela logo de cara
+                if (jogador.nome) {
+                    document.getElementById('home-nome').innerText = jogador.nome;
+                }
+
+                await carregarPerfil(); 
+                
+                // Se o banco tiver vazio, preenche a caixinha com o nome local
+                if(!jogador.nome) {
+                    jogador.nome = localStorage.getItem('mathArenaNome') || '';
+                }
+                
+                mostrarApp();
             }
         };
     </script>
