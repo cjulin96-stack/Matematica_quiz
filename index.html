@@ -79,6 +79,9 @@
         .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.5); margin-bottom: 10px;}
         .btn-secondary:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
 
+        .btn-danger { width: 100%; padding: 12px; background: rgba(255, 23, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 4px 0 rgba(178, 16, 47, 0.5); margin-top: 10px; font-size: 14px;}
+        .btn-danger:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(178, 16, 47, 0.5); }
+
         input, select { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 16px; margin-bottom: 15px; outline: none; }
         select option { background: var(--bg-dark); color: #fff; }
 
@@ -118,17 +121,14 @@
         .nav-item.active .nav-icon { transform: translateY(-2px); filter: drop-shadow(0 0 5px var(--primary)); }
         .nav-icon { font-size: 20px; transition: 0.2s; }
 
-        /* TIMER */
         .timer-display { font-family: 'Orbitron'; font-size: 24px; color: var(--danger); text-align: center; margin-bottom: 10px; font-weight: 900; }
         
-        /* CONQUISTAS */
         .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--text-muted); opacity: 0.6; }
         .achievement-card.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); }
         .ach-icon { font-size: 30px; }
         .ach-info h4 { font-size: 14px; margin-bottom: 2px; }
         .ach-info p { font-size: 11px; color: var(--text-muted); }
 
-        /* ESTATISTICAS */
         .stat-row { margin-bottom: 12px; }
         .stat-label-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: 700; }
         .stat-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
@@ -142,7 +142,6 @@
 <body>
 
     <div class="main-content">
-        <!-- TELA: HOME -->
         <div id="tela-home" class="screen active">
             <div class="user-header">
                 <div class="user-info">
@@ -178,7 +177,6 @@
             </div>
         </div>
 
-        <!-- TELA: JOGO -->
         <div id="tela-jogo" class="screen">
             <div id="timer-box" class="timer-display hidden">60s</div>
             <div class="hud">
@@ -199,9 +197,9 @@
             </div>
             
             <button class="btn-primary" id="btn-next" style="display: none; margin-top: 15px;" onclick="proximaQuestao()">PRÓXIMA ➡</button>
+            <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
         </div>
 
-        <!-- TELA: RESULTADO -->
         <div id="tela-resultado" class="screen">
             <div class="glass text-center">
                 <h2 id="result-title">FIM DE JOGO</h2>
@@ -216,13 +214,11 @@
             </div>
         </div>
 
-        <!-- TELA: CONQUISTAS -->
         <div id="tela-conquistas" class="screen">
             <h2 class="text-gradient text-center mb-20">CONQUISTAS</h2>
             <div id="lista-conquistas"></div>
         </div>
 
-        <!-- TELA: ESTATÍSTICAS -->
         <div id="tela-estatisticas" class="screen">
             <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
             <div class="glass">
@@ -231,13 +227,11 @@
             </div>
         </div>
 
-        <!-- TELA: RANKING -->
         <div id="tela-ranking" class="screen">
             <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
             <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
 
-        <!-- TELA: PERFIL -->
         <div id="tela-perfil" class="screen">
             <h2 class="text-gradient text-center mb-20">PERFIL</h2>
             <div class="glass text-center">
@@ -250,7 +244,6 @@
         </div>
     </div>
 
-    <!-- MENU INFERIOR (5 Itens) -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="mudarAba('tela-home', this)">
             <span class="nav-icon">🏠</span><span>Início</span>
@@ -283,7 +276,6 @@
 
         document.getElementById('perfil-nome-input').value = jogador.nome;
 
-        // Lista de Conquistas Disponíveis
         const CONQUISTAS_DB = [
             { id: 'primeiro_passo', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.' },
             { id: 'streak_fogo', icone: '🔥', titulo: 'Sequência de Fogo', desc: 'Acertou 5 seguidas.' },
@@ -310,6 +302,7 @@
         }
 
         function mudarAba(idTela, element) {
+            if(idTela === 'tela-jogo') return; // Segurança para não sair do jogo por engano
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(idTela).classList.add('active');
             
@@ -347,4 +340,265 @@
         }
 
         async function atualizarDashboard() {
-            await 
+            await carregarPerfil();
+            document.getElementById('home-nome').innerText = jogador.nome || 'Jogador';
+            document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel || 1}`;
+            document.getElementById('home-streak').innerText = jogador.streak || 0;
+            const xpAtualNivel = jogador.xp % 100;
+            document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
+            document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
+        }
+
+        const BANCO_QUESTOES = [
+            { q: "Quanto é 15 + 27?", o: ["32", "42", "52", "38"], c: 1, exp: "15 + 27 = 42.", serie: "5", mat: "Soma" },
+            { q: "Qual o resultado de 8 x 7?", o: ["48", "56", "64", "54"], c: 1, exp: "8 x 7 = 56.", serie: "5", mat: "Multiplicação" },
+            { q: "Quanto é 45 - 18?", o: ["27", "33", "23", "37"], c: 0, exp: "45 - 18 = 27.", serie: "5", mat: "Subtração" },
+            { q: "Se 2x + 5 = 15, qual o valor de x?", o: ["5", "10", "15", "20"], c: 0, exp: "2x = 10 -> x = 5.", serie: "7", mat: "Equações" },
+            { q: "Quanto é 2³?", o: ["6", "8", "9", "12"], c: 1, exp: "2 x 2 x 2 = 8.", serie: "8", mat: "Potenciação" }
+        ];
+
+        function prepararJogo(modo) {
+            if (!jogador.nome) { alert("Por favor, digite seu Nickname no Perfil!"); mudarAba('tela-perfil', document.querySelectorAll('.nav-item')[4]); return; }
+
+            estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
+            
+            const serie = document.getElementById('select-serie')?.value || '5';
+            let filtro = BANCO_QUESTOES.filter(q => q.serie === serie);
+            if(filtro.length < 5) filtro = BANCO_QUESTOES;
+            
+            filaPerguntas = [];
+            for(let i=0; i<30; i++) filaPerguntas = filaPerguntas.concat(filtro.sort(() => 0.5 - Math.random()));
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('tela-jogo').classList.add('active');
+            document.getElementById('timer-box').classList.toggle('hidden', modo !== 'tempo');
+            
+            if (modo === 'tempo') {
+                tempoRestante = 60;
+                document.getElementById('timer-box').innerText = `60s`;
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    tempoRestante--;
+                    document.getElementById('timer-box').innerText = `${tempoRestante}s`;
+                    if (tempoRestante <= 0) {
+                        clearInterval(timerInterval);
+                        finalizarJogo();
+                    }
+                }, 1000);
+            }
+
+            carregarQuestao();
+        }
+
+        function carregarQuestao() {
+            estado.respondidas = false;
+            perguntaAtual = filaPerguntas[estado.questaoAtual];
+            
+            document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
+            document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+            document.getElementById('hud-questao').innerText = estado.modo === 'tempo' ? '∞' : `${estado.questaoAtual + 1}/10`;
+            document.getElementById('progress-fill').style.width = estado.modo === 'tempo' ? '100%' : `${((estado.questaoAtual) / 10) * 100}%`;
+            
+            document.getElementById('question-text').innerText = perguntaAtual.q;
+            document.getElementById('feedback-box').classList.remove('active');
+            document.getElementById('btn-next').style.display = 'none';
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            const letras = ['A', 'B', 'C', 'D'];
+
+            perguntaAtual.o.forEach((opcao, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="option-letter">${letras[index]}</span> ${opcao}`;
+                btn.onclick = () => responder(index, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function responder(index, btn) {
+            if (estado.respondidas) return;
+            estado.respondidas = true;
+            const botoes = document.querySelectorAll('.option-btn');
+            botoes.forEach(b => b.style.pointerEvents = 'none');
+
+            const mat = perguntaAtual.mat;
+            if(!jogador.stats[mat]) jogador.stats[mat] = { acertos: 0, total: 0 };
+            jogador.stats[mat].total++;
+
+            if (index === perguntaAtual.c) {
+                tocarSom('acerto');
+                estado.pontos += 10;
+                estado.acertos++;
+                estado.sequencia++;
+                jogador.stats[mat].acertos++;
+                btn.classList.add('correct');
+            } else {
+                tocarSom('erro');
+                estado.pontos = Math.max(0, estado.pontos - 4);
+                estado.erros++;
+                estado.sequencia = 0;
+                btn.classList.add('wrong');
+                botoes[perguntaAtual.c].classList.add('correct');
+            }
+
+            document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
+            document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+
+            if (estado.modo === 'tempo') {
+                setTimeout(() => { estado.questaoAtual++; carregarQuestao(); }, 500);
+            } else {
+                const fbBox = document.getElementById('feedback-box');
+                const fbTitle = document.getElementById('feedback-title');
+                const fbExp = document.getElementById('feedback-explanation');
+                
+                fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
+                fbTitle.innerText = index === perguntaAtual.c ? "🎉 ACERTOU! +10 PTS" : "❌ ERROU! -4 PTS";
+                fbExp.innerText = perguntaAtual.exp;
+                
+                document.getElementById('btn-next').style.display = 'block';
+                if (estado.questaoAtual >= 9) document.getElementById('btn-next').innerText = "FINALIZAR 🏁";
+            }
+        }
+
+        function proximaQuestao() {
+            if (estado.modo === 'classico' && estado.questaoAtual >= 9) return finalizarJogo();
+            estado.questaoAtual++;
+            carregarQuestao();
+        }
+
+        function pararJogo() {
+            if(confirm("Deseja realmente parar agora e salvar seus pontos?")) {
+                finalizarJogo();
+            }
+        }
+
+        async function finalizarJogo() {
+            clearInterval(timerInterval);
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('tela-resultado').classList.add('active');
+            
+            document.getElementById('result-score').innerText = estado.pontos;
+            document.getElementById('result-acertos').innerText = estado.acertos;
+            document.getElementById('result-erros').innerText = estado.erros;
+            
+            let novasConquistas = [];
+            if(estado.acertos > 0 && !jogador.conquistas.includes('primeiro_passo')) novasConquistas.push('primeiro_passo');
+            if(estado.sequencia >= 5 && !jogador.conquistas.includes('streak_fogo')) novasConquistas.push('streak_fogo');
+            if(estado.pontos >= 80 && !jogador.conquistas.includes('mente_brilhante')) novasConquistas.push('mente_brilhante');
+            if(estado.modo === 'tempo' && !jogador.conquistas.includes('modo_turbo')) novasConquistas.push('modo_turbo');
+
+            if(novasConquistas.length > 0) {
+                jogador.conquistas = jogador.conquistas.concat(novasConquistas);
+                setTimeout(() => alert(`🏅 NOVA CONQUISTA DESBLOQUEADA!\nVeja na aba Medalhas.`), 500);
+            }
+
+            await salvarPartida();
+        }
+
+        async function salvarPartida() {
+            if (estado.pontos === 0 && estado.acertos === 0) return;
+            
+            try {
+                const hoje = new Date().toISOString().split('T')[0];
+                const { data } = await banco.from('ranking').select('last_played, streak').eq('nome', jogador.nome).order('id', { ascending: true }).limit(1);
+                
+                let novoStreak = jogador.streak || 0;
+                if(data && data.length > 0) {
+                    if(data[0].last_played !== hoje) {
+                        const ontem = new Date(); ontem.setDate(ontem.getDate() - 1);
+                        novoStreak = (data[0].last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1;
+                    }
+                    await banco.from('ranking').update({
+                        pontuacao: (jogador.pontos || 0) + estado.pontos,
+                        xp: (jogador.xp || 0) + estado.pontos,
+                        streak: novoStreak,
+                        last_played: hoje,
+                        conquistas: jogador.conquistas,
+                        stats_materias: jogador.stats
+                    }).eq('nome', jogador.nome);
+                } else {
+                    await banco.from('ranking').insert([{
+                        nome: jogador.nome, pontuacao: estado.pontos, xp: estado.pontos,
+                        streak: 1, last_played: hoje, conquistas: jogador.conquistas,
+                        stats_materias: jogador.stats, nivel: 'Geral'
+                    }]);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar os pontos no banco de dados. Verifique se rodou o SQL do Módulo 2.");
+            }
+        }
+
+        async function renderizarConquistas() {
+            await carregarPerfil();
+            const container = document.getElementById('lista-conquistas');
+            container.innerHTML = '';
+
+            CONQUISTAS_DB.forEach(c => {
+                const unlocked = jogador.conquistas.includes(c.id);
+                container.innerHTML += `
+                    <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                        <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                        <div class="ach-info">
+                            <h4>${c.titulo}</h4>
+                            <p>${c.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function renderizarEstatisticas() {
+            await carregarPerfil();
+            const container = document.getElementById('container-stats');
+            container.innerHTML = '';
+
+            const keys = Object.keys(jogador.stats);
+            if(keys.length === 0) {
+                container.innerHTML = '<p style="text-align:center; font-size:12px;">Jogue partidas para gerar estatísticas.</p>';
+                return;
+            }
+
+            keys.forEach(mat => {
+                const s = jogador.stats[mat];
+                const pct = Math.round((s.acertos / s.total) * 100);
+                let cor = pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--gold)' : 'var(--danger)';
+                
+                container.innerHTML += `
+                    <div class="stat-row">
+                        <div class="stat-label-row"><span>${mat}</span><span>${pct}%</span></div>
+                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:${cor};"></div></div>
+                    </div>
+                `;
+            });
+        }
+
+        async function carregarRanking() {
+            const lista = document.getElementById('rank-list-container');
+            lista.innerHTML = '<p class="text-center" style="color:var(--text-muted);">Buscando...</p>';
+            const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+
+            if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center">Vazio.</p>'; return; }
+            lista.innerHTML = '';
+            data.forEach((user, index) => {
+                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+                lista.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <span style="font-size:18px; width:30px;">${medalha}</span>
+                            <div>
+                                <div style="font-weight:800; font-size:14px;">${user.nome}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div>
+                            </div>
+                        </div>
+                        <div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div>
+                    </div>
+                `;
+            });
+        }
+
+        window.onload = () => { if(jogador.nome) atualizarDashboard(); }
+    </script>
+</body>
+</html>
