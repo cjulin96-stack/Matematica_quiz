@@ -133,6 +133,12 @@
         .aula-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .aula-conteudo { display: none; margin-top: 15px; font-size: 14px; color: #ddd; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
         .aula-conteudo.active { display: block; }
+        
+        /* CORREÇÃO DO VISUAL DAS ESTATÍSTICAS */
+        .stat-row { margin-bottom: 15px; }
+        .stat-label-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; font-weight: 700; color: #fff; }
+        .stat-bar-bg { height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; border-radius: 5px; transition: 0.5s; }
     </style>
 </head>
 <body>
@@ -314,7 +320,7 @@
         <div id="tela-estatisticas" class="screen">
             <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 15px;">APROVEITAMENTO POR MATÉRIA</h3>
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">APROVEITAMENTO POR MATÉRIA</h3>
                 <div id="container-stats"></div>
             </div>
             <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
@@ -624,22 +630,29 @@
             const container = document.getElementById('lista-historico');
             container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Carregando...</p>';
 
-            const { data: partidas } = await banco.from('partidas')
-                .select('pontos, data')
-                .eq('user_id', jogador.id)
-                .order('data', { ascending: false })
-                .limit(5);
+            try {
+                const { data: partidas, error } = await banco.from('partidas')
+                    .select('pontos, data')
+                    .eq('user_id', jogador.id)
+                    .order('data', { ascending: false })
+                    .limit(5);
 
-            if (!partidas || partidas.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Nenhuma partida jogada ainda.</p>';
-                return;
+                if (error) throw error;
+
+                if (!partidas || partidas.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Nenhuma partida jogada ainda.</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                partidas.forEach(p => {
+                    const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                    container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: bold;">${p.pontos} pts</span></div>`;
+                });
+            } catch(e) {
+                container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 12px;">Erro ao carregar histórico.</p>';
+                console.error(e);
             }
-
-            container.innerHTML = '';
-            partidas.forEach(p => {
-                const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: bold;">${p.pontos} pts</span></div>`;
-            });
         }
 
         async function carregarRanking(tipo, element) {
@@ -811,6 +824,7 @@
             carregarQuestao();
         }
 
+        // CORREÇÃO DO XP: Agora busca o XP atual do banco e SOMA com os novos pontos
         async function salvarPartida(pontosFinais) {
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
@@ -820,20 +834,23 @@
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; 
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; 
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
-                jogador.moedas = (jogador.moedas || 0) + pontosFinais;
-
-                const { data: arrayData } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia').eq('user_id', jogador.id).limit(1);
+                
+                // Pega os dados atuais do banco antes de atualizar
+                const { data: arrayData } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).limit(1);
                 const data = arrayData && arrayData.length > 0 ? arrayData[0] : null;
                 
-                let novoStreak = jogador.streak || 0;
-                let totalAcertos = (data?.acertos || 0) + estado.acertos;
-                let totalErros = (data?.erros || 0) + estado.erros;
-                let melhorSeq = Math.max(data?.melhor_sequencia || 0, estado.melhorSequencia);
+                let novoStreak = data ? data.streak || 0 : 0;
+                let totalAcertos = (data ? data.acertos || 0 : 0) + estado.acertos;
+                let totalErros = (data ? data.erros || 0 : 0) + estado.erros;
+                let melhorSeq = Math.max(data ? data.melhor_sequencia || 0 : 0, estado.melhorSequencia);
+                let novoXP = (data ? data.xp || 0 : 0) + pontosFinais;
+                let novaPontuacao = (data ? data.pontuacao || 0 : 0) + pontosFinais;
+                let novasMoedas = (data ? data.moedas || 0 : 0) + pontosFinais;
 
                 if (data) {
                     if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
                     await banco.from('ranking').update({ 
-                        pontuacao: (jogador.pontos || 0) + pontosFinais, xp: (jogador.xp || 0) + pontosFinais, streak: novoStreak, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats,
+                        pontuacao: novaPontuacao, xp: novoXP, streak: novoStreak, moedas: novasMoedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats,
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }).eq('user_id', jogador.id);
                 } else {
@@ -842,6 +859,13 @@
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }]);
                 }
+                
+                // Atualiza o objeto local para a tela não ficar desatualizada
+                jogador.xp = novoXP;
+                jogador.pontos = novaPontuacao;
+                jogador.moedas = novasMoedas;
+                jogador.nivel = Math.floor(novoXP / 100) + 1;
+                jogador.streak = novoStreak;
             } catch (e) { console.error(e); }
         }
 
@@ -1086,10 +1110,33 @@
             });
         }
 
+        // CORREÇÃO DO VISUAL DAS ESTATÍSTICAS
         async function renderizarEstatisticas() {
-            await carregarPerfil(); const container = document.getElementById('container-stats'); container.innerHTML = ''; const keys = Object.keys(jogador.stats);
-            if(keys.length === 0) { container.innerHTML = '<p style="text-align:center; font-size:12px;">Jogue partidas para gerar estatísticas.</p>'; return; }
-            keys.forEach(mat => { const s = jogador.stats[mat]; const pct = Math.round((s.acertos / s.total) * 100); let cor = pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--gold)' : 'var(--danger)'; container.innerHTML += `<div class="stat-row"><div class="stat-label-row"><span>${mat}</span><span>${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:${cor};"></div></div></div>`; });
+            await carregarPerfil(); 
+            const container = document.getElementById('container-stats'); 
+            container.innerHTML = ''; 
+            const keys = Object.keys(jogador.stats);
+            
+            if(keys.length === 0) { 
+                container.innerHTML = '<p style="text-align:center; font-size:12px;">Jogue partidas para gerar estatísticas.</p>'; 
+                return; 
+            }
+            
+            keys.forEach(mat => { 
+                const s = jogador.stats[mat]; 
+                const pct = Math.round((s.acertos / s.total) * 100); 
+                let cor = pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--gold)' : 'var(--danger)'; 
+                container.innerHTML += `
+                    <div class="stat-row">
+                        <div class="stat-label-row">
+                            <span>${mat}</span>
+                            <span>${pct}%</span>
+                        </div>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar-fill" style="width:${pct}%; background:${cor};"></div>
+                        </div>
+                    </div>`; 
+            });
         }
 
         window.onload = async () => {
