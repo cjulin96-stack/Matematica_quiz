@@ -486,9 +486,15 @@
 
         async function carregarPerfil() {
             if (!jogador.id) return;
-            const { data: arrayData } = await banco.from('ranking').select('*').eq('user_id', jogador.id).limit(1);
-            const data = arrayData && arrayData.length > 0 ? arrayData[0] : null;
+            // Puxa o perfil. Como criamos a regra 'unique' no banco, não haverá duplicatas.
+            const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
             
+            if (error) {
+                console.error("Erro ao carregar perfil:", error);
+                alert("Erro no banco de dados: " + error.message);
+                return;
+            }
+
             if (data) {
                 jogador.nome = data.nome || jogador.nome || 'Jogador';
                 jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
@@ -502,10 +508,11 @@
                 jogador.melhorSequencia = data.melhor_sequencia || 0;
             } else {
                 // Se não achou o perfil, insere um novo.
-                await banco.from('ranking').insert([{ 
+                const { error: erroInsert } = await banco.from('ranking').insert([{ 
                     user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0,
                     conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
                 }]);
+                if(erroInsert) alert("Erro ao criar perfil: " + erroInsert.message);
             }
         }
 
@@ -567,12 +574,9 @@
             document.getElementById('home-nome').innerText = jogador.nome;
 
             if (jogador.id) {
-                const { data: arrayData } = await banco.from('ranking').select('id').eq('user_id', jogador.id).limit(1);
-                const existe = arrayData && arrayData.length > 0;
-
-                if (existe) { 
-                    await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
-                } else { 
+                const { error } = await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
+                if(error) {
+                    // Se der erro no update, tenta inserir (caso o perfil não exista)
                     await banco.from('ranking').insert([{ 
                         user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0,
                         conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
@@ -835,18 +839,17 @@
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; 
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
                 
-                const { data: arrayData } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).limit(1);
-                const data = arrayData && arrayData.length > 0 ? arrayData[0] : null;
+                const { data, error: erroBusca } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).maybeSingle();
                 
-                let novoStreak = data ? data.streak || 0 : 0;
-                let totalAcertos = (data ? data.acertos || 0 : 0) + estado.acertos;
-                let totalErros = (data ? data.erros || 0 : 0) + estado.erros;
-                let melhorSeq = Math.max(data ? data.melhor_sequencia || 0 : 0, estado.melhorSequencia);
-                let novoXP = (data ? data.xp || 0 : 0) + pontosFinais;
-                let novaPontuacao = (data ? data.pontuacao || 0 : 0) + pontosFinais;
-                let novasMoedas = (data ? data.moedas || 0 : 0) + pontosFinais;
-
                 if (data) {
+                    let novoStreak = data.streak || 0;
+                    let totalAcertos = (data.acertos || 0) + estado.acertos;
+                    let totalErros = (data.erros || 0) + estado.erros;
+                    let melhorSeq = Math.max(data.melhor_sequencia || 0, estado.melhorSequencia);
+                    let novoXP = (data.xp || 0) + pontosFinais;
+                    let novaPontuacao = (data.pontuacao || 0) + pontosFinais;
+                    let novasMoedas = (data.moedas || 0) + pontosFinais;
+
                     if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
                     
                     const { error: erroUpdate } = await banco.from('ranking').update({ 
@@ -858,17 +861,17 @@
                 } else {
                     const { error: erroInsert } = await banco.from('ranking').insert([{ 
                         user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral',
-                        acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
+                        acertos: estado.acertos, erros: estado.erros, melhor_sequencia: estado.melhorSequencia
                     }]);
                     
                     if(erroInsert) alert("Erro ao criar o perfil: " + erroInsert.message);
                 }
                 
-                jogador.xp = novoXP;
-                jogador.pontos = novaPontuacao;
-                jogador.moedas = novasMoedas;
-                jogador.nivel = Math.floor(novoXP / 100) + 1;
-                jogador.streak = novoStreak;
+                jogador.xp = novoXP || pontosFinais;
+                jogador.pontos = novaPontuacao || pontosFinais;
+                jogador.moedas = novasMoedas || pontosFinais;
+                jogador.nivel = Math.floor(jogador.xp / 100) + 1;
+                jogador.streak = novoStreak || 1;
             } catch (e) { console.error(e); }
         }
 
@@ -1140,14 +1143,25 @@
             });
         }
 
-        banco.auth.onAuthStateChange((event, session) => {
+        // --- SESSÃO BLINDADA: Executa ao abrir o site E quando o login mudar ---
+        window.onload = async () => {
+            // Busca a sessão ativa no navegador
+            const { data: { session } } = await banco.auth.getSession();
             if (session) {
                 jogador.id = session.user.id;
                 jogador.email = session.user.email;
-                carregarPerfil().then(() => {
-                    mostrarApp();
-                });
-            } else {
+                await carregarPerfil();
+                mostrarApp();
+            }
+        };
+
+        banco.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session && !jogador.id) {
+                jogador.id = session.user.id;
+                jogador.email = session.user.email;
+                carregarPerfil().then(() => mostrarApp());
+            } else if (event === 'SIGNED_OUT') {
+                jogador.id = null;
                 document.getElementById('bottom-nav').style.display = 'none';
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById('tela-auth').classList.add('active');
