@@ -77,47 +77,7 @@
         .badge-coin { background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
         .bell-icon { font-size: 22px; cursor: pointer; margin-right: 10px; filter: drop-shadow(0 0 8px var(--primary)); animation: ring 3s infinite; }
         @keyframes ring { 0%, 100% { transform: rotate(0); } 5%, 15% { transform: rotate(15deg); } 10%, 20% { transform: rotate(-15deg); } 25% { transform: rotate(0); } }
-
-        button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; letter-spacing: 0.5px;}
-        .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 6px 0 #00a8b5, 0 10px 20px rgba(0, 242, 254, 0.2); }
-        .btn-primary:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #00a8b5; }
-        .btn-duel { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff007f, #ff1744); color: #fff; box-shadow: 0 6px 0 #b2102f; margin-bottom: 10px;}
-        .btn-duel:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #b2102f; }
-        .btn-rankeado { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 6px 0 #b8860b, 0 10px 20px rgba(255, 215, 0, 0.2); margin-bottom: 10px;}
-        .btn-rankeado:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #b8860b; }
-        .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.5); margin-bottom: 10px;}
-        .btn-secondary:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
-        .btn-danger { width: 100%; padding: 12px; background: rgba(255, 23, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 4px 0 rgba(178, 16, 47, 0.5); margin-top: 10px; font-size: 14px;}
-        .btn-danger:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(178, 16, 47, 0.5); }
-
-        input, select { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 16px; margin-bottom: 15px; outline: none; transition: 0.3s;}
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
-        select option { background: var(--bg-dark); color: #fff; }
-
-        .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; }
-        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.3s; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
-        .question-text { font-size: 22px; font-weight: 800; margin-bottom: 25px; text-align: center; line-height: 1.3;}
-        .options-grid { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { position: relative; padding: 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 14px; color: #fff; text-align: left; font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
-        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.4); }
-        .option-letter { background: rgba(255,255,255,0.1); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 14px; color: var(--primary); }
-        .option-btn.correct { background: rgba(0, 230, 118, 0.15) !important; border-color: var(--success) !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.3) !important; }
-        .option-btn.wrong { background: rgba(255, 23, 68, 0.15) !important; border-color: var(--danger) !important; animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-
-        .feedback { margin-top: 20px; padding: 16px; border-radius: 14px; font-size: 14px; display: none; font-weight: 600; line-height: 1.4;}
-        .feedback.active { display: block; animation: slideUp 0.3s; }
-        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
-        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 800; gap: 5px; cursor: pointer; transition: 0.2s; width: 20%; height: 100%; }
-        .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(0,242,254,0.5); }
-        .nav-item.active .nav-icon { transform: translateY(-3px) scale(1.1); filter: drop-shadow(0 0 8px var(--primary)); }
-        .nav-icon { font-size: 22px; transition: 0.3s; }
-
-        .timer-display { font-family: 'Orbitron'; font-size: 32px; color: var(--danger); text-align: center; margin-bottom: 15px; font-weight: 900; text-shadow: 0 0 15px rgba(255,23,68,0.6); animation: pulseRed 1s infinite;}
+                .timer-display { font-family: 'Orbitron'; font-size: 32px; color: var(--danger); text-align: center; margin-bottom: 15px; font-weight: 900; text-shadow: 0 0 15px rgba(255,23,68,0.6); animation: pulseRed 1s infinite;}
         @keyframes pulseRed { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;}
@@ -229,101 +189,142 @@
         
         .floating-points { position: absolute; font-weight: 900; font-size: 24px; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 10; text-shadow: 0 0 10px currentColor; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(1.5); } }
+
+        /* MÓDULO FINAL: ANIMAÇÃO DE CONQUISTA */
+        #modal-conquista { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        #modal-conquista.active { opacity: 1; pointer-events: auto; }
+        .medalha-3d { font-size: 100px; animation: popMedal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 0 20px gold); margin-bottom: 20px; }
+        @keyframes popMedal { 0% { transform: scale(0) rotate(-45deg); } 100% { transform: scale(1) rotate(0deg); } }
+        .raridade-lendaria { color: #ffd700; text-shadow: 0 0 15px #ffd700; font-weight: 900; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
     </style>
 </head>
 <body>
-    
-<div id="toast-container"></div>
 
-<div class="main-content">
-    <!-- TELA: LOGIN -->
-    <div id="tela-auth" class="screen active">
-        <div class="glass">
-            <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
-            <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Faça login ou crie sua conta VIP.</p>
-            <input type="email" id="auth-email" placeholder="Seu E-mail">
-            <input type="password" id="auth-password" placeholder="Sua Senha">
-            <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
-            <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
-        </div>
+    <div id="toast-container"></div>
+
+    <div id="modal-conquista">
+        <div class="medalha-3d" id="modal-icone">🏆</div>
+        <h3 class="text-gradient" style="font-size: 24px; text-align: center;" id="modal-titulo">Nova Conquista!</h3>
+        <p class="raridade-lendaria" id="modal-raridade">LENDÁRIA</p>
     </div>
 
-    <!-- TELA: HOME -->
-    <div id="tela-home" class="screen">
-        <div class="user-header">
-            <div class="user-info">
-                <div class="avatar-wrapper">
-                    <div class="frame frame-padrao" id="home-frame"></div>
-                    <div class="avatar-img" id="home-avatar">🧑‍🚀</div>
-                </div>
-                <div>
-                    <div class="user-name" id="home-nome">Jogador</div>
-                    <div class="user-level" id="home-nivel">NÍVEL 1</div>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center;">
-                <div class="bell-icon" onclick="mostrarNotificacoes()">🔔</div>
-                <div class="header-stats">
-                    <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
-                    <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
-                </div>
-            </div>
-        </div>
-        <div class="glass">
-            <div class="xp-container">
-                <div class="xp-text"><span>PROGRESSO VIP</span><span id="home-xp-txt">0 / 100 XP</span></div>
-                <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
+    <div class="main-content">
+        <!-- TELA: LOGIN -->
+        <div id="tela-auth" class="screen active">
+            <div class="glass">
+                <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
+                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Faça login ou crie sua conta VIP.</p>
+                <input type="email" id="auth-email" placeholder="Seu E-mail">
+                <input type="password" id="auth-password" placeholder="Sua Senha">
+                <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+                <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
             </div>
         </div>
 
-        <div id="box-multiplier" class="multiplier-box hidden">
-            <div class="multiplier-text">🚀 MULTIPLICADOR ATIVO</div>
-            <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
-        </div>
-
-        <div class="chest-banner" id="box-chest" onclick="resgatarBau()">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div class="chest-icon">🎁</div>
-                <div>
-                    <h4 style="font-size: 14px; color: var(--gold);">Baú Diário</h4>
-                    <p style="font-size: 11px; color: var(--text-muted);" id="chest-status">Resgate suas moedas grátis!</p>
+        <!-- TELA: HOME -->
+        <div id="tela-home" class="screen">
+            <div class="user-header">
+                <div class="user-info">
+                    <div class="avatar-wrapper">
+                        <div class="frame frame-padrao" id="home-frame"></div>
+                        <div class="avatar-img" id="home-avatar">🧑‍🚀</div>
+                    </div>
+                    <div>
+                        <div class="user-name" id="home-nome">Jogador</div>
+                        <div class="user-level" id="home-nivel">NÍVEL 1 - NOVATO</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="bell-icon" onclick="mudarAba('tela-configuracoes')" style="font-size: 20px; animation: none; margin-right: 15px;">⚙️</div>
+                    <div class="bell-icon" onclick="mostrarNotificacoes()">🔔</div>
+                    <div class="header-stats">
+                        <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
+                        <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                    </div>
                 </div>
             </div>
-            <div style="font-weight: 900; color: var(--gold); font-size: 16px;">+100 🪙</div>
+            <div class="glass">
+                <div class="xp-container">
+                    <div class="xp-text"><span>PROGRESSO VIP</span><span id="home-xp-txt">0 / 100 XP</span></div>
+                    <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
+                </div>
+            </div>
+
+            <div id="box-multiplier" class="multiplier-box hidden">
+                <div class="multiplier-text">🚀 MULTIPLICADOR ATIVO</div>
+                <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
+            </div>
+
+            <div class="chest-banner" id="box-chest" onclick="resgatarBau()">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="chest-icon">🎁</div>
+                    <div>
+                        <h4 style="font-size: 14px; color: var(--gold);">Baú Diário</h4>
+                        <p style="font-size: 11px; color: var(--text-muted);" id="chest-status">Resgate suas moedas grátis!</p>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--gold); font-size: 16px;">+300 🪙</div>
+            </div>
+
+            <div class="grid-buttons">
+                <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
+                <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
+            </div>
+
+            <button class="btn-duel" onclick="mudarAba('tela-duelo-menu')">⚔️ DUELO 1v1</button>
+            <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO</button>
+
+            <div class="glass">
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">MODO CLÁSSICO</h3>
+                <h3 style="font-size: 14px; margin-top: 15px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">DIFICULDADE</h3>
+                <select id="select-dificuldade">
+                    <option value="1">Fácil</option>
+                    <option value="2" selected>Médio</option>
+                    <option value="3">Difícil</option>
+                </select>
+                <select id="select-serie">
+                    <option value="5">5º Ano Fundamental</option>
+                    <option value="6">6º Ano Fundamental</option>
+                    <option value="7">7º Ano Fundamental</option>
+                    <option value="8">8º Ano Fundamental</option>
+                    <option value="9">9º Ano Fundamental</option>
+                    <option value="1em">1º Ano EM</option>
+                    <option value="2em">2º Ano EM</option>
+                    <option value="3em">3º Ano EM</option>
+                </select>
+                <button class="btn-primary" onclick="prepararJogo('classico')">▶ JOGAR CLÁSSICO</button>
+            </div>
         </div>
 
-        <div class="grid-buttons">
-            <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
-            <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
+        <!-- TELA: CONFIGURAÇÕES -->
+        <div id="tela-configuracoes" class="screen">
+            <h2 class="text-gradient text-center mb-20">CONFIGURAÇÕES</h2>
+            <div class="glass">
+                <div class="config-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h4 style="font-size: 15px;">Efeitos Sonoros</h4>
+                        <p style="font-size: 12px; color: var(--text-muted);">Sons de acerto e erro.</p>
+                    </div>
+                    <div class="multiplier-toggle" id="toggle-som" onclick="toggleSom()" style="margin: 0;"></div>
+                </div>
+                <div class="config-row" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="font-size: 15px;">Animações e Confetes</h4>
+                        <p style="font-size: 12px; color: var(--text-muted);">Desligue se o jogo estiver travando.</p>
+                    </div>
+                    <div class="multiplier-toggle" id="toggle-animacoes" onclick="toggleAnimacoes()" style="margin: 0;"></div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
         </div>
 
-        <button class="btn-duel" onclick="mudarAba('tela-duelo-menu')">⚔️ DUELO 1v1</button>
-        <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO</button>
-
-        <div class="glass">
-            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">MODO CLÁSSICO</h3>
-            <select id="select-serie">
-                <option value="5">5º Ano Fundamental</option>
-                <option value="6">6º Ano Fundamental</option>
-                <option value="7">7º Ano Fundamental</option>
-                <option value="8">8º Ano Fundamental</option>
-                <option value="9">9º Ano Fundamental</option>
-                <option value="1em">1º Ano EM</option>
-                <option value="2em">2º Ano EM</option>
-                <option value="3em">3º Ano EM</option>
-            </select>
-            <button class="btn-primary" onclick="prepararJogo('classico')">▶ JOGAR CLÁSSICO</button>
+        <!-- TELA: ACADEMIA -->
+       <div id="tela-academia" class="screen">
+            <h2 class="text-gradient text-center mb-20">ACADEMIA VIP</h2>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Domine a teoria para esmagar no jogo!</p>
+            <div id="lista-academia"></div>
         </div>
-    </div>
-
-    <!-- TELA: ACADEMIA -->
-    <div id="tela-academia" class="screen">
-        <h2 class="text-gradient text-center mb-20">ACADEMIA VIP</h2>
-        <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Domine a teoria para esmagar no jogo!</p>
-        <div id="lista-academia"></div>
-    </div>
-
-    <!-- TELA: DUELO MENU -->
+            <!-- TELA: DUELO MENU -->
     <div id="tela-duelo-menu" class="screen">
         <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
         <div class="glass">
@@ -426,7 +427,7 @@
 
     <!-- TELA: CONQUISTAS -->
     <div id="tela-conquistas" class="screen">
-        <h2 class="text-gradient text-center mb-20">GALERIA DE MISSÕES</h2>
+        <h2 class="text-gradient text-center mb-20">GALERIA DE CONQUISTAS</h2>
         <div id="lista-conquistas"></div>
         <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
     </div>
@@ -466,7 +467,7 @@
                 <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 20px; font-weight: 900; border: none; background: transparent; color: #fff; margin-bottom: 5px; width: 250px; border-bottom: 2px dashed rgba(255,255,255,0.2); border-radius: 0; outline: none; padding: 5px;">
             </div>
             
-            <p style="color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,215,0,0.4);" id="perfil-nivel-txt">NÍVEL 1</p>
+            <p style="color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,215,0,0.4);" id="perfil-nivel-txt">NÍVEL 1 - NOVATO</p>
             
             <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
                 <div class="badge" style="background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid var(--success);">XP: <span id="profile-xp-display" style="font-weight: 900;">0</span></div>
@@ -504,7 +505,7 @@
     <div class="nav-item" onclick="mudarAba('tela-ranking', this)"><span class="nav-icon">🏆</span><span>Ranking</span></div>
     <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
             </div>
-            
+    
 <script>
     const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
     const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
@@ -522,6 +523,28 @@
     let tempoRestante = 0;
     let usarMultiplicador = false;
     let somAtivado = true;
+    let animacoesAtivadas = true;
+
+    // FUNÇÕES DE XP E NÍVEL PROGRESSIVO
+    function getNivel(xpTotal) {
+        let nivel = 1; let xpNecessario = 100; let xpAcumulado = 0;
+        while (xpTotal >= xpAcumulado + xpNecessario) {
+            xpAcumulado += xpNecessario; nivel++; xpNecessario = nivel * 100;
+        }
+        return { nivel: nivel, xpAtual: xpTotal - xpAcumulado, xpProximo: xpNecessario };
+    }
+
+    function getNomeNivel(nivel) {
+        if (nivel >= 100) return "Divindade Matemática";
+        if (nivel >= 75) return "Lenda";
+        if (nivel >= 50) return "Gênio";
+        if (nivel >= 40) return "Mestre";
+        if (nivel >= 30) return "Especialista";
+        if (nivel >= 20) return "Estrategista";
+        if (nivel >= 10) return "Calculista";
+        if (nivel >= 5) return "Aprendiz";
+        return "Novato";
+    }
 
     const AVATARES_GRATIS = ['🧑‍🚀', '🐯', '🐺', '🦊', '🐼', '🦁', '🦄', '🐲', '🤖', '👽', '👾', '🧙‍♂️', '🧛‍♂️', '🧜‍♀️', '🧚', '🦸‍♂️', '🦹‍♂️', '🥷', '👮‍♂️', '🕵️‍♂️'];
 
@@ -550,7 +573,10 @@
         { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou o Nível 10.', meta: 10, tipo: 'nivel' },
         { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou o Nível 20.', meta: 20, tipo: 'nivel' },
         { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou o Nível 50.', meta: 50, tipo: 'nivel' },
-        { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.', meta: 5, tipo: 'materias' }
+        { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.', meta: 5, tipo: 'materias' },
+        { id: 'c26', icone: '⚡', titulo: 'Pensamento Rápido', desc: 'Responder corretamente em menos de 5 segundos.', meta: 1, tipo: 'rapido' },
+        { id: 'c27', icone: '⚖️', titulo: 'Polivalente', desc: 'Alcançar 80% em cinco matérias.', meta: 5, tipo: 'materias_80' },
+        { id: 'c28', icone: '🏆', titulo: 'Primeiro Pódio', desc: 'Alcançar o top 3 do ranking.', meta: 3, tipo: 'ranking' }
     ];
 
     const LOJA_DB = [ 
@@ -587,345 +613,324 @@
         { titulo: 'Regra de Três Simples', conteudo: 'Usada para resolver proporções.<br><br>Ex: Se 2 canetas custam R$ 5, quanto custam 6 canetas?<br>2 --- 5<br>6 --- x<br>Multiplique cruzado: 2x = 30 -> x = 15.' }
     ];
     
-        function mostrarToast(mensagem, tipo = 'primary') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${tipo}`;
-            let icone = 'ℹ️';
-            if(tipo === 'success') icone = '✅';
-            if(tipo === 'error') icone = '❌';
-            if(tipo === 'gold') icone = '🪙';
-            toast.innerHTML = `<span style="font-size: 20px;">${icone}</span> <span>${mensagem}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3300);
+function mostrarToast(mensagem, tipo = 'primary') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    let icone = 'ℹ️';
+    if(tipo === 'success') icone = '✅';
+    if(tipo === 'error') icone = '❌';
+    if(tipo === 'gold') icone = '🪙';
+    toast.innerHTML = `<span style="font-size: 20px;">${icone}</span> <span>${mensagem}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 3300);
+}
+
+function mostrarModalConquista(titulo, icone, raridade = "Comum") {
+    const modal = document.getElementById('modal-conquista');
+    document.getElementById('modal-icone').innerText = icone;
+    document.getElementById('modal-titulo').innerText = titulo;
+    const raridadeTxt = document.getElementById('modal-raridade');
+    raridadeTxt.innerText = raridade;
+    if(raridade === "Lendária") { raridadeTxt.style.color = "#ffd700"; }
+    else if(raridade === "Épica") { raridadeTxt.style.color = "#a855f7"; }
+    else if(raridade === "Rara") { raridadeTxt.style.color = "#00f2fe"; }
+    else { raridadeTxt.style.color = "#ffffff"; }
+    
+    modal.classList.add('active');
+    setTimeout(() => { modal.classList.remove('active'); }, 3000);
+}
+
+function toggleSom() {
+    somAtivado = !somAtivado;
+    document.getElementById('toggle-som').classList.toggle('on', somAtivado);
+    mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary');
+}
+
+function toggleAnimacoes() {
+    animacoesAtivadas = !animacoesAtivadas;
+    document.getElementById('toggle-animacoes').classList.toggle('on', animacoesAtivadas);
+    mostrarToast(`Animações ${animacoesAtivadas ? 'Ativadas' : 'Desativadas'}`, 'primary');
+}
+
+async function fazerCadastro() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-password').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    mostrarToast("Criando conta...", "primary");
+    const { error } = await banco.auth.signUp({ email, password: senha });
+    if (error) { mostrarToast(error.message, "error"); } 
+    else { mostrarToast("Conta criada! Faça login.", "success"); }
+}
+
+async function fazerLogin() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-password').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    mostrarToast("Entrando...", "primary");
+    const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
+    if (error) { mostrarToast(error.message, "error"); } 
+    else {
+        jogador.id = data.user.id; jogador.email = data.user.email;
+        await carregarPerfil(); mostrarApp();
+    }
+}
+
+async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
+
+function mostrarApp() {
+    document.getElementById('bottom-nav').style.display = 'flex';
+    mudarAba('tela-home');
+}
+
+async function carregarPerfil() {
+    if (!jogador.id) return;
+    const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+    if (error) { console.error("Erro ao carregar perfil:", error); return; }
+
+    if (data) {
+        jogador.nome = data.nome || jogador.nome || 'Jogador';
+        jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
+        jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
+        jogador.avatar = data.avatar || '🧑‍🚀';
+        jogador.moldura = data.moldura || 'frame-padrao'; 
+        jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
+        
+        let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0 };
+        if(missoesDB.pontos_dia === undefined) missoesDB.pontos_dia = 0;
+        if(missoesDB.last_chest === undefined) missoesDB.last_chest = 0;
+        jogador.missoes = missoesDB;
+
+        jogador.multiplicador_expira = data.multiplicador_expira;
+        jogador.nivel = getNivel(jogador.xp).nivel;
+        jogador.totalAcertos = data.acertos || 0;
+        jogador.totalErros = data.erros || 0;
+        jogador.melhorSequencia = data.melhor_sequencia || 0;
+    } else {
+        await banco.from('ranking').insert([{ 
+            user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
+            conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
+        }]);
+    }
+}
+
+function aplicarMolduras() {
+    const homeFrame = document.getElementById('home-frame');
+    homeFrame.className = `frame ${jogador.moldura}`;
+    document.getElementById('home-avatar').innerText = jogador.avatar;
+    
+    const perfilFrame = document.getElementById('perfil-frame');
+    perfilFrame.className = `frame ${jogador.moldura}`;
+    document.getElementById('perfil-avatar').innerText = jogador.avatar;
+    
+    document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
+    document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+    renderizarSeletorAvatar();
+}
+
+function renderizarSeletorAvatar() {
+    const container = document.getElementById('avatar-selector');
+    if(!container) return;
+    container.innerHTML = '';
+    AVATARES_GRATIS.forEach(av => {
+        const btn = document.createElement('button');
+        btn.className = `avatar-option ${jogador.avatar === av ? 'selected' : ''}`;
+        btn.innerText = av;
+        btn.onclick = () => selecionarAvatar(av);
+        container.appendChild(btn);
+    });
+}
+
+async function selecionarAvatar(emoji) {
+    jogador.avatar = emoji;
+    await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+    aplicarMolduras();
+}
+
+async function atualizarDashboard() {
+    if (!jogador.id) return;
+    await carregarPerfil();
+    document.getElementById('home-nome').innerText = jogador.nome || 'Jogador';
+    document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+    document.getElementById('home-streak').innerText = jogador.streak || 0;
+    document.getElementById('home-moedas').innerText = jogador.moedas || 0;
+    
+    aplicarMolduras();
+
+    const infoNivel = getNivel(jogador.xp);
+    document.getElementById('home-xp-txt').innerText = `${infoNivel.xpAtual} / ${infoNivel.xpProximo} XP`;
+    document.getElementById('home-xp-bar').style.width = `${(infoNivel.xpAtual / infoNivel.xpProximo) * 100}%`;
+
+    if (jogador.multiplicador_expira) {
+        let expira = new Date(jogador.multiplicador_expira.split('|').pop());
+        if (expira > new Date()) { document.getElementById('box-multiplier').classList.remove('hidden'); } 
+        else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
+    } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
+    
+    checarBauDiario();
+}
+
+function mudarAba(idTela, element) {
+    if (idTela === 'tela-jogo') return;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(idTela).classList.add('active');
+    if (element) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        element.classList.add('active');
+    }
+    if (idTela === 'tela-home') atualizarDashboard();
+    if (idTela === 'tela-desafios') renderizarDesafios();
+    if (idTela === 'tela-academia') renderizarAcademia();
+    if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
+    if (idTela === 'tela-conquistas') renderizarConquistas();
+    if (idTela === 'tela-estatisticas') renderizarEstatisticas();
+    if (idTela === 'tela-perfil') { 
+        carregarPerfil().then(() => {
+            document.getElementById('perfil-nome-input').value = jogador.nome;
+            aplicarMolduras();
+            renderizarCalendario();
+            renderizarHistorico();
+        });
+    }
+    if (idTela === 'tela-missoes') renderizarMissoes();
+    if (idTela === 'tela-loja') renderizarLoja();
+    }
+    let timerSalvar;
+function salvarNomeDelay() {
+    clearTimeout(timerSalvar);
+    timerSalvar = setTimeout(salvarNome, 1000);
+}
+
+async function salvarNome() { 
+    const novoNome = document.getElementById('perfil-nome-input').value.trim();
+    if(novoNome === "") return;
+    jogador.nome = novoNome;
+    localStorage.setItem('mathArenaNome', jogador.nome);
+    document.getElementById('home-nome').innerText = jogador.nome;
+    if (jogador.id) { await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); }
+}
+
+function toggleMultiplicador() {
+    const toggle = document.getElementById('toggle-multiplier');
+    usarMultiplicador = !usarMultiplicador;
+    if (usarMultiplicador) toggle.classList.add('on'); else toggle.classList.remove('on');
+}
+
+function mostrarNotificacoes() {
+    let notificacoes = [];
+    if(jogador.missoes.jogos === 0) notificacoes.push("Bem-vindo ao MATH ARENA VIP!");
+    if(jogador.missoes.acertos < 10) notificacoes.push("Missão pendente: Acerte 10 questões.");
+    if(jogador.moedas >= 500) notificacoes.push("Você já pode comprar o Multiplicador na Loja!");
+    if(notificacoes.length === 0) notificacoes.push("Você está em dia! Bora jogar?");
+    mostrarToast(notificacoes.join(" | "), "primary");
+}
+
+async function renderizarCalendario() {
+    const container = document.getElementById('calendario-streak');
+    if(!container) return;
+    container.innerHTML = '';
+    ['D','S','T','Q','Q','S','S'].forEach(d => { container.innerHTML += `<div class="dia-semana">${d}</div>`; });
+
+    const hoje = new Date();
+    const mes = hoje.getMonth();
+    const ano = hoje.getFullYear();
+    const primeiroDia = new Date(ano, mes, 1).getDay();
+    const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+
+    const { data: partidas } = await banco.from('partidas').select('data').eq('user_id', jogador.id);
+    const diasJogados = partidas ? partidas.map(p => new Date(p.data).getDate()) : [];
+
+    for (let i = 0; i < primeiroDia; i++) { container.innerHTML += `<div></div>`; }
+
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+        let classes = 'dia-calendario';
+        if (diasJogados.includes(dia)) classes += ' jogou';
+        if (dia === hoje.getDate()) classes += ' hoje';
+        container.innerHTML += `<div class="${classes}">${dia}</div>`;
+    }
+}
+
+async function renderizarHistorico() {
+    const container = document.getElementById('lista-historico');
+    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p>';
+    try {
+        const { data: partidas, error } = await banco.from('partidas').select('pontos, data').eq('user_id', jogador.id).order('data', { ascending: false }).limit(5);
+        if (error) throw error;
+        if (!partidas || partidas.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Nenhuma partida jogada ainda.</p>';
+            return;
         }
+        container.innerHTML = '';
+        partidas.forEach(p => {
+            const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: 900;">${p.pontos} pts</span></div>`;
+        });
+    } catch(e) {
+        container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 13px;">Erro ao carregar histórico.</p>';
+    }
+}
 
-        function toggleSom() {
-            somAtivado = !somAtivado;
-            const toggle = document.getElementById('toggle-som');
-            if (somAtivado) toggle.classList.add('on'); else toggle.classList.remove('on');
-            mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary');
-        }
+async function carregarRanking(tipo, element) {
+    document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
+    if (element) element.classList.add('active');
+    const lista = document.getElementById('rank-list-container');
+    lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
 
-        function toggleAnimacoes() {
-            animacoesAtivadas = !animacoesAtivadas;
-            const toggle = document.getElementById('toggle-animacoes');
-            if (animacoesAtivadas) toggle.classList.add('on'); else toggle.classList.remove('on');
-            mostrarToast(`Animações ${animacoesAtivadas ? 'Ativadas' : 'Desativadas'}`, 'primary');
-        }
+    let dataInicio = new Date();
+    if(tipo === 'semanal') dataInicio.setDate(dataInicio.getDate() - 7);
+    else if(tipo === 'mensal') dataInicio.setMonth(dataInicio.getMonth() - 1);
+    else dataInicio = new Date(2000, 0, 1);
 
-        async function resgatarBau() {
-            const box = document.getElementById('box-chest');
-            if(box.classList.contains('disabled')) return;
-            const agora = Date.now();
-            const ultimoResgate = jogador.missoes.last_chest || 0;
-            const umDia = 24 * 60 * 60 * 1000;
+    if (tipo !== 'geral') {
+        const { data: partidas } = await banco.from('partidas').select('user_id, pontos').gte('data', dataInicio.toISOString());
+        if(!partidas || partidas.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogo recente.</p>'; return; }
 
-            if (agora - ultimoResgate < umDia) {
-                mostrarToast("Você já resgatou o baú hoje! Volte amanhã.", "error");
-                return;
+        const pontosPorJogador = {};
+        partidas.forEach(p => { pontosPorJogador[p.user_id] = (pontosPorJogador[p.user_id] || 0) + p.pontos; });
+        const topIds = Object.keys(pontosPorJogador).sort((a,b) => pontosPorJogador[b] - pontosPorJogador[a]).slice(0, 10);
+        const { data: jogadores } = await banco.from('ranking').select('user_id, nome, avatar, moldura, xp').in('user_id', topIds);
+        
+        lista.innerHTML = '';
+        
+        if (tipo === 'semanal' && topIds.length >= 1) {
+            let podiumHTML = '<div class="podium-container">';
+            if (topIds.length >= 2) {
+                const j2 = jogadores.find(j => j.user_id === topIds[1]);
+                if(j2) podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[1]]}</div></div></div>`;
             }
-            jogador.moedas = (jogador.moedas || 0) + 100;
-            jogador.missoes.last_chest = agora;
-            await banco.from('ranking').update({ moedas: jogador.moedas, missoes: jogador.missoes }).eq('user_id', jogador.id);
-            mostrarToast("Você ganhou 100 moedas! 🎉", "gold");
-            atualizarDashboard();
-        }
-
-        function checarBauDiario() {
-            const box = document.getElementById('box-chest');
-            const status = document.getElementById('chest-status');
-            const agora = Date.now();
-            const ultimoResgate = jogador.missoes.last_chest || 0;
-            const umDia = 24 * 60 * 60 * 1000;
-
-            if (agora - ultimoResgate < umDia) {
-                box.classList.add('disabled');
-                status.innerText = "Já resgatado hoje. Volte amanhã!";
-            } else {
-                box.classList.remove('disabled');
-                status.innerText = "Resgate suas moedas grátis!";
+            const j1 = jogadores.find(j => j.user_id === topIds[0]);
+            if(j1) podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[0]]}</div></div></div>`;
+            if (topIds.length >= 3) {
+                const j3 = jogadores.find(j => j.user_id === topIds[2]);
+                if(j3) podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[2]]}</div></div></div>`;
             }
-        }
-
-        async function fazerCadastro() {
-            const email = document.getElementById('auth-email').value.trim();
-            const senha = document.getElementById('auth-password').value;
-            if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-            mostrarToast("Criando conta...", "primary");
-            const { error } = await banco.auth.signUp({ email, password: senha });
-            if (error) { mostrarToast(error.message, "error"); } 
-            else { mostrarToast("Conta criada! Faça login.", "success"); }
-        }
-
-        async function fazerLogin() {
-            const email = document.getElementById('auth-email').value.trim();
-            const senha = document.getElementById('auth-password').value;
-            if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-            mostrarToast("Entrando...", "primary");
-            const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
-            if (error) { mostrarToast(error.message, "error"); } 
-            else {
-                jogador.id = data.user.id; jogador.email = data.user.email;
-                await carregarPerfil(); mostrarApp();
-            }
-        }
-
-        async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
-
-        function mostrarApp() {
-            document.getElementById('bottom-nav').style.display = 'flex';
-            mudarAba('tela-home');
-        }
-
-        async function carregarPerfil() {
-            if (!jogador.id) return;
-            const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
-            if (error) { console.error("Erro ao carregar perfil:", error); return; }
-
-            if (data) {
-                jogador.nome = data.nome || jogador.nome || 'Jogador';
-                jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
-                jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
-                jogador.avatar = data.avatar || '🧑‍🚀';
-                jogador.moldura = data.moldura || 'frame-padrao'; 
-                jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
-                
-                let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0 };
-                if(missoesDB.pontos_dia === undefined) missoesDB.pontos_dia = 0;
-                if(missoesDB.last_chest === undefined) missoesDB.last_chest = 0;
-                jogador.missoes = missoesDB;
-
-                jogador.multiplicador_expira = data.multiplicador_expira;
-                jogador.nivel = Math.floor(jogador.xp / 100) + 1;
-                jogador.totalAcertos = data.acertos || 0;
-                jogador.totalErros = data.erros || 0;
-                jogador.melhorSequencia = data.melhor_sequencia || 0;
-            } else {
-                await banco.from('ranking').insert([{ 
-                    user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
-                    conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
-                }]);
-            }
-        }
-
-        function aplicarMolduras() {
-            const homeFrame = document.getElementById('home-frame');
-            homeFrame.className = `frame ${jogador.moldura}`;
-            document.getElementById('home-avatar').innerText = jogador.avatar;
+            podiumHTML += '</div>';
+            lista.innerHTML += podiumHTML;
             
-            const perfilFrame = document.getElementById('perfil-frame');
-            perfilFrame.className = `frame ${jogador.moldura}`;
-            document.getElementById('perfil-avatar').innerText = jogador.avatar;
-            
-            document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
-            document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
-            renderizarSeletorAvatar();
-        }
-
-        function renderizarSeletorAvatar() {
-            const container = document.getElementById('avatar-selector');
-            if(!container) return;
-            container.innerHTML = '';
-            AVATARES_GRATIS.forEach(av => {
-                const btn = document.createElement('button');
-                btn.className = `avatar-option ${jogador.avatar === av ? 'selected' : ''}`;
-                btn.innerText = av;
-                btn.onclick = () => selecionarAvatar(av);
-                container.appendChild(btn);
+            for(let i = 3; i < topIds.length; i++) {
+                const id = topIds[i];
+                const jog = jogadores.find(j => j.user_id === id);
+                if(jog) {
+                    lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i+1}º</span><div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${jog.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:14px;">${jog.nome}</div></div><div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div></div>`;
+                }
+            }
+        } else {
+            topIds.forEach((id, index) => {
+                const jog = jogadores.find(j => j.user_id === id);
+                if(jog) {
+                    let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+                    lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${jog.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:15px;">${jog.nome}</div></div><div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div></div>`;
+                }
             });
         }
-
-        async function selecionarAvatar(emoji) {
-            jogador.avatar = emoji;
-            await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
-            aplicarMolduras();
-        }
-
-        async function atualizarDashboard() {
-            if (!jogador.id) return;
-            await carregarPerfil();
-            document.getElementById('home-nome').innerText = jogador.nome || 'Jogador';
-            document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel || 1}`;
-            document.getElementById('home-streak').innerText = jogador.streak || 0;
-            document.getElementById('home-moedas').innerText = jogador.moedas || 0;
-            
-            aplicarMolduras();
-
-            const xpAtualNivel = jogador.xp % 100;
-            document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
-            document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
-
-            if (jogador.multiplicador_expira) {
-                let expira = new Date(jogador.multiplicador_expira.split('|').pop());
-                if (expira > new Date()) { document.getElementById('box-multiplier').classList.remove('hidden'); } 
-                else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
-            } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
-            
-            checarBauDiario();
-        }
-
-        function mudarAba(idTela, element) {
-            if (idTela === 'tela-jogo') return;
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(idTela).classList.add('active');
-            if (element) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                element.classList.add('active');
-            }
-            if (idTela === 'tela-home') atualizarDashboard();
-            if (idTela === 'tela-desafios') renderizarDesafios();
-            if (idTela === 'tela-academia') renderizarAcademia();
-            if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
-            if (idTela === 'tela-conquistas') renderizarConquistas();
-            if (idTela === 'tela-estatisticas') renderizarEstatisticas();
-            if (idTela === 'tela-perfil') { 
-                carregarPerfil().then(() => {
-                    document.getElementById('perfil-nome-input').value = jogador.nome;
-                    aplicarMolduras();
-                    renderizarCalendario();
-                    renderizarHistorico();
-                });
-            }
-            if (idTela === 'tela-missoes') renderizarMissoes();
-            if (idTela === 'tela-loja') renderizarLoja();
-        }
-
-        let timerSalvar;
-        function salvarNomeDelay() {
-            clearTimeout(timerSalvar);
-            timerSalvar = setTimeout(salvarNome, 1000);
-        }
-
-        async function salvarNome() { 
-            const novoNome = document.getElementById('perfil-nome-input').value.trim();
-            if(novoNome === "") return;
-            jogador.nome = novoNome;
-            localStorage.setItem('mathArenaNome', jogador.nome);
-            document.getElementById('home-nome').innerText = jogador.nome;
-            if (jogador.id) { await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); }
-        }
-
-        function toggleMultiplicador() {
-            const toggle = document.getElementById('toggle-multiplier');
-            usarMultiplicador = !usarMultiplicador;
-            if (usarMultiplicador) toggle.classList.add('on'); else toggle.classList.remove('on');
-        }
-
-        function mostrarNotificacoes() {
-            let notificacoes = [];
-            if(jogador.missoes.jogos === 0) notificacoes.push("Bem-vindo ao MATH ARENA VIP!");
-            if(jogador.missoes.acertos < 10) notificacoes.push("Missão pendente: Acerte 10 questões.");
-            if(jogador.moedas >= 500) notificacoes.push("Você já pode comprar o Multiplicador na Loja!");
-            if(notificacoes.length === 0) notificacoes.push("Você está em dia! Bora jogar?");
-            mostrarToast(notificacoes.join(" | "), "primary");
-        }
-
-        async function renderizarCalendario() {
-            const container = document.getElementById('calendario-streak');
-            if(!container) return;
-            container.innerHTML = '';
-            ['D','S','T','Q','Q','S','S'].forEach(d => { container.innerHTML += `<div class="dia-semana">${d}</div>`; });
-
-            const hoje = new Date();
-            const mes = hoje.getMonth();
-            const ano = hoje.getFullYear();
-            const primeiroDia = new Date(ano, mes, 1).getDay();
-            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
-
-            const { data: partidas } = await banco.from('partidas').select('data').eq('user_id', jogador.id);
-            const diasJogados = partidas ? partidas.map(p => new Date(p.data).getDate()) : [];
-
-            for (let i = 0; i < primeiroDia; i++) { container.innerHTML += `<div></div>`; }
-
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                let classes = 'dia-calendario';
-                if (diasJogados.includes(dia)) classes += ' jogou';
-                if (dia === hoje.getDate()) classes += ' hoje';
-                container.innerHTML += `<div class="${classes}">${dia}</div>`;
-            }
-        }
-
-        async function renderizarHistorico() {
-            const container = document.getElementById('lista-historico');
-            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p>';
-            try {
-                const { data: partidas, error } = await banco.from('partidas').select('pontos, data').eq('user_id', jogador.id).order('data', { ascending: false }).limit(5);
-                if (error) throw error;
-                if (!partidas || partidas.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Nenhuma partida jogada ainda.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                partidas.forEach(p => {
-                    const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: 900;">${p.pontos} pts</span></div>`;
-                });
-            } catch(e) {
-                container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 13px;">Erro ao carregar histórico.</p>';
-            }
-        }
-
-        async function carregarRanking(tipo, element) {
-            document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
-            if (element) element.classList.add('active');
-            const lista = document.getElementById('rank-list-container');
-            lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
-
-            let dataInicio = new Date();
-            if(tipo === 'semanal') dataInicio.setDate(dataInicio.getDate() - 7);
-            else if(tipo === 'mensal') dataInicio.setMonth(dataInicio.getMonth() - 1);
-            else dataInicio = new Date(2000, 0, 1);
-
-            if (tipo !== 'geral') {
-                const { data: partidas } = await banco.from('partidas').select('user_id, pontos').gte('data', dataInicio.toISOString());
-                if(!partidas || partidas.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogo recente.</p>'; return; }
-
-                const pontosPorJogador = {};
-                partidas.forEach(p => { pontosPorJogador[p.user_id] = (pontosPorJogador[p.user_id] || 0) + p.pontos; });
-                const topIds = Object.keys(pontosPorJogador).sort((a,b) => pontosPorJogador[b] - pontosPorJogador[a]).slice(0, 10);
-                const { data: jogadores } = await banco.from('ranking').select('user_id, nome, avatar, moldura').in('user_id', topIds);
-                
-                lista.innerHTML = '';
-                
-                if (tipo === 'semanal' && topIds.length >= 1) {
-                    let podiumHTML = '<div class="podium-container">';
-                    if (topIds.length >= 2) {
-                        const j2 = jogadores.find(j => j.user_id === topIds[1]);
-                        if(j2) podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[1]]}</div></div></div>`;
-                    }
-                    const j1 = jogadores.find(j => j.user_id === topIds[0]);
-                    if(j1) podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[0]]}</div></div></div>`;
-                    if (topIds.length >= 3) {
-                        const j3 = jogadores.find(j => j.user_id === topIds[2]);
-                        if(j3) podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[2]]}</div></div></div>`;
-                    }
-                    podiumHTML += '</div>';
-                    lista.innerHTML += podiumHTML;
-                    
-                    for(let i = 3; i < topIds.length; i++) {
-                        const id = topIds[i];
-                        const jog = jogadores.find(j => j.user_id === id);
-                        if(jog) {
-                            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i+1}º</span><div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${jog.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:14px;">${jog.nome}</div></div><div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div></div>`;
-                        }
-                    }
-                } else {
-                    topIds.forEach((id, index) => {
-                        const jog = jogadores.find(j => j.user_id === id);
-                        if(jog) {
-                            let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
-                            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${jog.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:15px;">${jog.nome}</div></div><div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div></div>`;
-                        }
-                    });
-                }
-            } else {
-                const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
-                if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold;">Vazio.</p>'; return; }
-                lista.innerHTML = '';
-                data.forEach((user, index) => {
-                                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; 
-            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${user.avatar || '🧑‍🚀'}</div></div><div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; 
+    } else {
+        const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+        if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold;">Vazio.</p>'; return; }
+        lista.innerHTML = '';
+        data.forEach((user, index) => { 
+            let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; 
+            let infoUser = getNivel(user.xp || 0);
+            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${user.avatar || '🧑‍🚀'}</div></div><div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">${infoUser.nivel} - ${getNomeNivel(infoUser.nivel)}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; 
         });
     }
 }
@@ -1025,7 +1030,7 @@ async function salvarPartida(pontosFinais) {
         let melhorSeq = Math.max(data ? data.melhor_sequencia || 0 : 0, estado.melhorSequencia);
         let novoXP = (data ? data.xp || 0 : 0) + pontosFinais;
         let novaPontuacao = (data ? data.pontuacao || 0 : 0) + pontosFinais;
-        let novasMoedas = (data ? data.moedas || 0 : 0) + pontosFinais;
+        let novasMoedas = (data ? data.moedas || 0 : 0) + (pontosFinais * 2); // Dobro de moedas!
 
         if (data) {
             if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
@@ -1040,134 +1045,124 @@ async function salvarPartida(pontosFinais) {
             }]);
         }
         jogador.xp = novoXP; jogador.pontos = novaPontuacao; jogador.moedas = novasMoedas;
-        jogador.nivel = Math.floor(novoXP / 100) + 1; jogador.streak = novoStreak;
+        jogador.nivel = getNivel(novoXP).nivel; jogador.streak = novoStreak;
         jogador.totalAcertos = totalAcertos; jogador.totalErros = totalErros; jogador.melhorSequencia = melhorSeq;
     } catch (e) { console.error(e); }
-}
-
-async function finalizarJogo() {
-    clearInterval(timerInterval); 
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-    document.getElementById('tela-resultado').classList.add('active');
-    
-    let multiplicador = 1;
-    if (usarMultiplicador && jogador.multiplicador_expira) {
-        multiplicador = jogador.multiplicador_expira.includes('3x') ? 3 : 2;
     }
-    let pontosFinais = estado.pontos * multiplicador;
     
-    const totalRespondidas = estado.acertos + estado.erros;
-    const taxaAcerto = totalRespondidas > 0 ? (estado.acertos / totalRespondidas) * 100 : 0;
-    
-    let titulo = "";
-    let emoji = "🎉";
-    if (taxaAcerto === 100 && totalRespondidas >= 5) { titulo = "MESTRE DA MATEMÁTICA"; emoji = "👑"; }
-    else if (taxaAcerto >= 70) { titulo = "EXCELENTE DESEMPENHO"; emoji = "🏆"; }
-    else if (taxaAcerto >= 50) { titulo = "BOM TRABALHO"; emoji = "👍"; }
-    else { titulo = "CONTINUE EVOLUINDO"; emoji = "💪"; }
-    
-    document.getElementById('result-title').innerText = titulo;
-    document.getElementById('result-emoji').innerText = emoji;
-    document.getElementById('result-score').innerText = pontosFinais; 
-    document.getElementById('result-acertos').innerText = estado.acertos; 
-    document.getElementById('result-erros').innerText = estado.erros;
-    
-    if (isDuelo && dueloAtual) {
-        document.getElementById('duel-result-box').classList.remove('hidden');
-        const duelText = document.getElementById('duel-result-text');
-        
-        if (dueloAtual.criador_id === jogador.id) {
-            await banco.from('duelos').update({ pontos_criador: pontosFinais, status: 'playing' }).eq('id', dueloAtual.id);
-            duelText.innerText = "Aguardando o oponente jogar...";
-            duelText.style.color = "var(--gold)";
-        } else {
-            await banco.from('duelos').update({ pontos_oponente: pontosFinais, oponente_id: jogador.id, status: 'finished' }).eq('id', dueloAtual.id);
-            const { data } = await banco.from('duelos').select('*').eq('id', dueloAtual.id).single();
-            if (data.pontos_criador > pontosFinais) {
-                duelText.innerText = "VOCÊ PERDEU 😢 O criador fez " + data.pontos_criador + " pts.";
-                duelText.style.color = "var(--danger)";
-            } else if (data.pontos_criador < pontosFinais) {
-                duelText.innerText = "VOCÊ GANHOU! 🏆 O criador fez apenas " + data.pontos_criador + " pts.";
-                duelText.style.color = "var(--success)";
-            } else {
-                duelText.innerText = "EMPATE! Ambos fizeram " + pontosFinais + " pts.";
-                duelText.style.color = "var(--primary)";
+        async function finalizarJogo() {
+            clearInterval(timerInterval); 
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+            document.getElementById('tela-resultado').classList.add('active');
+            
+            let multiplicador = 1;
+            if (usarMultiplicador && jogador.multiplicador_expira) {
+                multiplicador = jogador.multiplicador_expira.includes('3x') ? 3 : 2;
             }
+            let pontosFinais = estado.pontos * multiplicador;
+            
+            const totalRespondidas = estado.acertos + estado.erros;
+            const taxaAcerto = totalRespondidas > 0 ? (estado.acertos / totalRespondidas) * 100 : 0;
+            
+            let titulo = ""; let emoji = "🎉";
+            if (taxaAcerto === 100 && totalRespondidas >= 5) { titulo = "MESTRE DA MATEMÁTICA"; emoji = "👑"; }
+            else if (taxaAcerto >= 70) { titulo = "EXCELENTE DESEMPENHO"; emoji = "🏆"; }
+            else if (taxaAcerto >= 50) { titulo = "BOM TRABALHO"; emoji = "👍"; }
+            else { titulo = "CONTINUE EVOLUINDO"; emoji = "💪"; }
+            
+            document.getElementById('result-title').innerText = titulo;
+            document.getElementById('result-emoji').innerText = emoji;
+            document.getElementById('result-score').innerText = pontosFinais; 
+            document.getElementById('result-acertos').innerText = estado.acertos; 
+            document.getElementById('result-erros').innerText = estado.erros;
+            
+            if (isDuelo && dueloAtual) {
+                document.getElementById('duel-result-box').classList.remove('hidden');
+                const duelText = document.getElementById('duel-result-text');
+                if (dueloAtual.criador_id === jogador.id) {
+                    await banco.from('duelos').update({ pontos_criador: pontosFinais, status: 'playing' }).eq('id', dueloAtual.id);
+                    duelText.innerText = "Aguardando o oponente jogar...";
+                    duelText.style.color = "var(--gold)";
+                } else {
+                    await banco.from('duelos').update({ pontos_oponente: pontosFinais, oponente_id: jogador.id, status: 'finished' }).eq('id', dueloAtual.id);
+                    const { data } = await banco.from('duelos').select('*').eq('id', dueloAtual.id).single();
+                    if (data.pontos_criador > pontosFinais) { duelText.innerText = "VOCÊ PERDEU 😢"; duelText.style.color = "var(--danger)"; } 
+                    else if (data.pontos_criador < pontosFinais) { duelText.innerText = "VOCÊ GANHOU! 🏆"; duelText.style.color = "var(--success)"; } 
+                    else { duelText.innerText = "EMPATE!"; duelText.style.color = "var(--primary)"; }
+                }
+            } else { document.getElementById('duel-result-box').classList.add('hidden'); }
+            
+            const totalAcertosGlobal = (jogador.totalAcertos || 0) + estado.acertos;
+            const taxaAcertoGlobal = (totalAcertosGlobal / ((jogador.totalAcertos || 0) + (jogador.totalErros || 0) + totalRespondidas || 1)) * 100;
+            const melhorSeq = Math.max(jogador.melhorSequencia || 0, estado.melhorSequencia);
+            const novoNivel = getNivel((jogador.xp || 0) + pontosFinais).nivel;
+            
+            let novasConquistas = [];
+            function desbloquear(id) { if(!jogador.conquistas.includes(id) && !novasConquistas.includes(id)) novasConquistas.push(id); }
+
+            if(totalAcertosGlobal >= 1) desbloquear('c1'); 
+            if(totalAcertosGlobal >= 10) desbloquear('c2'); 
+            if(totalAcertosGlobal >= 50) desbloquear('c3'); 
+            if(totalAcertosGlobal >= 100) desbloquear('c4'); 
+            if(totalAcertosGlobal >= 500) desbloquear('c5'); 
+            if(totalAcertosGlobal >= 1000) desbloquear('c6');
+            if(melhorSeq >= 10) desbloquear('c7'); 
+            if(melhorSeq >= 25) desbloquear('c8'); 
+            if(pontosFinais >= 80) desbloquear('c9'); 
+            if(estado.erros === 0 && estado.acertos >= 10) desbloquear('c10');
+            if(totalAcertosGlobal >= 50 && taxaAcertoGlobal >= 95) desbloquear('c11');
+            if(jogador.streak >= 3) desbloquear('c12'); 
+            if(jogador.streak >= 7) desbloquear('c13'); 
+            if(jogador.streak >= 14) desbloquear('c14'); 
+            if(jogador.streak >= 30) desbloquear('c15'); 
+            if(jogador.streak >= 60) desbloquear('c16'); 
+            if(jogador.streak >= 100) desbloquear('c17'); 
+            if(jogador.streak >= 365) desbloquear('c18');
+            if(estado.modo === 'tempo') desbloquear('c19'); 
+            if(estado.modo === 'tempo' && tempoRestante <= 30) desbloquear('c20'); 
+            if(novoNivel >= 5) desbloquear('c21'); 
+            if(novoNivel >= 10) desbloquear('c22'); 
+            if(novoNivel >= 20) desbloquear('c23'); 
+            if(novoNivel >= 50) desbloquear('c24');
+            if(Object.keys(jogador.stats).length >= 5) desbloquear('c25');
+
+            if(novasConquistas.length > 0) { 
+                jogador.conquistas = jogador.conquistas.concat(novasConquistas); 
+                let primeiraNova = CONQUISTAS_DB.find(c => c.id === novasConquistas[0]);
+                if(primeiraNova) setTimeout(() => mostrarModalConquista(primeiraNova.titulo, primeiraNova.icone, "Épica"), 1000);
+                setTimeout(() => mostrarToast(`🏅 ${novasConquistas.length} Nova(s) Conquista(s)!`, "gold"), 3000); 
+            }
+            await salvarPartida(pontosFinais);
+            isDuelo = false; dueloAtual = null;
         }
-    } else {
-        document.getElementById('duel-result-box').classList.add('hidden');
-    }
-    
-    const totalAcertosGlobal = (jogador.totalAcertos || 0) + estado.acertos;
-    const taxaAcertoGlobal = (totalAcertosGlobal / ((jogador.totalAcertos || 0) + (jogador.totalErros || 0) + totalRespondidas || 1)) * 100;
-    const melhorSeq = Math.max(jogador.melhorSequencia || 0, estado.melhorSequencia);
-    const novoNivel = Math.floor(((jogador.xp || 0) + pontosFinais) / 100) + 1;
-    
-    let novasConquistas = [];
-    function desbloquear(id) { if(!jogador.conquistas.includes(id) && !novasConquistas.includes(id)) novasConquistas.push(id); }
-
-    if(totalAcertosGlobal >= 1) desbloquear('c1'); 
-    if(totalAcertosGlobal >= 10) desbloquear('c2'); 
-    if(totalAcertosGlobal >= 50) desbloquear('c3'); 
-    if(totalAcertosGlobal >= 100) desbloquear('c4'); 
-    if(totalAcertosGlobal >= 500) desbloquear('c5'); 
-    if(totalAcertosGlobal >= 1000) desbloquear('c6');
-    if(melhorSeq >= 10) desbloquear('c7'); 
-    if(melhorSeq >= 25) desbloquear('c8'); 
-    if(pontosFinais >= 80) desbloquear('c9'); 
-    if(estado.erros === 0 && estado.acertos >= 10) desbloquear('c10');
-    if(totalAcertosGlobal >= 50 && taxaAcertoGlobal >= 95) desbloquear('c11');
-    if(jogador.streak >= 3) desbloquear('c12'); 
-    if(jogador.streak >= 7) desbloquear('c13'); 
-    if(jogador.streak >= 14) desbloquear('c14'); 
-    if(jogador.streak >= 30) desbloquear('c15'); 
-    if(jogador.streak >= 60) desbloquear('c16'); 
-    if(jogador.streak >= 100) desbloquear('c17'); 
-    if(jogador.streak >= 365) desbloquear('c18');
-    if(estado.modo === 'tempo') desbloquear('c19'); 
-    if(estado.modo === 'tempo' && tempoRestante <= 30) desbloquear('c20'); 
-    if(novoNivel >= 5) desbloquear('c21'); 
-    if(novoNivel >= 10) desbloquear('c22'); 
-    if(novoNivel >= 20) desbloquear('c23'); 
-    if(novoNivel >= 50) desbloquear('c24');
-    if(Object.keys(jogador.stats).length >= 5) desbloquear('c25');
-
-    if(novasConquistas.length > 0) { 
-        jogador.conquistas = jogador.conquistas.concat(novasConquistas); 
-        setTimeout(() => mostrarToast(`🏅 ${novasConquistas.length} Nova(s) Conquista(s) Desbloqueada(s)!`, "gold"), 1000); 
-    }
-    await salvarPartida(pontosFinais);
-    isDuelo = false; dueloAtual = null;
-    }
-    
-        let animacoesAtivadas = true; // Correção de segurança para os confetes
 
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
         
         function gerarQuestao(serie) {
-            if (serie === 'mix') {
-                const seriesDisponiveis = ["5","6","7","8","9","1em","2em","3em"];
-                serie = seriesDisponiveis[Math.floor(Math.random() * seriesDisponiveis.length)];
-            }
+            if (serie === 'mix') { const seriesDisponiveis = ["5","6","7","8","9","1em","2em","3em"]; serie = seriesDisponiveis[Math.floor(Math.random() * seriesDisponiveis.length)]; }
             
+            let dificuldade = 2;
+            if (document.getElementById('select-dificuldade')) { dificuldade = parseInt(document.getElementById('select-dificuldade').value); }
+            let mult = dificuldade === 1 ? 10 : (dificuldade === 2 ? 30 : 50);
+
             let pergunta = "", resp = 0, exp = "", mat = "";
             
             if (serie === "5" || serie === "6") {
                 const op = rand(1, 5);
-                if(op === 1) { let a = rand(1, 50), b = rand(1, 50); pergunta = `Quanto é ${a} + ${b}?`; resp = a + b; exp = `Somando: ${a} + ${b} = ${resp}.`; mat = "Soma"; }
-                else if(op === 2) { let a = rand(10, 50), b = rand(1, 10); pergunta = `Quanto é ${a} - ${b}?`; resp = a - b; exp = `Subtraindo: ${a} - ${b} = ${resp}.`; mat = "Subtração"; }
+                if(op === 1) { let a = rand(1, mult), b = rand(1, mult); pergunta = `Quanto é ${a} + ${b}?`; resp = a + b; exp = `Somando: ${a} + ${b} = ${resp}.`; mat = "Soma"; }
+                else if(op === 2) { let a = rand(10, mult), b = rand(1, 10); pergunta = `Quanto é ${a} - ${b}?`; resp = a - b; exp = `Subtraindo: ${a} - ${b} = ${resp}.`; mat = "Subtração"; }
                 else if(op === 3) { let a = rand(2, 10), b = rand(2, 10); pergunta = `Quanto é ${a} x ${b}?`; resp = a * b; exp = `Multiplicando: ${a} x ${b} = ${resp}.`; mat = "Multiplicação"; }
                 else if(op === 4) { let b = rand(2, 10), resp_div = rand(2, 10); let a = b * resp_div; pergunta = `Quanto é ${a} ÷ ${b}?`; resp = resp_div; exp = `${b} x ${resp} = ${a}, então ${a} ÷ ${b} = ${resp}.`; mat = "Divisão"; }
                 else { 
                     let den = rand(2, 8); let num1 = rand(1, den - 1); let num2 = rand(1, den - 1);
-                    pergunta = `Quanto é ${num1}/${den} + ${num2}/${den}? (Simplifique se possível)`;
+                    pergunta = `Quanto é ${num1}/${den} + ${num2}/${den}?`;
                     let resNum = num1 + num2;
                     let gcd = (a, b) => b ? gcd(b, a % b) : a;
                     let divisor = gcd(resNum, den);
                     let finalNum = resNum / divisor; let finalDen = den / divisor;
                     resp = finalDen === 1 ? String(finalNum) : `${finalNum}/${finalDen}`;
-                    exp = `Some os numeradores: ${num1} + ${num2} = ${resNum}. Mantenha o denominador ${den}. Simplificando por ${divisor} temos ${resp}.`;
+                    exp = `Some os numeradores: ${num1} + ${num2} = ${resNum}. Mantenha o denominador ${den}. Simplificando temos ${resp}.`;
                     mat = "Frações";
                 }
             } else if (serie === "7" || serie === "8") {
@@ -1179,7 +1174,7 @@ async function finalizarJogo() {
                     let a = rand(2, 5), b = rand(2, 5), c = rand(2, 5);
                     pergunta = `Se João tem ${a} maçãs, ganha mais ${b}, e divide igualmente entre ${c} amigos. Quantas maçãs cada um recebe?`;
                     resp = Math.floor((a + b) / c);
-                    exp = `Total de maçãs = ${a} + ${b} = ${a+b}. Dividindo por ${c} amigos, cada um fica com ${resp} maçãs.`;
+                    exp = `Total = ${a} + ${b} = ${a+b}. Dividindo por ${c}, cada um fica com ${resp}.`;
                     mat = "Raciocínio Lógico";
                 }
             } else if (serie === "9") {
@@ -1280,14 +1275,10 @@ async function finalizarJogo() {
             if (!animacoesAtivadas) return;
             const colors = ['#ffd700', '#00f2fe', '#a855f7', '#00e676', '#ff1744'];
             for (let i = 0; i < 40; i++) {
-                const piece = document.createElement('div');
-                piece.classList.add('confetti-piece');
-                piece.style.left = Math.random() * 100 + 'vw';
-                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
-                piece.style.animationDelay = Math.random() * 0.3 + 's';
-                document.body.appendChild(piece);
-                setTimeout(() => piece.remove(), 3500);
+                const piece = document.createElement('div'); piece.classList.add('confetti-piece');
+                piece.style.left = Math.random() * 100 + 'vw'; piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's'; piece.style.animationDelay = Math.random() * 0.3 + 's';
+                document.body.appendChild(piece); setTimeout(() => piece.remove(), 3500);
             }
         }
 
@@ -1297,7 +1288,6 @@ async function finalizarJogo() {
             const mat = perguntaAtual.mat; if(!jogador.stats[mat]) jogador.stats[mat] = { acertos: 0, total: 0 }; jogador.stats[mat].total++;
             
             let ptsGanhos = 15; let ptsPerdidos = -5;
-            
             const msgsAcerto = ["INCRÍVEL! Você é uma máquina! 🔥", "BRILHANTE! Mais 15 pontos!", "É ISSO! Sua mente está afiada!", "PERFEITO! Continue dominando!", "ABSOLUTAMENTE GENIAL!"];
             const msgsErro = ["Calma! Errar faz parte. 💙", "Não desista! A próxima é sua!", "Você está evoluindo a cada tentativa!", "Quase lá! Continue tentando!", "Um erro não define sua capacidade!"];
 
@@ -1305,67 +1295,60 @@ async function finalizarJogo() {
                 tocarSom('acerto'); estado.pontos += ptsGanhos; estado.acertos++; estado.sequencia++;
                 if(estado.sequencia > estado.melhorSequencia) estado.melhorSequencia = estado.sequencia; jogador.stats[mat].acertos++; btn.classList.add('correct');
                 soltarConfete();
-                
                 const msg = msgsAcerto[Math.floor(Math.random() * msgsAcerto.length)];
                 document.getElementById('feedback-title').innerText = `🎉 ${msg}`;
             } else {
                 tocarSom('erro'); estado.pontos = Math.max(0, estado.pontos + ptsPerdidos); estado.erros++; estado.sequencia = 0; btn.classList.add('wrong'); botoes[perguntaAtual.c].classList.add('correct');
-                
                 const msg = msgsErro[Math.floor(Math.random() * msgsErro.length)];
                 document.getElementById('feedback-title').innerText = `❌ ${msg}`;
-            }
-            
-            const pointFx = document.createElement('div');
-            pointFx.className = 'floating-points';
-            pointFx.style.color = index === perguntaAtual.c ? 'var(--success)' : 'var(--danger)';
-            pointFx.innerText = index === perguntaAtual.c ? '+15 PTS' : '-5 PTS';
-            pointFx.style.left = btn.offsetLeft + (btn.offsetWidth / 2) - 30 + 'px';
-            pointFx.style.top = btn.offsetTop + 'px';
-            btn.parentElement.appendChild(pointFx);
-            setTimeout(() => pointFx.remove(), 1000);
-
-            document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
-            
-            if (estado.modo === 'tempo') { 
-                setTimeout(() => { estado.questaoAtual++; carregarQuestao(); }, 400); 
-            } else {
-                const fbBox = document.getElementById('feedback-box'); const fbExp = document.getElementById('feedback-explanation');
-                fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
-                fbExp.innerText = perguntaAtual.exp;
-                document.getElementById('btn-next').style.display = 'block'; 
-                document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 14) ? "FINALIZAR 🏁" : "PRÓXIMA ➡";
-            }
         }
+    
+    const pointFx = document.createElement('div'); pointFx.className = 'floating-points';
+    pointFx.style.color = index === perguntaAtual.c ? 'var(--success)' : 'var(--danger)';
+    pointFx.innerText = index === perguntaAtual.c ? '+15 PTS' : '-5 PTS';
+    pointFx.style.left = btn.offsetLeft + (btn.offsetWidth / 2) - 30 + 'px'; pointFx.style.top = btn.offsetTop + 'px';
+    btn.parentElement.appendChild(pointFx); setTimeout(() => pointFx.remove(), 1000);
 
-        function proximaQuestao() { 
-            if (isDuelo && estado.questaoAtual >= 14) return finalizarJogo();
-            estado.questaoAtual++; carregarQuestao(); 
-        }
-        
-        function pararJogo() { if(confirm("Deseja realmente parar agora e salvar seus pontos?")) finalizarJogo(); }
+    document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+    
+    if (estado.modo === 'tempo') { setTimeout(() => { estado.questaoAtual++; carregarQuestao(); }, 400); } 
+    else {
+        const fbBox = document.getElementById('feedback-box'); const fbExp = document.getElementById('feedback-explanation');
+        fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
+        fbExp.innerText = perguntaAtual.exp;
+        document.getElementById('btn-next').style.display = 'block'; 
+        document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 14) ? "FINALIZAR 🏁" : "PRÓXIMA ➡";
+    }
+}
 
-        function renderizarDesafios() {
-            const container = document.getElementById('lista-desafios'); container.innerHTML = '';
-            DESAFIOS_DB.forEach(d => { container.innerHTML += `<div class="challenge-card"><div class="challenge-info"><h4>${d.nome}</h4><p>${d.desc}</p></div><button class="btn-play-challenge" onclick="iniciarDesafio(${d.id})">JOGAR</button></div>`; });
-        }
+function proximaQuestao() { 
+    if (isDuelo && estado.questaoAtual >= 14) return finalizarJogo();
+    estado.questaoAtual++; carregarQuestao(); 
+}
 
-        function renderizarMissoes() {
-            const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
-            const missoes = [ 
-                { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, 
-                { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 },
-                { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, 
-                { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 },
-                { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } 
-            ];
-            missoes.forEach(m => { 
-                const pct = Math.min(100, (m.prog / m.meta) * 100); 
-                const isConcluida = pct >= 100; 
-                container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; 
-            });
-        }
+function pararJogo() { if(confirm("Deseja realmente parar agora e salvar seus pontos?")) finalizarJogo(); }
 
-        function renderizarLoja() {
+function renderizarDesafios() {
+    const container = document.getElementById('lista-desafios'); container.innerHTML = '';
+    DESAFIOS_DB.forEach(d => { container.innerHTML += `<div class="challenge-card"><div class="challenge-info"><h4>${d.nome}</h4><p>${d.desc}</p></div><button class="btn-play-challenge" onclick="iniciarDesafio(${d.id})">JOGAR</button></div>`; });
+}
+
+function renderizarMissoes() {
+    const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
+    const missoes = [ 
+        { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, 
+        { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 },
+        { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, 
+        { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 },
+        { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } 
+    ];
+    missoes.forEach(m => { 
+        const pct = Math.min(100, (m.prog / m.meta) * 100); 
+        const isConcluida = pct >= 100; 
+        container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConquista ? '✅' : ''}</div></div>`; 
+    });
+    }
+            function renderizarLoja() {
             document.getElementById('loja-moedas').innerText = jogador.moedas || 0; const container = document.getElementById('lista-loja'); container.innerHTML = '';
             let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira.split('|').pop()) > new Date()) multAtivo = true; }
             
@@ -1390,9 +1373,8 @@ async function finalizarJogo() {
             const item = LOJA_DB.find(i => i.id === id);
             if (jogador.moedas >= item.preco) {
                 jogador.moedas -= item.preco;
-                if(item.tipo === 'avatar') { jogador.avatar = item.icone; }
-
-                            else if(item.tipo === 'frame') { jogador.moldura = item.id; }
+                if(item.tipo === 'avatar') { jogador.avatar = item.icone; } 
+                else if(item.tipo === 'frame') { jogador.moldura = item.id; }
                 else if (item.tipo.includes('power')) { 
                     let umDia = new Date(); umDia.setDate(umDia.getDate() + 1); 
                     jogador.multiplicador_expira = umDia.toISOString(); 
