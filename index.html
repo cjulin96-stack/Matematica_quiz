@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MATH ARENA - Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --bg-dark: #070b14; --primary: #00f2fe; --secondary: #4facfe; --accent: #a855f7; --success: #00e676; --danger: #ff1744; --gold: #ffd700; --text-main: #ffffff; --text-muted: #8b9bb4; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.15), transparent 50%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 50%); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        .main-content { flex: 1; overflow-y: auto; padding: 20px 20px 90px 20px; display: flex; flex-direction: column; }
+        .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); margin-bottom: 15px; }
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
+        .text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-center { text-align: center; } .mb-20 { margin-bottom: 20px; }
+
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; pointer-events: none; }
+        .toast { background: rgba(20, 25, 40, 0.95); border-left: 4px solid var(--primary); color: #fff; padding: 15px; border-radius: 10px; font-size: 14px; font-weight: 600; animation: slideDown 0.3s, fadeOut 0.3s 3s forwards; }
+        .toast.success { border-left-color: var(--success); } .toast.error { border-left-color: var(--danger); } .toast.gold { border-left-color: var(--gold); }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
+        .user-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
+        .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; border: 1px solid rgba(255,255,255,0.1);}
+        .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .user-name { font-weight: 800; font-size: 18px; } .user-level { font-size: 12px; color: var(--primary); font-weight: 800; } .user-divisao { font-size: 10px; font-weight: 800; color: #cd7f32; margin-top: 2px; }
+        .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .badge { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; }
+        .badge-fire { background: rgba(255, 69, 0, 0.15); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; }
+        .badge-coin { background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); }
+        .bell-icon { font-size: 22px; cursor: pointer; margin-right: 10px; }
+
+        .season-banner { display: flex; justify-content: space-between; align-items: center; background: rgba(255,215,0,0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
+        .btn-small { background: var(--gold); color: #000; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 800; }
+        button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; border: none; border-radius: 14px; cursor: pointer; text-transform: uppercase; }
+        .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; margin-bottom: 10px; }
+        .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+        .btn-danger { width: 100%; padding: 12px; background: rgba(255, 23, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px; }
+        .btn-duel { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff007f, #ff1744); color: #fff; margin-bottom: 10px; }
+        .btn-rankeado { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; margin-bottom: 10px; }
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; padding: 16px; border-radius: 14px; }
+        .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 16px; border-radius: 14px; }
+        input, select { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff; margin-bottom: 15px; }
+        select option { background: var(--bg-dark); }
+        .xp-container { margin-top: 10px; } .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+        .xp-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; }
+        .chest-banner { display: flex; justify-content: space-between; align-items: center; background: rgba(255,215,0,0.15); border: 1px solid var(--gold); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
+        .chest-icon { font-size: 30px; }
+        .multiplier-box { display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
+        .multiplier-toggle { width: 44px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 20px; position: relative; }
+        .multiplier-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        .multiplier-toggle.on { background: var(--accent); } .multiplier-toggle.on::after { transform: translateX(20px); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(10, 15, 30, 0.95); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 800; width: 20%; }
+        .nav-item.active { color: var(--primary); } .nav-icon { font-size: 22px; }
+        .hud { display: flex; justify-content: space-between; font-weight: 800; color: var(--primary); margin-bottom: 15px; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; }
+        .question-text { font-size: 22px; font-weight: 800; margin-bottom: 25px; text-align: center; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { padding: 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 14px; color: #fff; text-align: left; display: flex; align-items: center; gap: 15px; }
+        .option-letter { background: rgba(255,255,255,0.1); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border-radius: 8px; color: var(--primary); }
+        .option-btn.correct { border-color: var(--success); background: rgba(0, 230, 118, 0.15); }
+        .option-btn.wrong { border-color: var(--danger); background: rgba(255, 23, 68, 0.15); }
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 30px 0 20px 0; height: 220px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; position: relative; }
+        .podium-avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: -10px; z-index: 2; }
+        .podium-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
+        .podium-block { width: 100%; border-radius: 12px 12px 0 0; display: flex; flex-direction: column; align-items: center; padding: 10px; text-align: center; }
+        .podium-name { font-size: 13px; font-weight: 800; margin-top: 5px; }
+        .podium-score { font-size: 12px; font-weight: 900; color: #000; background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
+        .podium-1 .podium-block { height: 130px; background: linear-gradient(180deg, #ffd700, #b8860b); }
+        .podium-1 .podium-avatar { border: 3px solid #ffd700; }
+        .podium-crown { position: absolute; top: -35px; font-size: 28px; }
+        .podium-2 .podium-block { height: 95px; background: linear-gradient(180deg, #e0e0e0, #9e9e9e); }
+        .podium-3 .podium-block { height: 75px; background: linear-gradient(180deg, #cd7f32, #8b4513); }
+        .ranking-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px; }
+        .rank-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .rank-tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.03); border-radius: 12px; color: var(--text-muted); }
+        .rank-tab.active { background: rgba(0, 242, 254, 0.1); color: var(--primary); }
+        .store-item, .mission-card, .achievement-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .store-item { display: flex; justify-content: space-between; align-items: center; }
+        .store-icon { font-size: 32px; }
+        .store-price { color: var(--gold); font-weight: 800; font-size: 14px; margin-top: 5px; }
+        .btn-buy { background: var(--primary); color: #000; padding: 10px 18px; border-radius: 10px; font-size: 13px; }
+        .mission-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .mission-progress-bar { height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
+        .mission-progress-fill { height: 100%; background: var(--success); }
+        .achievement-card { display: flex; align-items: center; gap: 15px; }
+        .ach-icon { font-size: 32px; }
+        .ach-info h4 { font-size: 15px; } .ach-info p { font-size: 12px; color: var(--text-muted); }
+        .stat-row { margin-bottom: 15px; }
+        .stat-label-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .stat-bar-bg { height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; }
+        .avatar-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .avatar-option { background: rgba(255,255,255,0.05); border: 2px solid transparent; border-radius: 50%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; font-size: 24px; }
+        .avatar-option.selected { border-color: var(--primary); }
+        #modal-conquista { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        #modal-conquista.active { opacity: 1; pointer-events: auto; }
+        .medalha-3d { font-size: 100px; margin-bottom: 20px; }
+        .raridade-lendaria { color: #ffd700; font-weight: 900; font-size: 14px; }
+        .confetti-piece { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 9999; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+  
+<div id="toast-container"></div>
+
+<div id="modal-conquista">
+    <div class="medalha-3d" id="modal-icone">🏆</div>
+    <h3 class="text-gradient" style="font-size: 24px; text-align: center;" id="modal-titulo">Nova Conquista!</h3>
+    <p class="raridade-lendaria" id="modal-raridade">LENDÁRIA</p>
+</div>
+
+<div class="main-content">
+    <!-- TELA: LOGIN -->
+    <div id="tela-auth" class="screen active">
+        <div class="glass">
+            <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
+            <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Faça login ou crie sua conta VIP.</p>
+            <input type="email" id="auth-email" placeholder="Seu E-mail">
+            <input type="password" id="auth-password" placeholder="Sua Senha">
+            <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+            <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
+        </div>
+    </div>
+
+    <!-- TELA: HOME -->
+    <div id="tela-home" class="screen">
+        <div class="user-header">
+            <div class="user-info">
+                <div class="avatar-wrapper">
+                    <div class="frame" id="home-frame"></div>
+                    <div class="avatar-img" id="home-avatar">🧑‍🚀</div>
+                </div>
+                <div>
+                    <div class="user-name" id="home-nome">Jogador</div>
+                    <div class="user-level" id="home-nivel">NÍVEL 1 - NOVATO</div>
+                    <div class="user-divisao" id="home-divisao">🥉 BRONZE</div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="bell-icon" onclick="mudarAba('tela-configuracoes')">⚙️</div>
+                <div class="bell-icon" onclick="mostrarNotificacoes()">🔔</div>
+                <div class="header-stats">
+                    <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
+                    <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="season-banner" onclick="mudarAba('tela-temporada')">
+            <div>
+                <h3 style="color: var(--gold);">Temporada Atual</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Termina em 15 dias</p>
+            </div>
+            <button class="btn-small">VER</button>
+        </div>
+
+        <div class="glass">
+            <div class="xp-container">
+                <div class="xp-text"><span>PROGRESSO VIP</span><span id="home-xp-txt">0 / 100 XP</span></div>
+                <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
+            </div>
+        </div>
+
+        <div id="box-multiplier" class="multiplier-box hidden">
+            <div class="multiplier-text">🚀 MULTIPLICADOR ATIVO</div>
+            <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
+        </div>
+
+        <div class="chest-banner" id="box-chest" onclick="resgatarBau()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="chest-icon">🎁</div>
+                <div>
+                    <h4 style="font-size: 14px; color: var(--gold);">Baú Diário</h4>
+                    <p style="font-size: 11px; color: var(--text-muted);" id="chest-status">Resgate suas moedas grátis!</p>
+                </div>
+            </div>
+            <div style="font-weight: 900; color: var(--gold); font-size: 16px;">+300 🪙</div>
+        </div>
+
+        <div class="grid-buttons">
+            <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
+            <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
+        </div>
+
+        <button class="btn-duel" onclick="mudarAba('tela-duelo-menu')">⚔️ DUELO 1v1</button>
+        <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO</button>
+
+        <div class="glass">
+            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">MODO CLÁSSICO</h3>
+            <h3 style="font-size: 14px; margin-top: 15px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">DIFICULDADE</h3>
+            <select id="select-dificuldade">
+                <option value="1">Fácil</option>
+                <option value="2" selected>Médio</option>
+                <option value="3">Difícil</option>
+            </select>
+            <select id="select-serie">
+                <option value="5">5º Ano Fundamental</option>
+                <option value="6">6º Ano Fundamental</option>
+                <option value="7">7º Ano Fundamental</option>
+                <option value="8">8º Ano Fundamental</option>
+                <option value="9">9º Ano Fundamental</option>
+                <option value="1em">1º Ano EM</option>
+                <option value="2em">2º Ano EM</option>
+                <option value="3em">3º Ano EM</option>
+            </select>
+            <button class="btn-primary" onclick="prepararJogo('classico')">▶ JOGAR CLÁSSICO</button>
+        </div>
+    </div>
+
+    <!-- TELA: CONFIGURAÇÕES -->
+    <div id="tela-configuracoes" class="screen">
+        <h2 class="text-gradient text-center mb-20">CONFIGURAÇÕES</h2>
+        <div class="glass">
+            <div class="config-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h4 style="font-size: 15px;">Efeitos Sonoros</h4>
+                    <p style="font-size: 12px; color: var(--text-muted);">Sons de acerto e erro.</p>
+                </div>
+                <div class="multiplier-toggle" id="toggle-som" onclick="toggleSom()" style="margin: 0;"></div>
+            </div>
+            <div class="config-row" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="font-size: 15px;">Animações e Confetes</h4>
+                    <p style="font-size: 12px; color: var(--text-muted);">Desligue se o jogo estiver travando.</p>
+                </div>
+                <div class="multiplier-toggle" id="toggle-animacoes" onclick="toggleAnimacoes()" style="margin: 0;"></div>
+            </div>
+        </div>
+        <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
+    </div>
+
+    <!-- TELA: ACADEMIA -->
+    <div id="tela-academia" class="screen">
+        <h2 class="text-gradient text-center mb-20">ACADEMIA</h2>
+        <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Trilhas de aprendizado</p>
+        <div id="lista-academia"></div>
+        <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: DUELO MENU -->
+    <div id="tela-duelo-menu" class="screen">
+        <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
+        <div class="glass">
+            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">CRIAR UM DESAFIO</h3>
+            <select id="select-serie-duelo">
+                <option value="5">5º Ano Fundamental</option>
+                <option value="6">6º Ano Fundamental</option>
+                <option value="7">7º Ano Fundamental</option>
+                <option value="8">8º Ano Fundamental</option>
+                <option value="9">9º Ano Fundamental</option>
+                <option value="1em">1º Ano EM</option>
+                <option value="2em">2º Ano EM</option>
+                <option value="3em">3º Ano EM</option>
+            </select>
+            <button class="btn-duel" id="btn-criar-duelo" onclick="criarDuelo()">➕ CRIAR DUELO</button>
+            <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
+            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">ENTRAR COM CÓDIGO</h3>
+            <input type="text" id="input-codigo-duelo" placeholder="Ex: DUELO-1234" style="text-transform: uppercase;">
+            <button class="btn-primary" id="btn-entrar-duelo" onclick="entrarDuelo()">▶ ENTRAR NO DUELO</button>
+        </div>
+        <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: DUELO ESPERA -->
+    <div id="tela-duelo-espera" class="screen">
+        <div class="glass text-center">
+            <h2 class="text-gradient">DUELO CRIADO!</h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin-top: 10px;">Mande este código para seu amigo:</p>
+            <div class="codigo-duelo" id="codigo-gerado">----</div>
+            <button class="btn-primary" onclick="iniciarDueloHost()">JOGAR MINHA PARTE AGORA</button>
+            <button class="btn-secondary" style="margin-top: 10px;" onclick="mudarAba('tela-home')">SAIR</button>
+        </div>
+    </div>
+
+    <!-- TELA: MISSÕES -->
+    <div id="tela-missoes" class="screen">
+        <h2 class="text-gradient text-center mb-20">MISSÕES DIÁRIAS</h2>
+        <div id="lista-missoes"></div>
+        <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: LOJA -->
+    <div id="tela-loja" class="screen">
+        <h2 class="text-gradient text-center mb-20">LOJA VIP</h2>
+        <p class="text-center" style="font-size: 14px; color: var(--gold); font-weight: 800; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3);">Suas moedas: 🪙 <span id="loja-moedas">0</span></p>
+        <div id="lista-loja"></div>
+        <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: JOGO -->
+    <div id="tela-jogo" class="screen">
+        <div id="timer-box" class="timer-display hidden">60s</div>
+        <div class="hud">
+            <span id="hud-pontos">🏆 0 PTS</span>
+            <span id="hud-sequencia" style="color: var(--accent);">🔥 0</span>
+            <span id="hud-questao">∞</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        
+        <div class="glass" style="border-radius: 20px; padding: 25px;">
+            <div class="question-text" id="question-text">Carregando...</div>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+        
+        <div class="feedback" id="feedback-box">
+            <strong id="feedback-title"></strong><br>
+            <span id="feedback-explanation"></span>
+        </div>
+        
+        <button class="btn-primary" id="btn-next" style="display: none; margin-top: 15px;" onclick="proximaQuestao()">PRÓXIMA ➡</button>
+        <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
+    </div>
+
+    <!-- TELA: RESULTADO -->
+    <div id="tela-resultado" class="screen">
+        <div class="glass text-center">
+            <h2 id="result-title" style="font-size: 28px; color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.5);">FIM DE JOGO</h2>
+            <div style="font-size: 70px; margin: 20px 0;" id="result-emoji">🎉</div>
+            <div style="font-size: 56px; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(0,242,254,0.4);" id="result-score">0</div>
+            <p style="color: var(--text-muted); margin-bottom: 25px; letter-spacing: 2px;">PONTOS</p>
+            
+            <div id="duel-result-box" class="hidden glass" style="background: rgba(0,0,0,0.6); border-color: var(--accent);">
+                <h3 style="margin-bottom: 10px; color: var(--accent);">RESULTADO DO DUELO</h3>
+                <p id="duel-result-text" style="font-size: 16px; font-weight: bold;"></p>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; margin-bottom: 30px;">
+                <div><span style="color: var(--success); font-size: 28px; font-weight: 900;" id="result-acertos">0</span><br><small style="font-weight: bold;">ACERTOS</small></div>
+                <div><span style="color: var(--danger); font-size: 28px; font-weight: 900;" id="result-erros">0</span><br><small style="font-weight: bold;">ERROS</small></div>
+            </div>
+            <button class="btn-primary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
+        </div>
+    </div>
+
+    <!-- TELA: CONQUISTAS -->
+    <div id="tela-conquistas" class="screen">
+        <h2 class="text-gradient text-center mb-20">CONQUISTAS</h2>
+        <div id="lista-conquistas"></div>
+        <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: ESTATÍSTICAS -->
+    <div id="tela-estatisticas" class="screen">
+        <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
+        <div class="glass">
+            <h3 style="font-size: 15px; margin-bottom: 20px; color: var(--text-muted); text-align: center;">APROVEITAMENTO POR MATÉRIA</h3>
+            <div id="container-stats"></div>
+        </div>
+        <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+    </div>
+
+    <!-- TELA: RANKING -->
+    <div id="tela-ranking" class="screen">
+        <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
+        <div class="rank-tabs">
+            <div class="rank-tab active" onclick="carregarRanking('geral', this)">GERAL</div>
+            <div class="rank-tab" onclick="carregarRanking('semanal', this)">SEMANAL</div>
+            <div class="rank-tab" onclick="carregarRanking('mensal', this)">MENSAL</div>
+        </div>
+        <div id="rank-list-container" class="glass" style="max-height: 450px; overflow-y: auto;"></div>
+    </div>
+
+    <!-- TELA: PERFIL -->
+    <div id="tela-perfil" class="screen">
+        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL VIP</h2>
+        <div class="glass text-center" style="border-color: var(--accent); box-shadow: 0 0 30px rgba(168,85,247,0.15);">
+            <div class="avatar-wrapper" style="width: 100px; height: 100px; margin: 0 auto 15px auto;">
+                <div class="frame frame-padrao" id="perfil-frame"></div>
+                <div class="avatar-img" id="perfil-avatar" style="width: 80px; height: 80px; font-size: 46px;">🧑‍🚀</div>
+            </div>
+            <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 20px; font-weight: 900; border: none; background: transparent; color: #fff; margin-bottom: 5px; width: 250px; border-bottom: 2px dashed rgba(255,255,255,0.2); outline: none; padding: 5px;">
+            <p style="color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; margin-top: 10px;" id="perfil-nivel-txt">NÍVEL 1 - NOVATO</p>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                <div class="badge" style="background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid var(--success);">XP: <span id="profile-xp-display" style="font-weight: 900;">0</span></div>
+            </div>
+        </div>
+        <div class="glass">
+            <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">ESCOLHA SEU AVATAR</h3>
+            <div class="avatar-selector" id="avatar-selector"></div>
+        </div>
+        <div class="glass">
+            <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">🔥 OFENSIVA</h3>
+            <div class="calendario-grid" id="calendario-streak"></div>
+        </div>
+        <div class="glass">
+            <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center;">📜 HISTÓRICO</h3>
+            <div id="lista-historico"><p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p></div>
+        </div>
+        <button class="btn-secondary" style="border-color: var(--primary); color: var(--primary);" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
+        <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER CONQUISTAS</button>
+        <button class="btn-danger" style="margin-top: 20px;" onclick="sair()">SAIR DA CONTA</button>
+    </div>
+</div>
+
+<!-- MENU INFERIOR -->
+<div class="bottom-nav" id="bottom-nav" style="display: none;">
+    <div class="nav-item active" onclick="mudarAba('tela-home', this)"><span class="nav-icon">🏠</span><span>Início</span></div>
+    <div class="nav-item" onclick="mudarAba('tela-academia', this)"><span class="nav-icon">📖</span><span>Academia</span></div>
+    <div class="nav-item" onclick="mudarAba('tela-ranking', this)"><span class="nav-icon">🏆</span><span>Ranking</span></div>
+    <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
+                                                                      </div>
+                                                                      
+<script>
+    const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
+    const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
+    const banco = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let jogador = { id: null, email: '', nome: 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, multiplicador_expira: null, nivel: 1, totalAcertos: 0, totalErros: 0, melhorSequencia: 0 };
+    let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+    let isDuelo = false, dueloAtual = null, filaPerguntas = [], perguntaAtual = null, timerInterval = null, tempoRestante = 0, usarMultiplicador = false, somAtivado = true, animacoesAtivadas = true;
+
+    function getNivel(xpTotal) {
+        let nivel = 1, xpNecessario = 100, xpAcumulado = 0;
+        while (xpTotal >= xpAcumulado + xpNecessario) { xpAcumulado += xpNecessario; nivel++; xpNecessario = nivel * 100; }
+        return { nivel: nivel, xpAtual: xpTotal - xpAcumulado, xpProximo: xpNecessario };
+    }
+    function getNomeNivel(nivel) {
+        if (nivel >= 100) return "Divindade Matemática"; if (nivel >= 75) return "Lenda"; if (nivel >= 50) return "Gênio"; if (nivel >= 40) return "Mestre";
+        if (nivel >= 30) return "Especialista"; if (nivel >= 20) return "Estrategista"; if (nivel >= 10) return "Calculista"; if (nivel >= 5) return "Aprendiz";
+        return "Novato";
+    }
+
+    const AVATARES_GRATIS = ['🧑‍🚀', '🐯', '🐺', '🦊', '🐼', '🦁', '🦄', '🐲', '🤖', '👽', '👾', '🧙‍♂️', '🧛‍♂️', '🧜‍♀️', '🧚', '🦸‍♂️', '🦹‍♂️', '🥷', '👮‍♂️', '🕵️‍♂️'];
+
+    const CONQUISTAS_DB = [
+        { id: 'c1', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.', meta: 1, tipo: 'jogos' }, { id: 'c2', icone: '🧐', titulo: 'Mente Curiosa', desc: 'Respondeu 10 questões.', meta: 10, tipo: 'acertos' },
+        { id: 'c3', icone: '🌱', titulo: 'Iniciante', desc: 'Respondeu 50 questões.', meta: 50, tipo: 'acertos' }, { id: 'c4', icone: '📚', titulo: 'Aprendiz', desc: 'Respondeu 100 questões.', meta: 100, tipo: 'acertos' },
+        { id: 'c5', icone: '🎓', titulo: 'Dedicado', desc: 'Respondeu 500 questões.', meta: 500, tipo: 'acertos' }, { id: 'c6', icone: '🏛️', titulo: 'Veterano', desc: 'Respondeu 1000 questões.', meta: 1000, tipo: 'acertos' },
+        { id: 'c7', icone: '🎯', titulo: 'Atirador de Elite', desc: 'Acertou 10 seguidas.', meta: 10, tipo: 'sequencia' }, { id: 'c8', icone: '🔪', titulo: 'Precisão Absoluta', desc: 'Acertou 25 seguidas.', meta: 25, tipo: 'sequencia' },
+        { id: 'c9', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos.', meta: 80, tipo: 'pontos_partida' }, { id: 'c10', icone: '💎', titulo: 'Perfeição', desc: '10 questões sem errar.', meta: 10, tipo: 'perfeicao' },
+        { id: 'c11', icone: '🧮', titulo: 'Calculadora Humana', desc: '95% de aproveitamento.', meta: 95, tipo: 'taxa' }, { id: 'c12', icone: '🔥', titulo: 'Chama Inicial', desc: '3 dias consecutivos.', meta: 3, tipo: 'streak' },
+        { id: 'c13', icone: '☄️', titulo: 'Uma Semana de Fogo', desc: '7 dias consecutivos.', meta: 7, tipo: 'streak' }, { id: 'c14', icone: '🌋', titulo: 'Duas Semanas', desc: '14 dias consecutivos.', meta: 14, tipo: 'streak' },
+        { id: 'c15', icone: '🛡️', titulo: 'Disciplina de Ferro', desc: '30 dias consecutivos.', meta: 30, tipo: 'streak' }, { id: 'c16', icone: '🚀', titulo: 'Imparável', desc: '60 dias consecutivos.', meta: 60, tipo: 'streak' },
+        { id: 'c17', icone: '💯', titulo: 'Centenário', desc: '100 dias consecutivos.', meta: 100, tipo: 'streak' }, { id: 'c18', icone: '👑', titulo: 'Lenda', desc: '365 dias consecutivos.', meta: 365, tipo: 'streak' },
+        { id: 'c19', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou desafio de tempo.', meta: 1, tipo: 'desafio' }, { id: 'c20', icone: '⏱️', titulo: 'Reflexos Matemáticos', desc: 'Jogou Desafio Hardcore.', meta: 1, tipo: 'hardcore' },
+        { id: 'c21', icone: '⭐', titulo: 'Subindo na Vida', desc: 'Alcançou Nível 5.', meta: 5, tipo: 'nivel' }, { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou Nível 10.', meta: 10, tipo: 'nivel' },
+        { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou Nível 20.', meta: 20, tipo: 'nivel' }, { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou Nível 50.', meta: 50, tipo: 'nivel' },
+        { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias.', meta: 5, tipo: 'materias' }
+    ];
+
+    const LOJA_DB = [ 
+        { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos 24h', preco: 500, tipo: 'power' }, { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos 24h', preco: 1200, tipo: 'power3' },
+        { id: 'frame-ouro', icone: '👑', nome: 'Moldura Ouro', desc: 'Brilho VIP', preco: 800, tipo: 'frame' }, { id: 'frame-fogo', icone: '🔥', nome: 'Moldura Fogo', desc: 'Chamas ardentes', preco: 1500, tipo: 'frame' },
+        { id: 'frame-gelo', icone: '❄️', nome: 'Moldura Gelo', desc: 'Congelante', preco: 1500, tipo: 'frame' }, { id: 'frame-neon', icone: '🔮', nome: 'Moldura Neon', desc: 'Energia roxa', preco: 2000, tipo: 'frame' },
+        { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' }, { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
+        { id: 'av_ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar VIP', preco: 2500, tipo: 'avatar' }, { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar VIP', preco: 5000, tipo: 'avatar' }
+    ];
+
+    const DESAFIOS_DB = [ 
+        { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' }, { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90, desc: '6º Ano • 1m 30s' },
+        { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60, desc: '7º Ano • 1 Minuto' }, { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45, desc: '8º Ano • 45 Segundos' },
+        { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30, desc: '9º Ano • 30 Segundos' } 
+    ];
+
+    const ACADEMIA_DB = [
+        { titulo: 'Trilha 1: Frações', conteudo: 'Uma fração representa uma parte de um todo. Ex: 1/2 (metade). Para somar frações com o mesmo denominador, some apenas os numeradores: 1/4 + 2/4 = 3/4.' },
+        { titulo: 'Trilha 2: Equações 1º Grau', conteudo: 'O objetivo é isolar a letra. Ex: 2x + 5 = 15. Passe o 5 subtraindo: 2x = 10. Divida por 2: x = 5.' },
+        { titulo: 'Trilha 3: Teorema de Pitágoras', conteudo: 'Usado em triângulos retângulos. A fórmula é a² = b² + c². O "a" é a hipotenusa.' },
+        { titulo: 'Trilha 4: Porcentagem', conteudo: 'Porcentagem é uma fração com denominador 100. Ex: 20% de 150 = 20/100 x 150 = 30.' },
+        { titulo: 'Trilha 5: Geometria', conteudo: 'Área do quadrado = lado x lado. Área do retângulo = base x altura.' }
+    ];
+
+    function mostrarToast(mensagem, tipo = 'primary') {
+        const container = document.getElementById('toast-container'); const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`; let icone = 'ℹ️';
+        if(tipo === 'success') icone = '✅'; if(tipo === 'error') icone = '❌'; if(tipo === 'gold') icone = '🪙';
+        toast.innerHTML = `<span style="font-size: 20px;">${icone}</span> <span>${mensagem}</span>`;
+        container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3300);
+    }
+
+    function mostrarModalConquista(titulo, icone, raridade = "Comum") {
+        const modal = document.getElementById('modal-conquista');
+        document.getElementById('modal-icone').innerText = icone; document.getElementById('modal-titulo').innerText = titulo;
+        const raridadeTxt = document.getElementById('modal-raridade'); raridadeTxt.innerText = raridade;
+        if(raridade === "Lendária") { raridadeTxt.style.color = "#ffd700"; } else if(raridade === "Épica") { raridadeTxt.style.color = "#a855f7"; } else { raridadeTxt.style.color = "#ffffff"; }
+        modal.classList.add('active'); setTimeout(() => { modal.classList.remove('active'); }, 3000);
+    }
+
+    function toggleSom() { somAtivado = !somAtivado; document.getElementById('toggle-som').classList.toggle('on', somAtivado); mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary'); }
+    function toggleAnimacoes() { animacoesAtivadas = !animacoesAtivadas; document.getElementById('toggle-animacoes').classList.toggle('on', animacoesAtivadas); mostrarToast(`Animações ${animacoesAtivadas ? 'Ativadas' : 'Desativadas'}`, 'primary'); }
+
+    async function fazerCadastro() {
+        const email = document.getElementById('auth-email').value.trim(); const senha = document.getElementById('auth-password').value;
+        if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+        const { error } = await banco.auth.signUp({ email, password: senha });
+        if (error) { mostrarToast(error.message, "error"); } else { mostrarToast("Conta criada! Faça login.", "success"); }
+    }
+
+    async function fazerLogin() {
+        const email = document.getElementById('auth-email').value.trim(); const senha = document.getElementById('auth-password').value;
+        if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+        const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
+        if (error) { mostrarToast(error.message, "error"); } else { jogador.id = data.user.id; jogador.email = data.user.email; await carregarPerfil(); mostrarApp(); }
+    }
+
+    async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
+    function mostrarApp() { document.getElementById('bottom-nav').style.display = 'flex'; mudarAba('tela-home'); }
+
+    async function carregarPerfil() {
+        if (!jogador.id) return;
+        const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+        if (error) return;
+        if (data) {
+            jogador.nome = data.nome || 'Jogador'; jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0; jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
+            jogador.avatar = data.avatar || '🧑‍🚀'; jogador.moldura = data.moldura || 'frame-padrao'; jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
+            let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0 };
+            jogador.missoes = missoesDB; jogador.multiplicador_expira = data.multiplicador_expira; jogador.nivel = getNivel(jogador.xp).nivel;
+            jogador.totalAcertos = data.acertos || 0; jogador.totalErros = data.erros || 0; jogador.melhorSequencia = data.melhor_sequencia || 0;
+        } else {
+            await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0, conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, acertos: 0, erros: 0, melhor_sequencia: 0 }]);
+        }
+    }
+
+    function aplicarMolduras() {
+        document.getElementById('home-frame').className = `frame ${jogador.moldura}`; document.getElementById('home-avatar').innerText = jogador.avatar;
+        document.getElementById('perfil-frame').className = `frame ${jogador.moldura}`; document.getElementById('perfil-avatar').innerText = jogador.avatar;
+        document.getElementById('profile-xp-display').innerText = jogador.xp || 0; document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+        const container = document.getElementById('avatar-selector'); if(!container) return; container.innerHTML = '';
+        AVATARES_GRATIS.forEach(av => { const btn = document.createElement('button'); btn.className = `avatar-option ${jogador.avatar === av ? 'selected' : ''}`; btn.innerText = av; btn.onclick = () => selecionarAvatar(av); container.appendChild(btn); });
+    }
+
+    async function selecionarAvatar(emoji) { jogador.avatar = emoji; await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id); aplicarMolduras(); }
+
+    async function atualizarDashboard() {
+        if (!jogador.id) return; await carregarPerfil();
+        document.getElementById('home-nome').innerText = jogador.nome; document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+        document.getElementById('home-streak').innerText = jogador.streak || 0; document.getElementById('home-moedas').innerText = jogador.moedas || 0;
+        let div = "🥉 BRONZE", cor = "#cd7f32"; if (jogador.nivel >= 10) { div = "🥈 PRATA"; cor = "#c0c0c0"; } if (jogador.nivel >= 20) { div = "🥇 OURO"; cor = "#ffd700"; } if (jogador.nivel >= 30) { div = "💎 PLATINA"; cor = "#00f2fe"; } if (jogador.nivel >= 40) { div = "💠 DIAMANTE"; cor = "#a855f7"; } if (jogador.nivel >= 50) { div = "🔮 MESTRE"; cor = "#ff1744"; } if (jogador.nivel >= 75) { div = "👑 LENDÁRIO"; cor = "#ffd700"; }
+        const elDivisao = document.getElementById('home-divisao'); if (elDivisao) { elDivisao.innerText = div; elDivisao.style.color = cor; }
+        aplicarMolduras(); const infoNivel = getNivel(jogador.xp);
+        document.getElementById('home-xp-txt').innerText = `${infoNivel.xpAtual} / ${infoNivel.xpProximo} XP`; document.getElementById('home-xp-bar').style.width = `${(infoNivel.xpAtual / infoNivel.xpProximo) * 100}%`;
+        if (jogador.multiplicador_expira) { let expira = new Date(jogador.multiplicador_expira.split('|').pop()); if (expira > new Date()) { document.getElementById('box-multiplier').classList.remove('hidden'); } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; } } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
+        checarBauDiario();
+    }
+
+    function mudarAba(idTela, element) {
+        if (idTela === 'tela-jogo') return; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(idTela).classList.add('active');
+        if (element) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); element.classList.add('active'); }
+        if (idTela === 'tela-home') atualizarDashboard(); if (idTela === 'tela-academia') renderizarAcademia(); if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
+        if (idTela === 'tela-conquistas') renderizarConquistas(); if (idTela === 'tela-temporada') renderizarTemporada(); if (idTela === 'tela-estatisticas') renderizarEstatisticas();
+        if (idTela === 'tela-perfil') { carregarPerfil().then(() => { document.getElementById('perfil-nome-input').value = jogador.nome; aplicarMolduras(); renderizarCalendario(); renderizarHistorico(); }); }
+        if (idTela === 'tela-missoes') renderizarMissoes(); if (idTela === 'tela-loja') renderizarLoja();
+    }
+        let timerSalvar;
+        function salvarNomeDelay() { clearTimeout(timerSalvar); timerSalvar = setTimeout(salvarNome, 1000); }
+        async function salvarNome() { 
+            const novoNome = document.getElementById('perfil-nome-input').value.trim();
+            if(novoNome === "") return; jogador.nome = novoNome; localStorage.setItem('mathArenaNome', jogador.nome);
+            document.getElementById('home-nome').innerText = jogador.nome;
+            if (jogador.id) { await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); }
+        }
+
+        function toggleMultiplicador() { const toggle = document.getElementById('toggle-multiplier'); usarMultiplicador = !usarMultiplicador; if (usarMultiplicador) toggle.classList.add('on'); else toggle.classList.remove('on'); }
+        function mostrarNotificacoes() {
+            let n = []; if(jogador.missoes.jogos === 0) n.push("Bem-vindo ao MATH ARENA!"); if(jogador.missoes.acertos < 10) n.push("Missão: Acerte 10 questões."); if(jogador.moedas >= 500) n.push("Você já pode comprar o Multiplicador!");
+            if(n.length === 0) n.push("Você está em dia! Bora jogar?"); mostrarToast(n.join(" | "), "primary");
+        }
+
+        async function renderizarCalendario() {
+            const container = document.getElementById('calendario-streak'); if(!container) return; container.innerHTML = '';
+            ['D','S','T','Q','Q','S','S'].forEach(d => { container.innerHTML += `<div class="dia-semana">${d}</div>`; });
+            const hoje = new Date(), mes = hoje.getMonth(), ano = hoje.getFullYear(), primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const { data: partidas } = await banco.from('partidas').select('data').eq('user_id', jogador.id);
+            const diasJogados = partidas ? partidas.map(p => new Date(p.data).getDate()) : [];
+            for (let i = 0; i < primeiroDia; i++) { container.innerHTML += `<div></div>`; }
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                let c = 'dia-calendario'; if (diasJogados.includes(dia)) c += ' jogou'; if (dia === hoje.getDate()) c += ' hoje';
+                container.innerHTML += `<div class="${c}">${dia}</div>`;
+            }
+        }
+
+        async function renderizarHistorico() {
+            const container = document.getElementById('lista-historico'); container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p>';
+            try {
+                const { data: partidas } = await banco.from('partidas').select('pontos, data').eq('user_id', jogador.id).order('data', { ascending: false }).limit(5);
+                if (!partidas || partidas.length === 0) { container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Nenhuma partida jogada.</p>'; return; }
+                container.innerHTML = '';
+                partidas.forEach(p => { const d = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); container.innerHTML += `<div class="historico-item"><span>${d}</span> <span style="color: var(--primary); font-weight: 900;">${p.pontos} pts</span></div>`; });
+            } catch(e) { container.innerHTML = '<p style="text-align: center; color: var(--danger);">Erro.</p>'; }
+        }
+
+        async function carregarRanking(tipo, element) {
+            document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active')); if (element) element.classList.add('active');
+            const lista = document.getElementById('rank-list-container'); lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
+            const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+            if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogador.</p>'; return; }
+            lista.innerHTML = '';
+            let podium = '<div class="podium-container">';
+            if (data.length >= 2) { const j2 = data[1]; podium += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${j2.xp||0}</div></div></div>`; }
+            const j1 = data[0]; podium += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${j1.xp||0}</div></div></div>`;
+            if (data.length >= 3) { const j3 = data[2]; podium += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${j3.xp||0}</div></div></div>`; }
+            podium += '</div>'; lista.innerHTML += podium;
+            for(let i = 3; i < data.length; i++) {
+                const user = data[i]; lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i + 1}º</span><div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${user.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:14px;">${user.nome}</div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`;
+            }
+        }
+
+        function renderizarTemporada() {
+            let divName = "BRONZE", divIcon = "🥉", cor = "#cd7f32";
+            if (jogador.nivel >= 10) { divName = "PRATA"; divIcon = "🥈"; cor = "#c0c0c0"; } if (jogador.nivel >= 20) { divName = "OURO"; divIcon = "🥇"; cor = "#ffd700"; }
+            if (jogador.nivel >= 30) { divName = "PLATINA"; divIcon = "💎"; cor = "#00f2fe"; } if (jogador.nivel >= 40) { divName = "DIAMANTE"; divIcon = "💠"; cor = "#a855f7"; }
+            if (jogador.nivel >= 50) { divName = "MESTRE"; divIcon = "🔮"; cor = "#ff1744"; } if (jogador.nivel >= 75) { divName = "LENDÁRIO"; divIcon = "👑"; cor = "#ffd700"; }
+            document.getElementById('season-icon').innerText = divIcon; document.getElementById('season-name').innerText = divName;
+            document.getElementById('season-name').style.color = cor;
+        }
+
+        function renderizarAcademia() {
+            const container = document.getElementById('lista-academia'); container.innerHTML = '';
+            ACADEMIA_DB.forEach((aula, index) => {
+                container.innerHTML += `<div class="trilha-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);"><div onclick="toggleAula(${index})" style="cursor:pointer; display:flex; justify-content:space-between;"><span style="font-weight: 800; font-size: 15px; color:var(--primary);">${aula.titulo}</span><span style="color: var(--primary); font-size: 18px;">▼</span></div><div class="aula-conteudo" id="aula-${index}" style="display:none; margin-top: 10px; font-size: 14px; color: #ddd;">${aula.conteudo}</div></div>`;
+            });
+        }
+        function toggleAula(index) { const c = document.getElementById(`aula-${index}`); if(c.style.display === 'none') c.style.display = 'block'; else c.style.display = 'none'; }
+
+        function renderizarMissoes() {
+            const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
+            const missoes = [ { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 }, { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 }, { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } ];
+            missoes.forEach(m => { const pct = Math.min(100, (m.prog / m.meta) * 100); const isConcluida = pct >= 100; container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; });
+        }
+
+        function renderizarLoja() {
+            document.getElementById('loja-moedas').innerText = jogador.moedas || 0; const container = document.getElementById('lista-loja'); container.innerHTML = '';
+            let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira.split('|').pop()) > new Date()) multAtivo = true; }
+            LOJA_DB.forEach(item => {
+                let isEquipado = false; if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true; if(item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true; if(item.tipo.includes('power') && multAtivo) isEquipado = true;
+                let podeComprar = jogador.moedas >= item.preco && !isEquipado, btnTexto = isEquipado ? 'EQUIPADO' : (!podeComprar ? 'FALTA 🪙' : 'COMPRAR');
+                let iconVisual = item.tipo === 'frame' ? `<div class="frame ${item.id}" style="position:relative; width:40px; height:40px; display:flex; justify-content:center; align-items:center;"><span style="font-size:20px; z-index:5;">${item.icone}</span></div>` : item.icone;
+                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${iconVisual}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
+            });
+        }
+        async function comprarItem(id) {
+            const item = LOJA_DB.find(i => i.id === id);
+            if (jogador.moedas >= item.preco) {
+                jogador.moedas -= item.preco; if(item.tipo === 'avatar') jogador.avatar = item.icone; else if(item.tipo === 'frame') jogador.moldura = item.id;
+                else if (item.tipo.includes('power')) { let d = new Date(); d.setDate(d.getDate() + 1); jogador.multiplicador_expira = d.toISOString(); if(item.tipo === 'power3') jogador.multiplicador_expira = '3x|' + d.toISOString(); }
+                await banco.from('ranking').update({ avatar: jogador.avatar, moldura: jogador.moldura, moedas: jogador.moedas, multiplicador_expira: jogador.multiplicador_expira }).eq('user_id', jogador.id);
+                mostrarToast(`Comprou: ${item.nome}!`, "success"); renderizarLoja(); atualizarDashboard();
+            }
+        }
+
+        function renderizarConquistas() {
+            const container = document.getElementById('lista-conquistas'); container.innerHTML = '';
+            CONQUISTAS_DB.forEach(c => { const unlocked = jogador.conquistas.includes(c.id); container.innerHTML += `<div class="achievement-card ${unlocked ? 'unlocked' : ''}"><div class="ach-icon">${unlocked ? c.icone : '🔒'}</div><div class="ach-info"><h4>${c.titulo}</h4><p>${c.desc}</p></div></div>`; });
+        }
+
+        function renderizarEstatisticas() {
+            const container = document.getElementById('container-stats'); container.innerHTML = ''; const keys = Object.keys(jogador.stats);
+            if(keys.length === 0) { container.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-weight:bold;">Jogue para gerar estatísticas.</p>'; return; }
+            keys.forEach(mat => { const s = jogador.stats[mat]; const pct = Math.round((s.acertos / s.total) * 100); let cor = pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--gold)' : 'var(--danger)'; container.innerHTML += `<div class="stat-row"><div class="stat-label-row"><span>${mat}</span><span>${pct}%</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%; background:${cor};"></div></div></div>`; });
+        }
+
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function gerarQuestao(serie) {
+            if (serie === 'mix') { const s = ["5","6","7","8","9","1em","2em","3em"]; serie = s[Math.floor(Math.random() * s.length)]; }
+            let dif = 2; if (document.getElementById('select-dificuldade')) dif = parseInt(document.getElementById('select-dificuldade').value);
+            let mult = dif === 1 ? 10 : (dif === 2 ? 30 : 50); let p = "", r = 0, e = "", m = "";
+            if (serie === "5" || serie === "6") {
+                const op = rand(1, 5);
+                if(op === 1) { let a = rand(1, mult), b = rand(1, mult); p = `Quanto é ${a} + ${b}?`; r = a + b; e = `Somando: ${a} + ${b} = ${r}.`; m = "Soma"; }
+                else if(op === 2) { let a = rand(10, mult), b = rand(1, 10); p = `Quanto é ${a} - ${b}?`; r = a - b; e = `Subtraindo: ${a} - ${b} = ${r}.`; m = "Subtração"; }
+                else if(op === 3) { let a = rand(2, 10), b = rand(2, 10); p = `Quanto é ${a} x ${b}?`; r = a * b; e = `Multiplicando: ${a} x ${b} = ${r}.`; m = "Multiplicação"; }
+                else if(op === 4) { let b = rand(2, 10), rd = rand(2, 10); let a = b * rd; p = `Quanto é ${a} ÷ ${b}?`; r = rd; e = `${b} x ${r} = ${a}.`; m = "Divisão"; }
+                else { let den = rand(2, 8), n1 = rand(1, den - 1), n2 = rand(1, den - 1); p = `Quanto é ${n1}/${den} + ${n2}/${den}?`; let rn = n1 + n2; let gcd = (a, b) => b ? gcd(b, a % b) : a; let div = gcd(rn, den); let fn = rn / div, fd = den / div; r = fd === 1 ? String(fn) : `${fn}/${fd}`; e = `Some os numeradores: ${n1} + ${n2} = ${rn}. Simplificando temos ${r}.`; m = "Frações"; }
+            } else if (serie === "7" || serie === "8") {
+                const op = rand(1, 4);
+                if(op === 1) { let x = rand(2, 10), b = rand(1, 10), c = (2*x) + b; p = `Se 2x + ${b} = ${c}, x = ?`; r = x; e = `2x = ${c} - ${b}. x = ${x}.`; m = "Equações"; }
+                else if(op === 2) { let a = rand(2, 10); p = `Área de um quadrado de lado ${a}cm?`; r = a*a; e = `${a} x ${a} = ${r} cm².`; m = "Geometria"; }
+                else if(op === 3) { let a = rand(2, 5) * 10, total = rand(2,10)*100; p = `Quanto é ${a}% de ${total}?`; r = (a/100) * total; e = `${a}/100 x ${total} = ${r}.`; m = "Porcentagem"; }
+                else { let a = rand(2, 5), b = rand(2, 5), c = rand(2, 5); p = `João tem ${a}, ganha ${b}, divide p/ ${c}. Quanto cada um recebe?`; r = Math.floor((a + b) / c); e = `Total = ${a+b}. Dividindo por ${c} = ${r}.`; m = "Raciocínio Lógico"; }
+            } else if (serie === "9") {
+                const op = rand(1, 3);
+                if(op === 1) { const t = [[3,4,5], [6,8,10], [5,12,13]][rand(0,2)]; p = `Catetos ${t[0]} e ${t[1]}. Hipotenusa?`; r = t[2]; e = `a² = ${t[0]}² + ${t[1]}² = ${t[0]*t[0] + t[1]*t[1]}. Raiz = ${r}.`; m = "Geometria"; }
+                else if(op === 2) { let x = rand(2, 5); p = `Se x² = ${x*x}, x = ?`; r = x; e = `Raiz de ${x*x} é ${x}.`; m = "Equações"; }
+                else { let a = rand(2, 10); p = `Quanto é ${a}²?`; r = a*a; e = `${a} x ${a} = ${r}.`; m = "Potenciação"; }
+            } else if (serie === "1em") { let a = rand(2, 5), b = rand(1, 10), x = rand(1, 5); p = `f(x) = ${a}x + ${b}. f(${x})?`; r = a*x + b; e = `f(${x}) = ${a}(${x}) + ${b} = ${r}.`; m = "Funções"; }
+            else if (serie === "2em") { const trig = [ {q: "sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0}, {q: "cos(60º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0}, {q: "sen(90º)?", o: ["0", "1/2", "√2/2", "1"], c: 3}, {q: "cos(0º)?", o: ["0", "1/2", "1", "√3/2"], c: 2} ]; let es = trig[rand(0,3)]; return { q: es.q, o: es.o, c: es.c, exp: "Trigonometria básica.", serie: serie, mat: "Trigonometria" }; }
+            else if (serie === "3em") { let a = rand(2, 5); p = `log₁₀(10^${a})?`; r = a; e = `Log de 10^${a} na base 10 é ${a}.`; m = "Logaritmos"; }
+            else return gerarQuestao('mix');
+            
+            if (typeof r === 'string') {
+                let os = new Set([r]); let at = 0;
+                while(os.size < 4 && at < 50) { let v = (parseFloat(r.replace(',', '.')) + rand(-30, 30)/10).toFixed(1).replace('.', ','); if(v !== r && parseFloat(v.replace(',', '.')) >= 0) os.add(v); at++; }
+                let o = Array.from(os).sort(); return { q: p, o: o, c: o.indexOf(r), exp: e, serie: serie, mat: m };
+            } else {
+                let os = new Set([r]); let at = 0;
+                while(os.size < 4 && at < 50) { let of = rand(1, 10) * (Math.random() > 0.5 ? 1 : -1); let er = r + of; if(er !== r && er >= 0) os.add(er); at++; }
+                let fb = 1; while(os.size < 4) { os.add(r + fb); fb++; }
+                let o = Array.from(os).sort((a,b) => a-b).map(String); return { q: p, o: o, c: o.indexOf(String(r)), exp: e, serie: serie, mat: m };
+            }
+        }
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext; let audioCtx;
+        function tocarSom(t) { if (!somAtivado) return; if (!audioCtx) audioCtx = new AudioContext(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); if(t==='acerto'){o.frequency.setValueAtTime(400,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+0.1);}else{o.type='sawtooth';o.frequency.setValueAtTime(200,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(100,audioCtx.currentTime+0.2);} g.gain.setValueAtTime(0.1,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.3); o.start(); o.stop(audioCtx.currentTime+0.3); }
+        function soltarConfete() { if (!animacoesAtivadas) return; const c = ['#ffd700', '#00f2fe', '#a855f7', '#00e676', '#ff1744']; for (let i = 0; i < 40; i++) { const p = document.createElement('div'); p.classList.add('confetti-piece'); p.style.left = Math.random() * 100 + 'vw'; p.style.backgroundColor = c[Math.floor(Math.random() * c.length)]; p.style.animationDuration = (Math.random() * 2 + 1.5) + 's'; document.body.appendChild(p); setTimeout(() => p.remove(), 3500); } }
+
+        function prepararJogo(modo) {
+            const serie = document.getElementById('select-serie').value; filaPerguntas = [];
+            for(let i=0; i<20; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
+            estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
+            document.getElementById('timer-box').classList.add('hidden'); document.getElementById('duel-result-box').classList.add('hidden'); carregarQuestao();
+        }
+
+        function iniciarDesafio(id) {
+            const d = DESAFIOS_DB.find(x => x.id === id); if(!d) return; filaPerguntas = []; for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(d.serie));
+            estado = { modo: 'tempo', pontos: 0, acertos: 0, erros:
+              0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
+           const tb = document.getElementById('timer-box'); tb.classList.remove('hidden'); tempoRestante = d.tempo; tb.innerText = `${tempoRestante}s`; clearInterval(timerInterval);
+           timerInterval = setInterval(() => { tempoRestante--; tb.innerText = `${tempoRestante}s`; if (tempoRestante <= 0) { clearInterval(timerInterval); finalizarJogo(); } }, 1000); carregarQuestao();
+       }
+
+       function carregarQuestao() {
+           if (!isDuelo && estado.questaoAtual >= filaPerguntas.length) { const s = document.getElementById('select-serie').value; for(let i=0; i<10; i++) filaPerguntas.push(gerarQuestao(estado.modo === 'rankeado' ? 'mix' : s)); }
+           estado.respondidas = false; perguntaAtual = filaPerguntas[estado.questaoAtual];
+           document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+           document.getElementById('hud-questao').innerText = isDuelo ? `${estado.questaoAtual + 1}/15` : `∞`; document.getElementById('progress-fill').style.width = isDuelo ? `${(estado.questaoAtual / 15) * 100}%` : `${((estado.questaoAtual % 10) / 10) * 100}%`;
+           document.getElementById('question-text').innerText = perguntaAtual.q; document.getElementById('feedback-box').classList.remove('active'); document.getElementById('btn-next').style.display = 'none';
+           const c = document.getElementById('options-container'); c.innerHTML = ''; const l = ['A', 'B', 'C', 'D'];
+           perguntaAtual.o.forEach((op, i) => { const b = document.createElement('button'); b.className = 'option-btn'; b.innerHTML = `<span class="option-letter">${l[i]}</span> ${op}`; b.onclick = () => responder(i, b); c.appendChild(b); });
+       }
+
+       function responder(index, btn) {
+           if (estado.respondidas) return; estado.respondidas = true; const bts = document.querySelectorAll('.option-btn'); bts.forEach(b => b.style.pointerEvents = 'none');
+           const m = perguntaAtual.mat; if(!jogador.stats[m]) jogador.stats[m] = { acertos: 0, total: 0 }; jogador.stats[m].total++;
+           let g = 15, p = -5; const ma = ["INCRÍVEL! 🔥", "BRILHANTE! +15 PTS", "É ISSO! 🎯", "PERFEITO! 🏆", "GENIAL! 🧠"], me = ["Calma! 💙", "Não desista! 💪", "Evoluindo! 📈", "Quase lá! 🤏", "Siga em frente! 🚀"];
+           if (index === perguntaAtual.c) { 
+               tocarSom('acerto'); estado.pontos += g; estado.acertos++; estado.sequencia++; 
+               if(estado.sequencia > estado.melhorSequencia) estado.melhorSequencia = estado.sequencia; 
+               jogador.stats[m].acertos++; btn.classList.add('correct'); soltarConfete(); 
+               document.getElementById('feedback-title').innerText = `🎉 ${ma[Math.floor(Math.random() * ma.length)]}`; 
+           } else { 
+               tocarSom('erro'); estado.pontos = Math.max(0, estado.pontos + p); estado.erros++; estado.sequencia = 0; 
+               btn.classList.add('wrong'); bts[perguntaAtual.c].classList.add('correct'); 
+               document.getElementById('feedback-title').innerText = `❌ ${me[Math.floor(Math.random() * me.length)]}`; 
+           }
+           const fx = document.createElement('div'); fx.className = 'floating-points'; fx.style.color = index === perguntaAtual.c ? 'var(--success)' : 'var(--danger)'; fx.innerText = index === perguntaAtual.c ? '+15 PTS' : '-5 PTS'; fx.style.left = btn.offsetLeft + (btn.offsetWidth / 2) - 30 + 'px'; fx.style.top = btn.offsetTop + 'px'; btn.parentElement.appendChild(fx); setTimeout(() => fx.remove(), 1000);
+           document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+           if (estado.modo === 'tempo') { setTimeout(() => { estado.questaoAtual++; carregarQuestao(); }, 400); } 
+           else { const fb = document.getElementById('feedback-box'); fb.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error'; document.getElementById('feedback-explanation').innerText = perguntaAtual.exp; document.getElementById('btn-next').style.display = 'block'; document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 14) ? "FINALIZAR 🏁" : "PRÓXIMA ➡"; }
+       }
+
+       function proximaQuestao() { if (isDuelo && estado.questaoAtual >= 14) return finalizarJogo(); estado.questaoAtual++; carregarQuestao(); }
+       function pararJogo() { if(confirm("Deseja parar e salvar?")) finalizarJogo(); }
+  
+        async function salvarPartida(pontosF) {
+            if (pontosF === 0 && estado.acertos === 0) return;
+            await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosF }]); const hoje = new Date().toISOString().split('T')[0];
+            jogador.missoes.jogos++; jogador.missoes.acertos += estado.acertos; jogador.missoes.pontos_dia += pontosF; if(estado.modo === 'tempo') jogador.missoes.desafios++;
+            const { data } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+            let ns = data ? data.streak || 0 : 0, ta = (data ? data.acertos || 0 : 0) + estado.acertos, te = (data ? data.erros || 0 : 0) + estado.erros, ms = Math.max(data ? data.melhor_sequencia || 0 : 0, estado.melhorSequencia), nx = (data ? data.xp || 0 : 0) + pontosF, np = (data ? data.pontuacao || 0 : 0) + pontosF, nm = (data ? data.moedas || 0 : 0) + (pontosF * 2);
+            if (data) {
+                if (data.last_played !== hoje) { const o = new Date(); o.setDate(o.getDate() - 1); ns = (data.last_played === o.toISOString().split('T')[0]) ? ns + 1 : 1; }
+                await banco.from('ranking').update({ pontuacao: np, xp: nx, streak: ns, moedas: nm, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, acertos: ta, erros: te, melhor_sequencia: ms }).eq('user_id', jogador.id);
+            } else { await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosF, xp: pontosF, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, acertos: ta, erros: te, melhor_sequencia: ms }]); }
+            jogador.xp = nx; jogador.pontos = np; jogador.moedas = nm; jogador.nivel = getNivel(nx).nivel; jogador.streak = ns; jogador.totalAcertos = ta; jogador.totalErros = te; jogador.melhorSequencia = ms;
+        }
+
+        async function finalizarJogo() {
+            clearInterval(timerInterval); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-resultado').classList.add('active');
+            let mult = (usarMultiplicador && jogador.multiplicador_expira) ? (jogador.multiplicador_expira.includes('3x') ? 3 : 2) : 1; let pf = estado.pontos * mult;
+            const tr = estado.acertos + estado.erros, tx = tr > 0 ? (estado.acertos / tr) * 100 : 0; let t = "", e = "🎉";
+            if (tx === 100 && tr >= 5) { t = "MESTRE DA MATEMÁTICA"; e = "👑"; } else if (tx >= 70) { t = "EXCELENTE DESEMPENHO"; e = "🏆"; } else if (tx >= 50) { t = "BOM TRABALHO"; e = "👍"; } else { t = "CONTINUE EVOLUINDO"; e = "💪"; }
+            document.getElementById('result-title').innerText = t; document.getElementById('result-emoji').innerText = e; document.getElementById('result-score').innerText = pf; document.getElementById('result-acertos').innerText = estado.acertos; document.getElementById('result-erros').innerText = estado.erros;
+            document.getElementById('duel-result-box').classList.add('hidden');
+            const tag = (jogador.totalAcertos || 0) + estado.acertos, txg = (tag / ((jogador.totalAcertos || 0) + (jogador.totalErros || 0) + tr || 1)) * 100, ms = Math.max(jogador.melhorSequencia || 0, estado.melhorSequencia), nn = getNivel((jogador.xp || 0) + pf).nivel;
+            let nc = []; function des(id) { if(!jogador.conquistas.includes(id) && !nc.includes(id)) nc.push(id); }
+            if(tag >= 1) des('c1'); if(tag >= 10) des('c2'); if(tag >= 50) des('c3'); if(tag >= 100) des('c4'); if(tag >= 500) des('c5'); if(tag >= 1000) des('c6'); if(ms >= 10) des('c7'); if(ms >= 25) des('c8'); if(pf >= 80) des('c9'); if(estado.erros === 0 && estado.acertos >= 10) des('c10'); if(tag >= 50 && txg >= 95) des('c11'); if(jogador.streak >= 3) des('c12'); if(jogador.streak >= 7) des('c13'); if(jogador.streak >= 14) des('c14'); if(jogador.streak >= 30) des('c15'); if(jogador.streak >= 60) des('c16'); if(jogador.streak >= 100) des('c17'); if(jogador.streak >= 365) des('c18'); if(estado.modo === 'tempo') des('c19'); if(estado.modo === 'tempo' && tempoRestante <= 30) des('c20'); if(nn >= 5) des('c21'); if(nn >= 10) des('c22'); if(nn >= 20) des('c23'); if(nn >= 50) des('c24'); if(Object.keys(jogador.stats).length >= 5) des('c25');
+            if(nc.length > 0) { jogador.conquistas = jogador.conquistas.concat(nc); let pn = CONQUISTAS_DB.find(c => c.id === nc[0]); if(pn) setTimeout(() => mostrarModalConquista(pn.titulo, pn.icone, "Épica"), 1000); setTimeout(() => mostrarToast(`🏅 ${nc.length} Nova(s) Conquista(s)!`, "gold"), 3000); }
+            await salvarPartida(pf); isDuelo = false; dueloAtual = null;
+        }
+
+        function renderizarDesafios() { const c = document.getElementById('lista-desafios'); c.innerHTML = ''; DESAFIOS_DB.forEach(d => { c.innerHTML += `<div class="challenge-card"><div class="challenge-info"><h4>${d.nome}</h4><p>${d.desc}</p></div><button class="btn-play-challenge" onclick="iniciarDesafio(${d.id})">JOGAR</button></div>`; }); }
+
+        window.onload = async () => {
+            const { data: { session } } = await banco.auth.getSession();
+            if (session) { jogador.id = session.user.id; jogador.email = session.user.email; await carregarPerfil(); mostrarApp(); }
+        };
+
+        banco.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session && !jogador.id) { jogador.id = session.user.id; jogador.email = session.user.email; carregarPerfil().then(() => mostrarApp()); }
+            else if (event === 'SIGNED_OUT') { jogador.id = null; document.getElementById('bottom-nav').style.display = 'none'; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-auth').classList.add('active'); }
+        });
+    </script>
+</body>
+</html>
