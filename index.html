@@ -2,446 +2,674 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matemática Quiz - Modo Infinito</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MATH ARENA - Quiz de Matemática</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --azul: #4a90e2;
-            --azul-escuro: #357abd;
-            --verde: #2ecc71;
-            --verde-escuro: #27ae60;
-            --vermelho: #e74c3c;
-            --vermelho-escuro: #c0392b;
-            --cinza: #95a5a6;
-            --cinza-escuro: #7f8c8d;
-            --laranja: #f39c12;
+            --bg-color: #0b0f19;
+            --card-bg: rgba(20, 25, 40, 0.85);
+            --primary: #00f2fe;
+            --primary-dark: #00a8b5;
+            --secondary: #4facfe;
+            --accent: #a855f7;
+            --success: #00e676;
+            --success-dark: #00b050;
+            --danger: #ff1744;
+            --danger-dark: #b2102f;
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
         }
 
-        * { box-sizing: border-box; }
-
-        body { 
-            font-family: 'Nunito', sans-serif; 
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            margin: 0; 
-            padding: 20px; 
-            text-align: center; 
-            color: #333;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(79, 172, 254, 0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow: hidden;
         }
 
-        .container { 
-            max-width: 500px; 
-            margin: auto; 
-            background: white; 
-            padding: 25px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        .screen { display: none; width: 100%; max-width: 480px; animation: slideUp 0.4s ease-out; }
+        .screen.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Glassmorphism Container */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        h1 { color: #2c3e50; font-size: 28px; margin-bottom: 20px; font-weight: 900; }
-        h2 { color: #2c3e50; font-weight: 900; }
-        
-        .header-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
-        
-        /* Botões estilo 3D */
-        button { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer; border: none; border-radius: 12px; transition: all 0.1s; }
-        
-        .btn-login { background-color: #db4437; color: white; padding: 10px 15px; box-shadow: 0 4px 0 #b73227; opacity: 0.8; }
-        .btn-ranking { background-color: var(--laranja); color: white; padding: 10px 15px; box-shadow: 0 4px 0 #c87f0a; }
-        .btn-ranking:active { transform: translateY(4px); box-shadow: 0 0 0 #c87f0a; }
-        
-        .btn-principal { 
-            color: white; 
-            padding: 15px 20px; 
-            width: 100%; 
-            margin-top: 10px; 
-            font-size: 18px; 
-            display: block; /* CORRIGIDO AQUI */
-        }
-        .btn-verde { background-color: var(--verde); box-shadow: 0 5px 0 var(--verde-escuro); }
-        .btn-verde:active { transform: translateY(5px); box-shadow: 0 0 0 var(--verde-escuro); }
-        
-        .btn-azul { background-color: var(--azul); box-shadow: 0 5px 0 var(--azul-escuro); }
-        .btn-azul:active { transform: translateY(5px); box-shadow: 0 0 0 var(--azul-escuro); }
+        /* Typography */
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 36px; text-transform: uppercase; letter-spacing: 2px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; filter: drop-shadow(0 0 10px rgba(0,242,254,0.4)); }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; font-weight: 600; }
 
-        .btn-vermelho { background-color: var(--vermelho); box-shadow: 0 5px 0 var(--vermelho-escuro); }
-        .btn-vermelho:active { transform: translateY(5px); box-shadow: 0 0 0 var(--vermelho-escuro); }
-
-        .btn-cinza { background-color: var(--cinza); box-shadow: 0 5px 0 var(--cinza-escuro); }
-        .btn-cinza:active { transform: translateY(5px); box-shadow: 0 0 0 var(--cinza-escuro); }
-        
-        input[type="text"], select { 
-            width: 100%; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            border: 2px solid #dfe6e9; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-family: 'Nunito', sans-serif;
-            background-color: #f8f9fa; 
-            transition: 0.3s;
+        /* 3D Buttons */
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s;
+            margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
-        input[type="text"]:focus, select:focus { border-color: var(--azul); outline: none; background-color: #fff;}
-        
-        .quiz-card { background: #f8f9fa; padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 2px solid #e9ecef; }
-        .pergunta { font-size: 22px; font-weight: 900; margin-bottom: 20px; color: #2c3e50; }
-        
-        .opcao { 
-            display: block; 
-            width: 100%; 
-            background: white; 
-            border: 2px solid #ced6e0; 
-            padding: 15px; 
-            margin-bottom: 12px; 
-            border-radius: 12px; 
-            font-size: 18px; 
-            font-weight: 700;
-            color: #57606f;
-            transition: all 0.2s; 
-        }
-        .opcao:hover { border-color: var(--azul); color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05);}
-        
-        .correta { background: var(--verde) !important; color: white !important; border-color: var(--verde-escuro) !important; animation: pop 0.3s ease; }
-        .errada { background: var(--vermelho) !important; color: white !important; border-color: var(--vermelho-escuro) !important; animation: shake 0.3s ease; }
-        
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
 
-        .resultado { display: none; text-align: center; }
-        .ranking-lista { text-align: left; margin-top: 20px; background: #f8f9fa; border-radius: 16px; padding: 10px; }
-        .ranking-item { padding: 12px 15px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #2f3542; }
-        .ranking-item:last-child { border-bottom: none; }
-        .ranking-item:nth-child(1) { background: #fff3cd; border-radius: 10px 10px 0 0; color: #856404; }
-        .ranking-item:nth-child(2) { background: #e2e3e5; color: #383d41;}
-        .ranking-item:nth-child(3) { background: #f8d7da; color: #721c24;}
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 6px 0 var(--primary-dark), 0 10px 20px rgba(0, 242, 254, 0.3); color: #000; }
+        .btn-primary:active { transform: translateY(6px); box-shadow: 0 0 0 var(--primary-dark), 0 2px 10px rgba(0, 242, 254, 0.3); }
+
+        .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 6px 0 rgba(0,0,0,0.4); }
+        .btn-secondary:active { transform: translateY(6px); box-shadow: 0 0 0 rgba(0,0,0,0.4); }
+
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #ff5252); box-shadow: 0 6px 0 var(--danger-dark), 0 10px 20px rgba(255, 23, 68, 0.3); }
+        .btn-danger:active { transform: translateY(6px); box-shadow: 0 0 0 var(--danger-dark); }
+
+        .btn-icon { position: absolute; top: 15px; right: 15px; background: none; border: none; box-shadow: none; width: auto; padding: 10px; font-size: 24px; color: var(--text-muted); margin: 0; }
+        .btn-icon:active { transform: scale(0.9); }
+
+        /* Inputs */
+        input, select {
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1);
+            color: #fff; font-size: 16px; margin-bottom: 15px; font-family: 'Poppins';
+            outline: none; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,242,254,0.2); }
+        select option { background: var(--bg-color); color: #fff; }
+
+        /* Quiz UI */
+        .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 800; font-size: 14px; color: var(--primary); text-shadow: 0 0 10px rgba(0,242,254,0.5); }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.3s; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
         
-        .pontuacao-viva { font-size: 20px; font-weight: 900; color: var(--azul); margin-bottom: 15px; background: #e3f2fd; padding: 10px; border-radius: 10px; }
-        .feedback { font-size: 18px; font-weight: 900; min-height: 30px; margin-top: 15px; transition: 0.3s; }
-        .btn-trocar { background: none; border: none; color: #a4b0be; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 14px; box-shadow: none;}
+        .question-box { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 25px 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .question-text { font-size: 20px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .option-btn {
+            background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 16px; text-align: left; font-size: 16px;
+            color: #fff; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 15px; margin: 0;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+        }
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
+        .option-letter { background: rgba(255,255,255,0.1); width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 14px; }
+        
+        /* Correct / Wrong Animations */
+        .option-btn.correct { background: rgba(0, 230, 118, 0.2) !important; border-color: var(--success) !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.4) !important; animation: pulseCorrect 0.5s ease; }
+        .option-btn.wrong { background: rgba(255, 23, 68, 0.2) !important; border-color: var(--danger) !important; animation: shakeWrong 0.4s ease; }
+        
+        @keyframes pulseCorrect { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes shakeWrong { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-8px); } }
+
+        /* Feedback Area */
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 12px; font-size: 14px; display: none; text-align: left; line-height: 1.5; }
+        .feedback.active { display: block; animation: slideUp 0.3s ease; }
+        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
+        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
+        
+        /* Ranking Lists */
+        .rank-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .rank-tab { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; }
+        .rank-tab.active { background: rgba(0, 242, 254, 0.1); color: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.2); }
+        
+        .rank-list { max-height: 350px; overflow-y: auto; text-align: left; padding-right: 5px; }
+        .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px; border-left: 4px solid transparent; }
+        .rank-item:nth-child(1) { background: linear-gradient(90deg, rgba(255,215,0,0.15), transparent); border-color: #ffd700; }
+        .rank-item:nth-child(2) { background: linear-gradient(90deg, rgba(192,192,192,0.15), transparent); border-color: #c0c0c0; }
+        .rank-item:nth-child(3) { background: linear-gradient(90deg, rgba(205,127,50,0.15), transparent); border-color: #cd7f32; }
+        .rank-pos { font-weight: 900; font-size: 18px; width: 35px; color: var(--text-muted); }
+        .rank-info { flex: 1; }
+        .rank-name { font-weight: 800; font-size: 15px; }
+        .rank-stats { font-size: 11px; color: var(--text-muted); }
+        .rank-score { font-weight: 900; color: var(--primary); font-size: 16px; text-shadow: 0 0 8px rgba(0,242,254,0.5); }
+
+        /* Profile Stats */
+        .profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-value { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 5px; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index: 1000; padding: 20px; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .xp-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+        .xp-fill { height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); width: 0%; transition: 0.5s; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🧮 Matemática Quiz</h1>
-    
-    <div class="header-buttons">
-        <button class="btn-login" onclick="alert('O login com Google será ativado em breve!')">Entrar com Google</button>
-        <button class="btn-ranking" onclick="abrirRanking()">🏆 Ranking</button>
-    </div>
-
-    <div id="tela-inicio">
-        <p style="color: #57606f; margin-bottom: 20px;">Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
-        <input type="text" id="nome-aluno" placeholder="Digite seu nome" oninput="salvarPerfilRapido()">
-        
-        <select id="nivel-aluno" onchange="salvarPerfilRapido()">
-            <option value="5">5º Ano</option>
-            <option value="6">6º Ano</option>
-            <option value="7">7º Ano</option>
-            <option value="8">8º Ano</option>
-            <option value="9">9º Ano</option>
-        </select>
-
-        <button class="btn-principal btn-verde" onclick="iniciarQuiz()">Começar Modo Infinito 🚀</button>
-    </div>
-
-    <div id="tela-quiz" style="display: none;">
-        <div class="pontuacao-viva" id="placar-vivo">Pontos da Rodada: 0</div>
-        <div class="quiz-card">
-            <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
-            <div id="opcoes-container"></div>
-            <div id="feedback-text" class="feedback"></div>
-        </div>
-        <div class="controles">
-            <button class="btn-principal btn-azul" id="btn-proximo" style="display: none;" onclick="proximaPergunta()">Próxima ➡️</button>
-            <button class="btn-principal btn-vermelho" onclick="mostrarResultado()">Parar e Salvar 🏁</button>
-        </div>
-        <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
-    </div>
-
-    <div id="tela-resultado" class="resultado">
-        <h2>Fim da Rodada! 🎉</h2>
-        <p style="font-size: 18px;">Você fez <strong id="pontuacao-final" style="color: var(--azul); font-size: 24px;">0</strong> pontos nesta rodada.</p>
-        <p id="status-salvamento" style="font-size: 16px; font-weight: bold; color: #7f8c8d; margin-bottom: 20px;"></p>
-        <button class="btn-principal btn-verde" onclick="abrirRanking()">Ver Ranking 🏆</button>
-        <button class="btn-principal btn-cinza" style="margin-top: 15px;" onclick="jogarNovamente()">Jogar de Novo 🔄</button>
-        <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
-    </div>
-
-    <div id="tela-ranking" style="display: none;">
-        <h2>🏆 Top 10 Ranking</h2>
-        <div class="ranking-lista" id="lista-ranking">
-            <p style="padding: 15px; text-align: center;">Carregando ranking...</p>
-        </div>
-        <button class="btn-principal btn-azul" style="margin-top: 20px;" onclick="voltarAoJogo()">Voltar ao Quiz</button>
-    </div>
-</div>
-
-<script>
-    const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
-    const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
-    const banco = supabase.createClient(supabaseUrl, supabaseKey);
-
-    let perguntas = [];
-    let indiceAtual = 0;
-    let pontuacao = 0;
-    let combo = 0;
-    let nomeDoAluno = "";
-    let nivelAluno = "5";
-    let jogoEmAndamento = false;
-
-    const mensagensAcerto = [
-        "Parabéns, você acertou! 🎉",
-        "Isso aí! Mandou muito bem! 🌟",
-        "Acertou de novo! Você é fera! 🦁",
-        "Uau, melhor que professor! 👨‍🏫",
-        "Cálculo perfeito! Imparável! 🚀",
-        "Você está voando! 💯",
-        "Gênio da matemática! 🧠"
-    ];
-
-    const mensagensErro = [
-        "Ops, não foi dessa vez. Tente a próxima!",
-        "Quase! A resposta certa está em verde.",
-        "Não desanime, continue tentando! 💪",
-        "Errou, mas todo mundo erra. Bora pra cima!",
-        "Cuidado com as continhas! Você consegue!"
-    ];
-
-    function salvarPerfilRapido() {
-        const nome = document.getElementById('nome-aluno').value.trim();
-        const nivel = document.getElementById('nivel-aluno').value;
-        if(nome !== "") {
-            localStorage.setItem('quizPerfil', JSON.stringify({ nome: nome, nivel: nivel }));
-        }
-    }
-
-    window.onload = function() {
-        const perfilSalvo = localStorage.getItem('quizPerfil');
-        if (perfilSalvo) {
-            const perfil = JSON.parse(perfilSalvo);
-            document.getElementById('nome-aluno').value = perfil.nome;
-            document.getElementById('nivel-aluno').value = perfil.nivel;
-            nomeDoAluno = perfil.nome;
-            nivelAluno = perfil.nivel;
-        }
-    };
-
-    function gerarQuestaoAleatoria(nivel) {
-        let pergunta, respostaCorreta;
-        
-        if (nivel === '5') {
-            const isSoma = Math.random() > 0.5;
-            const a = Math.floor(Math.random() * 50) + 10;
-            const b = Math.floor(Math.random() * 40) + 10;
-            if (isSoma) { pergunta = `Quanto é ${a} + ${b}?`; respostaCorreta = a + b; } 
-            else { const maior = Math.max(a, b); const menor = Math.min(a, b); pergunta = `Quanto é ${maior} - ${menor}?`; respostaCorreta = maior - menor; }
-        } else if (nivel === '6') {
-            const isMult = Math.random() > 0.5;
-            const a = Math.floor(Math.random() * 10) + 2;
-            const b = Math.floor(Math.random() * 10) + 2;
-            if (isMult) { pergunta = `Quanto é ${a} x ${b}?`; respostaCorreta = a * b; } 
-            else { pergunta = `Quanto é ${a * b} ÷ ${a}?`; respostaCorreta = b; }
-        } else if (nivel === '7') {
-            const x = Math.floor(Math.random() * 10) + 1;
-            const a = Math.floor(Math.random() * 10) + 1;
-            const b = x + a;
-            pergunta = `Se x + ${a} = ${b}, qual o valor de x?`;
-            respostaCorreta = x;
-        } else if (nivel === '8') {
-            const a = Math.floor(Math.random() * 10) + 2;
-            pergunta = `Quanto é ${a}²?`;
-            respostaCorreta = a * a;
-        } else if (nivel === '9') {
-            const a = Math.floor(Math.random() * 5) + 1;
-            const b = Math.floor(Math.random() * 10);
-            const x = Math.floor(Math.random() * 5) + 1;
-            pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`;
-            respostaCorreta = a * x + b;
-        }
-
-        const opcoesSet = new Set([respostaCorreta]);
-        while (opcoesSet.size < 4) {
-            const erro = respostaCorreta + (Math.floor(Math.random() * 10) - 5);
-            if (erro !== respostaCorreta && erro >= 0) { opcoesSet.add(erro); }
-        }
-        
-        let opcoes = Array.from(opcoesSet).sort(() => Math.random() - 0.5).map(String);
-        let indexCorreta = opcoes.indexOf(String(respostaCorreta));
-
-        return { pergunta: pergunta, opcoes: opcoes, correta: indexCorreta };
-    }
-
-    function iniciarQuiz() {
-        nomeDoAluno = document.getElementById('nome-aluno').value.trim();
-        nivelAluno = document.getElementById('nivel-aluno').value;
-        
-        if (nomeDoAluno === "") {
-            alert("Por favor, digite seu nome primeiro!");
-            return;
-        }
-        
-        indiceAtual = 0;
-        pontuacao = 0;
-        combo = 0;
-        perguntas = []; 
-        jogoEmAndamento = true;
-        
-        salvarPerfilRapido(); 
-        
-        document.getElementById('tela-inicio').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'none';
-        document.getElementById('tela-ranking').style.display = 'none';
-        document.getElementById('tela-quiz').style.display = 'block';
-        
-        carregarPergunta();
-    }
-
-    function carregarPergunta() {
-        if (indiceAtual >= perguntas.length) {
-            for(let i=0; i<5; i++) {
-                perguntas.push(gerarQuestaoAleatoria(nivelAluno));
-            }
-        }
-
-        document.getElementById('placar-vivo').innerText = `Pontos da Rodada: ${pontuacao}`;
-        document.getElementById('feedback-text').innerText = "";
-        const container = document.getElementById('opcoes-container');
-        container.innerHTML = ''; 
-        document.getElementById('btn-proximo').style.display = 'none'; // Esconde o botão próxima
-
-        const perguntaAtual = perguntas[indiceAtual];
-        document.getElementById('texto-pergunta').innerText = perguntaAtual.pergunta;
-
-        perguntaAtual.opcoes.forEach((opcao, index) => {
-            const botao = document.createElement('button');
-            botao.innerText = opcao;
-            botao.classList.add('opcao');
-            botao.onclick = () => verificarResposta(index, botao);
-            container.appendChild(botao);
-        });
-    }
-
-    function verificarResposta(indexEscolhido, botaoClicado) {
-        const perguntaAtual = perguntas[indiceAtual];
-        const todosBotoes = document.querySelectorAll('.opcao');
-        const feedback = document.getElementById('feedback-text');
-        todosBotoes.forEach(btn => btn.disabled = true);
-
-        if (indexEscolhido === perguntaAtual.correta) {
-            botaoClicado.classList.add('correta');
-            pontuacao += 10;
-            combo++;
+    <!-- TELA INICIAL -->
+    <div id="screen-home" class="screen active">
+        <div class="glass-panel">
+            <button class="btn-icon" onclick="toggleSettings()">⚙️</button>
+            <h1>MATH ARENA</h1>
+            <p class="subtitle">Desafie sua mente. Domine a matemática!</p>
             
-            if (combo >= 3) {
-                const msgIndex = Math.floor(Math.random() * (mensagensAcerto.length - 3)) + 3;
-                feedback.innerText = mensagensAcerto[msgIndex];
-            } else {
-                feedback.innerText = mensagensAcerto[Math.floor(Math.random() * 3)];
-            }
-            feedback.style.color = "var(--verde-escuro)";
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 12px; color: var(--text-muted); margin-left: 5px;">JOGADOR</label>
+                <input type="text" id="input-nome" placeholder="Seu Nickname" oninput="salvarNome()">
+                <label style="font-size: 12px; color: var(--text-muted); margin-left: 5px;">DIFICULDADE</label>
+                <select id="select-dificuldade">
+                    <option value="facil">🟢 Fácil</option>
+                    <option value="medio" selected>🟡 Médio</option>
+                    <option value="dificil">🔴 Difícil</option>
+                    <option value="extremo">💀 Extremo</option>
+                </select>
+            </div>
 
-        } else {
-            botaoClicado.classList.add('errada');
-            todosBotoes[perguntaAtual.correta].classList.add('correta');
-            pontuacao = Math.max(0, pontuacao - 4);
-            combo = 0;
-            feedback.innerText = mensagensErro[Math.floor(Math.random() * mensagensErro.length)];
-            feedback.style.color = "var(--vermelho-escuro)";
-        }
+            <button class="btn-primary" onclick="iniciarJogo()">▶ JOGAR AGORA</button>
+            <button class="btn-secondary" onclick="abrirTela('screen-ranking')">🏆 RANKING</button>
+            <button class="btn-secondary" onclick="abrirPerfil()">👤 MEU PERFIL</button>
+        </div>
+    </div>
 
-        document.getElementById('placar-vivo').innerText = `Pontos da Rodada: ${pontuacao}`;
-        document.getElementById('btn-proximo').style.display = 'block'; // Mostra o botão próxima
-    }
+    <!-- TELA DE JOGO -->
+    <div id="screen-game" class="screen">
+        <div class="glass-panel">
+            <div class="hud">
+                <span id="hud-pontos">🏆 0 PTS</span>
+                <span id="hud-sequencia" style="color: var(--accent);">🔥 0</span>
+                <span id="hud-questao">1/10</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            
+            <div class="question-box">
+                <div class="question-text" id="question-text">Carregando...</div>
+                <div class="options-grid" id="options-container"></div>
+            </div>
+            
+            <div class="feedback" id="feedback-box">
+                <strong id="feedback-title"></strong><br>
+                <span id="feedback-explanation"></span>
+            </div>
+            
+            <button class="btn-primary" id="btn-next" style="display: none; margin-top: 20px;" onclick="proximaQuestao()">PRÓXIMA ➡</button>
+            <button class="btn-danger" style="margin-top: 10px; padding: 10px; font-size: 12px;" onclick="pararJogo()">Parar e Salvar</button>
+        </div>
+    </div>
 
-    function proximaPergunta() {
-        indiceAtual++;
-        carregarPergunta();
-    }
+    <!-- TELA DE RESULTADO -->
+    <div id="screen-result" class="screen">
+        <div class="glass-panel">
+            <h1 id="result-title" style="font-size: 24px;">FIM DE JOGO</h1>
+            <p class="subtitle" id="result-subtitle">Bom trabalho!</p>
+            
+            <div style="font-size: 60px; margin: 20px 0;" id="result-emoji">🎉</div>
+            <div style="font-size: 48px; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(0,242,254,0.5);" id="result-score">0</div>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">PONTOS TOTAIS</p>
 
-    async function mostrarResultado() {
-        if(pontuacao === 0 && !confirm("Você ainda não fez nenhum ponto. Deseja realmente parar?")) return;
+            <div class="profile-stats">
+                <div class="stat-card"><div class="stat-value" id="result-acertos" style="color: var(--success);">0</div><div class="stat-label">Acertos</div></div>
+                <div class="stat-card"><div class="stat-value" id="result-erros" style="color: var(--danger);">0</div><div class="stat-label">Erros</div></div>
+            </div>
 
-        jogoEmAndamento = false;
-        document.getElementById('tela-quiz').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'block';
-        document.getElementById('pontuacao-final').innerText = pontuacao;
+            <button class="btn-primary" onclick="iniciarJogo()">JOGAR NOVAMENTE</button>
+            <button class="btn-secondary" onclick="abrirTela('screen-home')">VOLTAR AO INÍCIO</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RANKING -->
+    <div id="screen-ranking" class="screen">
+        <div class="glass-panel">
+            <h1 style="font-size: 28px;">HALL DA FAMA</h1>
+            <div class="rank-tabs">
+                <div class="rank-tab active" onclick="carregarRanking('geral', this)">GERAL</div>
+                <div class="rank-tab" onclick="carregarRanking('semanal', this)">SEMANAL</div>
+                <div class="rank-tab" onclick="carregarRanking('mensal', this)">MENSAL</div>
+            </div>
+            <div class="rank-list" id="rank-list-container">
+                <!-- Preenchido via JS -->
+            </div>
+            <button class="btn-secondary" style="margin-top: 20px;" onclick="abrirTela('screen-home')">VOLTAR</button>
+        </div>
+    </div>
+
+    <!-- TELA DE PERFIL -->
+    <div id="screen-profile" class="screen">
+        <div class="glass-panel">
+            <h1 style="font-size: 28px;">MEU PERFIL</h1>
+            <div style="margin-bottom: 20px;">
+                <div style="font-size: 40px;">🧑‍🚀</div>
+                <h2 id="profile-name" style="font-size: 22px;">Jogador</h2>
+                <p style="font-size: 12px; color: var(--accent); font-weight: 800;">NÍVEL <span id="profile-level">1</span></p>
+                <div class="xp-bar"><div class="xp-fill" id="profile-xp-bar"></div></div>
+                <p style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="profile-xp-text">0 / 100 XP</p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-card"><div class="stat-value" id="profile-xp">0</div><div class="stat-label">XP Total</div></div>
+                <div class="stat-card"><div class="stat-value" id="profile-pts">0</div><div class="stat-label">Pontos</div></div>
+                <div class="stat-card"><div class="stat-value" id="profile-acc">0%</div><div class="stat-label">Aproveitamento</div></div>
+                <div class="stat-card"><div class="stat-value" id="profile-streak">0</div><div class="stat-label">Melhor Sequência</div></div>
+            </div>
+
+            <button class="btn-secondary" onclick="abrirTela('screen-home')">VOLTAR</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div class="modal-overlay" id="modal-settings">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px;">⚙️ CONFIGURAÇÕES</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
+                <span>Efeitos Sonoros</span>
+                <input type="checkbox" id="toggle-sound" checked onchange="toggleSound()" style="width: 20px; height: 20px; margin: 0;">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
+                <span>Modo Claro</span>
+                <input type="checkbox" id="toggle-theme" onchange="toggleTheme()" style="width: 20px; height: 20px; margin: 0;">
+            </div>
+            <button class="btn-primary" onclick="toggleSettings()">FECHAR</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURAÇÕES E VARIÁVEIS GERAIS
+        // ==========================================
+        const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
+        const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
+        const banco = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let nomeJogador = localStorage.getItem('mathArenaNome') || "";
+        let somAtivado = localStorage.getItem('mathArenaSom') !== 'false';
+        let estado = { pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+        let filaPerguntas = [];
+        let perguntaAtual = null;
         
-        const status = document.getElementById('status-salvamento');
-        status.innerText = "Verificando pontuação...";
-        status.style.color = "var(--laranja)";
+        document.getElementById('input-nome').value = nomeJogador;
 
-        const nivelTexto = nivelAluno + "º Ano";
-
-        try {
-            const { data: existentes, error: erroBusca } = await banco
-                .from('ranking')
-                .select('id, pontuacao')
-                .eq('nome', nomeDoAluno)
-                .eq('nivel', nivelTexto)
-                .order('pontuacao', { ascending: false })
-                .limit(1);
-
-            if (erroBusca) throw new Error("Erro na busca: " + erroBusca.message);
-
-            const existente = (existentes && existentes.length > 0) ? existentes[0] : null;
-
-            if (existente) {
-                const novaPontuacaoTotal = Math.max(0, existente.pontuacao + pontuacao);
-                const { error: erroUpdate } = await banco
-                    .from('ranking')
-                    .update({ pontuacao: novaPontuacaoTotal })
-                    .eq('id', existente.id);
-                
-                if (erroUpdate) throw new Error("Erro no update: " + erroUpdate.message);
-
-                status.innerText = `Você somou ${pontuacao > 0 ? '+' : ''}${pontuacao} pts! Seu total agora é ${novaPontuacaoTotal} pts! 🚀`;
-                status.style.color = "var(--verde-escuro)";
-            } else {
-                const pontosIniciais = Math.max(0, pontuacao);
-                const { error: erroInsert } = await banco
-                    .from('ranking')
-                    .insert([{ nome: nomeDoAluno, pontuacao: pontosIniciais, nivel: nivelTexto }]);
-                
-                if (erroInsert) throw new Error("Erro no insert: " + erroInsert.message);
-
-                status.innerText = "Pontuação inicial salva no ranking!";
-                status.style.color = "var(--verde-escuro)";
+        // Inicializa áudio (Web Audio API para não precisar de arquivos externos)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function tocarSom(tipo) {
+            if (!somAtivado) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (tipo === 'acerto') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (tipo === 'erro') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (tipo === 'click') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
             }
-        } catch (erro) {
-            console.error(erro);
-            status.innerText = "Erro ao salvar no ranking. Verifique a conexão.";
-            status.style.color = "var(--vermelho-escuro)";
-        }
-    }
-
-    async function abrirRanking() {
-        document.getElementById('tela-inicio').style.display = 'none';
-        document.getElementById('tela-quiz').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'none';
-        document.getElementById('tela-ranking').style.display = 'block';
-
-        const lista = document.getElementById('lista-ranking');
-        lista.innerHTML = '<p style="padding: 15px; text-align: center;">Carregando ranking...</p>';
-
-        const { data, error } = await banco
-            .from('ranking')
-            .select('nome, pontuacao, nivel')
-            .order('pontuacao', { ascending: false })
-            .order('nome', { ascending: true })
-            .limit(10);
-
-        if (error) {
-            lista.innerHTML = '<p style="padding: 15px; text-align: center;">Erro ao carregar o ranking.</p>';
-            return;
         }
 
-        if (data.length === 0) {
-            lista.innerHTML = '<p style="padding: 15px; text-align: center;">Ninguém jogou ainda. Seja o primeiro!</p>';
-            return;
+        // ==========================================
+        // BANCO DE QUESTÕES (DINÂMICO)
+        // ==========================================
+        const BANCO_QUESTOES = [
+            { q: "Quanto é 15 + 27?", o: ["32", "42", "52", "38"], c: 1, exp: "15 + 27 = 42.", dif: "facil" },
+            { q: "Qual o resultado de 8 x 7?", o: ["48", "56", "64", "54"], c: 1, exp: "8 x 7 = 56.", dif: "facil" },
+            { q: "Se x + 5 = 12, qual o valor de x?", o: ["5", "6", "7", "8"], c: 2, exp: "x = 12 - 5 = 7.", dif: "facil" },
+            { q: "Quanto é a metade de 50?", o: ["20", "25", "30", "15"], c: 1, exp: "50 / 2 = 25.", dif: "facil" },
+            { q: "Quanto é (-3) * (-4)?", o: ["-12", "12", "-7", "7"], c: 1, exp: "Menos com menos dá mais. 3 x 4 = 12.", dif: "medio" },
+            { q: "Quanto é 30% de 200?", o: ["50", "60", "70", "80"], c: 1, exp: "30/100 * 200 = 60.", dif: "medio" },
+            { q: "Qual é a área de um quadrado de lado 5cm?", o: ["10 cm²", "20 cm²", "25 cm²", "15 cm²"], c: 2, exp: "Área = lado x lado = 5 x 5 = 25.", dif: "medio" },
+            { q: "Na função f(x) = 2x + 1, qual o valor de f(3)?", o: ["5", "6", "7", "8"], c: 2, exp: "f(3) = 2(3) + 1 = 6 + 1 = 7.", dif: "medio" },
+            { q: "Quanto é 2³?", o: ["6", "8", "9", "12"], c: 1, exp: "2³ = 2 x 2 x 2 = 8.", dif: "medio" },
+            { q: "Qual o valor de √81?", o: ["7", "8", "9", "10"], c: 2, exp: "9 x 9 = 81, logo a raiz é 9.", dif: "medio" },
+            { q: "Quais são as raízes de x² - 5x + 6 = 0?", o: ["1 e 6", "2 e 3", "-2 e -3", "0 e 5"], c: 1, exp: "Soma = 5, Produto = 6. Os números são 2 e 3.", dif: "dificil" },
+            { q: "Se b=3 e c=4, qual o valor de a no Teorema de Pitágoras (a² = b² + c²)?", o: ["5", "6", "7", "25"], c: 0, exp: "a² = 9 + 16 = 25. a = √25 = 5.", dif: "dificil" },
+            { q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é sempre 1/2.", dif: "dificil" },
+            { q: "Qual o valor de log₁₀(1000)?", o: ["2", "3", "10", "100"], c: 1, exp: "10 elevado a qual potência dá 1000? 10³ = 1000. Log = 3.", dif: "extremo" },
+            { q: "Quanto é 5! (fatorial de 5)?", o: ["25", "60", "120", "720"], c: 2, exp: "5! = 5 x 4 x 3 x 2 x 1 = 120.", dif: "extremo" }
+        ];
+
+        // ==========================================
+        // LÓGICA DE NAVEGAÇÃO E SISTEMA
+        // ==========================================
+        function abrirTela(id) {
+            tocarSom('click');
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        lista.innerHTML = '';
- 
+        function toggleSettings() {
+            tocarSom('click');
+            document.getElementById('modal-settings').classList.toggle('active');
+        }
+
+        function toggleSound() { somAtivado = document.getElementById('toggle-sound').checked; localStorage.setItem('mathArenaSom', somAtivado); }
+        
+        function toggleTheme() {
+            const isLight = document.getElementById('toggle-theme').checked;
+            if(isLight) {
+                document.documentElement.style.setProperty('--bg-color', '#f0f4f8');
+                document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.9)');
+                document.documentElement.style.setProperty('--text-main', '#1a202c');
+                document.documentElement.style.setProperty('--text-muted', '#4a5568');
+            } else {
+                document.documentElement.style.setProperty('--bg-color', '#0b0f19');
+                document.documentElement.style.setProperty('--card-bg', 'rgba(20, 25, 40, 0.85)');
+                document.documentElement.style.setProperty('--text-main', '#ffffff');
+                document.documentElement.style.setProperty('--text-muted', '#8b9bb4');
+            }
+        }
+
+        function salvarNome() {
+            nomeJogador = document.getElementById('input-nome').value.trim();
+            localStorage.setItem('mathArenaNome', nomeJogador);
+        }
+
+        // ==========================================
+        // LÓGICA DO JOGO
+        // ==========================================
+        function iniciarJogo() {
+            tocarSom('click');
+            if (!nomeJogador) { alert("Por favor, digite seu nickname primeiro!"); return; }
+            
+            const dif = document.getElementById('select-dificuldade').value;
+            let filtro = BANCO_QUESTOES.filter(q => q.dif === dif);
+            if(filtro.length < 5) filtro = BANCO_QUESTOES; // Fallback se não tiver questões suficientes
+
+            // Embaralha e pega até 10 questões
+            filaPerguntas = filtro.sort(() => 0.5 - Math.random()).slice(0, 10);
+            
+            estado = { pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+            
+            abrirTela('screen-game');
+            carregarQuestao();
+        }
+
+        function carregarQuestao() {
+            if (estado.questaoAtual >= filaPerguntas.length) {
+                finalizarJogo();
+                return;
+            }
+
+            estado.respondidas = false;
+            perguntaAtual = filaPerguntas[estado.questaoAtual];
+            
+            document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
+            document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+            document.getElementById('hud-questao').innerText = `${estado.questaoAtual + 1}/${filaPerguntas.length}`;
+            document.getElementById('progress-fill').style.width = `${((estado.questaoAtual) / filaPerguntas.length) * 100}%`;
+            
+            document.getElementById('question-text').innerText = perguntaAtual.q;
+            document.getElementById('feedback-box').classList.remove('active');
+            document.getElementById('btn-next').style.display = 'none';
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            const letras = ['A', 'B', 'C', 'D'];
+
+            perguntaAtual.o.forEach((opcao, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="option-letter">${letras[index]}</span> ${opcao}`;
+                btn.onclick = () => responderQuestao(index, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function responderQuestao(index, btnElement) {
+            if (estado.respondidas) return;
+            estado.respondidas = true;
+
+            const botoes = document.querySelectorAll('.option-btn');
+            botoes.forEach(b => b.style.pointerEvents = 'none'); // Desabilita cliques
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackExp = document.getElementById('feedback-explanation');
+
+            if (index === perguntaAtual.c) {
+                // ACERTOU
+                tocarSom('acerto');
+                estado.pontos += 10;
+                estado.acertos++;
+                estado.sequencia++;
+                if(estado.sequencia > estado.melhorSequencia) estado.melhorSequencia = estado.sequencia;
+                
+                btnElement.classList.add('correct');
+                feedbackBox.className = 'feedback active success';
+                feedbackTitle.innerText = "🎉 ACERTOU! +10 PTS";
+                feedbackExp.innerText = perguntaAtual.exp;
+                
+                // Efeito visual nos pontos
+                const hud = document.getElementById('hud-pontos');
+                hud.style.transform = 'scale(1.2)';
+                setTimeout(() => hud.style.transform = 'scale(1)', 200);
+
+            } else {
+                // ERROU
+                tocarSom('erro');
+                estado.pontos = Math.max(0, estado.pontos - 4);
+                estado.erros++;
+                estado.sequencia = 0;
+
+                btnElement.classList.add('wrong');
+                botoes[perguntaAtual.c].classList.add('correct'); // Mostra a certa
+                
+                feedbackBox.className = 'feedback active error';
+                feedbackTitle.innerText = "❌ ERROU! -4 PTS";
+                feedbackExp.innerText = `A resposta correta era: ${perguntaAtual.o[perguntaAtual.c]}.<br><br>${perguntaAtual.exp}`;
+            }
+
+            document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
+            document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
+            document.getElementById('btn-next').style.display = 'block';
+        }
+
+        function proximaQuestao() {
+            tocarSom('click');
+            estado.questaoAtual++;
+            carregarQuestao();
+        }
+
+        async function pararJogo() {
+            if(confirm("Deseja encerrar a partida e salvar sua pontuação?")) {
+                finalizarJogo();
+            }
+        }
+
+        async function finalizarJogo() {
+            document.getElementById('progress-fill').style.width = '100%';
+            abrirTela('screen-result');
+
+            document.getElementById('result-score').innerText = estado.pontos;
+            document.getElementById('result-acertos').innerText = estado.acertos;
+            document.getElementById('result-erros').innerText = estado.erros;
+
+            // Define mensagem baseada no desempenho
+            let msg = "CONTINUE EVOLUINDO";
+            let emoji = "💪";
+            const totalRespondidas = estado.acertos + estado.erros;
+            const aproveitamento = totalRespondidas > 0 ? (estado.acertos / totalRespondidas) * 100 : 0;
+
+            if (aproveitamento >= 90) { msg = "MESTRE DA MATEMÁTICA"; emoji = "👑"; }
+            else if (aproveitamento >= 70) { msg = "EXCELENTE DESEMPENHO"; emoji = "🔥"; }
+            else if (aproveitamento >= 50) { msg = "BOM TRABALHO"; emoji = "⭐"; }
+
+            document.getElementById('result-title').innerText = msg;
+            document.getElementById('result-emoji').innerText = emoji;
+
+            // Salvar no Supabase
+            await salvarNoBanco(estado.pontos, estado.acertos, estado.erros, estado.melhorSequencia);
+        }
+
+        // ==========================================
+        // INTEGRAÇÃO COM SUPABASE
+        // ==========================================
+        async function salvarNoBanco(pontosGanhos, acertos, erros, melhorSeq) {
+            if (pontosGanhos === 0 && acertos === 0) return;
+
+            try {
+                // Busca jogador existente
+                const { data: existentes } = await banco
+                    .from('ranking')
+                    .select('*')
+                    .eq('nome', nomeJogador)
+                    .order('id', { ascending: true })
+                    .limit(1);
+
+                const player = existentes && existentes.length > 0 ? existentes[0] : null;
+
+                if (player) {
+                    // Atualiza
+                    const novoS = player.pontuacao + pontosGanhos;
+                    const novosAcertos = (player.acertos || 0) + acertos;
+                    const novosErros = (player.erros || 0) + erros;
+                    const novaSeq = Math.max(player.melhor_sequencia || 0, melhorSeq);
+                    const novoXP = (player.xp || 0) + pontosGanhos; // XP ganha o mesmo que os pontos
+                    
+                    await banco.from('ranking').update({
+                        pontuacao: novoS,
+                        acertos: novosAcertos,
+                        erros: novosErros,
+                        melhor_sequencia: novaSeq,
+                        xp: novoXP
+                    }).eq('id', player.id);
+                } else {
+                    // Insere novo
+                    await banco.from('ranking').insert([{
+                        nome: nomeJogador,
+                        pontuacao: pontosGanhos,
+                        acertos: acertos,
+                        erros: erros,
+                        melhor_sequencia: melhorSeq,
+                        xp: pontosGanhos,
+                        nivel: 'Geral'
+                    }]);
+                }
+            } catch (e) {
+                console.error("Erro ao salvar", e);
+            }
+        }
+
+        // ==========================================
+        // RANKING E PERFIL
+        // ==========================================
+        async function carregarRanking(tipo, tabElement) {
+            tocarSom('click');
+            document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
+            tabElement.classList.add('active');
+
+            const lista = document.getElementById('rank-list-container');
+            lista.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Carregando...</p>';
+
+            let query = banco.from('ranking').select('*').order('pontuacao', { ascending: false }).limit(20);
+
+            // Filtros de data (semanal / mensal)
+            if (tipo === 'semanal') {
+                const d = new Date(); d.setDate(d.getDate() - 7);
+                query = query.gte('created_at', d.toISOString());
+            } else if (tipo === 'mensal') {
+                const d = new Date(); d.setMonth(d.getMonth() - 1);
+                query = query.gte('created_at', d.toISOString());
+            }
+
+            const { data } = await query;
+
+            if (!data || data.length === 0) {
+                lista.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Nenhum registro ainda.</p>';
+                return;
+            }
+
+            lista.innerHTML = '';
+            data.forEach((user, index) => {
+                let medalha = "";
+                if (index === 0) medalha = "🥇";
+                else if (index === 1) medalha = "🥈";
+                else if (index === 2) medalha = "🥉";
+                else medalha = `${index + 1}º`;
+
+                // Calcula aproveitamento
+                const total = (user.acertos || 0) + (user.erros || 0);
+                const acc = total > 0 ? Math.round((user.acertos / total) * 100) : 0;
+
+                lista.innerHTML += `
+                    <div class="rank-item">
+                        <div class="rank-pos">${medalha}</div>
+                        <div class="rank-info">
+                            <div class="rank-name">${user.nome}</div>
+                            <div class="rank-stats">🎯 ${acc}% • 🔥 Seq: ${user.melhor_sequencia || 0}</div>
+                        </div>
+                        <div class="rank-score">${user.pontuacao} pts</div>
+                    </div>
+                `;
+            });
+        }
+
+        async function abrirPerfil() {
+            tocarSom('click');
+            if (!nomeJogador) { alert("Digite seu nome na tela inicial primeiro!"); return; }
+            
+            abrirTela('screen-profile');
+            document.getElementById('profile-name').innerText = nomeJogador;
+
+            const { data } = await banco.from('ranking').select('*').eq('nome', nomeJogador).order('id', { ascending: true }).limit(1);
+            
+            if (data && data.length > 0) {
+                const user = data[0];
+                const total = (user.acertos || 0) + (user.erros || 0);
+                const acc = total > 0 ? Math.round((user.acertos / total) * 100) : 0;
+                const xp = user.xp || 0;
+                const level = Math.floor(xp / 100) + 1;
+                const xpNext = (level * 100) - xp;
+
+                document.getElementById('profile-pts').innerText = user.pontuacao;
+                document.getElementById('profile-acc').innerText = `${acc}%`;
+                document.getElementById('profile-streak').innerText = user.melhor_sequencia || 0;
+                document.getElementById('profile-xp').innerText = xp;
+                
+                document.getElementById('profile-level').innerText = level;
+                document.getElementById('profile-xp-bar').style.width = `${(xp % 100)}%`;
+                document.getElementById('profile-xp-text').innerText = `Faltam ${xpNext} XP para Nível ${level + 1}`;
+            } else {
+                // Zerar caso não tenha jogado
+                document.getElementById('profile-pts').innerText = '0';
+                document.getElementById('profile-acc').innerText = '0%';
+                document.getElementById('profile-streak').innerText = '0';
+                document.getElementById('profile-xp').innerText = '0';
+            }
+        }
+    </script>
+</body>
+</html>
