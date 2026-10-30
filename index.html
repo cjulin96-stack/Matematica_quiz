@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 6</title>
+    <title>MATH ARENA - Módulo 6.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -171,7 +171,6 @@
 <body>
 
     <div class="main-content">
-        <!-- TELA: HOME -->
         <div id="tela-home" class="screen active">
             <div class="user-header">
                 <div class="user-info">
@@ -193,9 +192,8 @@
                 </div>
             </div>
 
-            <!-- NOVO: MULTIPLICADOR ATIVO -->
             <div id="box-multiplier" class="multiplier-box hidden">
-                <div class="multiplier-text">🚀 MULTIPLICADOR 2X ATIVO</div>
+                <div class="multiplier-text">🚀 MULTIPLICADOR 2X (24h)</div>
                 <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
             </div>
 
@@ -222,14 +220,12 @@
             </div>
         </div>
 
-        <!-- TELA: MISSÕES -->
         <div id="tela-missoes" class="screen">
             <h2 class="text-gradient text-center mb-20">MISSÕES DIÁRIAS</h2>
             <div id="lista-missoes"></div>
             <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
         </div>
 
-        <!-- TELA: LOJA -->
         <div id="tela-loja" class="screen">
             <h2 class="text-gradient text-center mb-20">LOJA</h2>
             <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Suas moedas: 🪙 <span id="loja-moedas" style="color:var(--gold); font-weight:800;">0</span></p>
@@ -237,13 +233,11 @@
             <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
         </div>
 
-        <!-- TELA: DESAFIOS -->
         <div id="tela-desafios" class="screen">
             <h2 class="text-gradient text-center mb-20">ARENA DE DESAFIOS</h2>
             <div id="lista-desafios"></div>
         </div>
 
-        <!-- TELA: JOGO -->
         <div id="tela-jogo" class="screen">
             <div id="timer-box" class="timer-display hidden">60s</div>
             <div class="hud">
@@ -267,7 +261,6 @@
             <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
         </div>
 
-        <!-- TELA: RESULTADO -->
         <div id="tela-resultado" class="screen">
             <div class="glass text-center">
                 <h2 id="result-title">FIM DE JOGO</h2>
@@ -282,13 +275,11 @@
             </div>
         </div>
 
-        <!-- TELA: MEDALHAS -->
         <div id="tela-conquistas" class="screen">
             <h2 class="text-gradient text-center mb-20">MEDALHAS</h2>
             <div id="lista-conquistas"></div>
         </div>
 
-        <!-- TELA: ESTATÍSTICAS -->
         <div id="tela-estatisticas" class="screen">
             <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
             <div class="glass">
@@ -297,13 +288,11 @@
             </div>
         </div>
 
-        <!-- TELA: RANKING -->
         <div id="tela-ranking" class="screen">
             <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
             <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
 
-        <!-- TELA: PERFIL -->
         <div id="tela-perfil" class="screen">
             <h2 class="text-gradient text-center mb-20">PERFIL</h2>
             <div class="glass text-center">
@@ -316,7 +305,6 @@
         </div>
     </div>
 
-    <!-- MENU INFERIOR -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="mudarAba('tela-home', this)">
             <span class="nav-icon">🏠</span><span>Início</span>
@@ -340,7 +328,7 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, inventario: {multiplicador: 0} };
+        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
         let perguntaAtual = null;
@@ -366,16 +354,18 @@
         ];
 
         const LOJA_DB = [
-            { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos e XP por 1 partida', preco: 200, tipo: 'power' },
+            { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X (24h)', desc: 'Dobra pontos e XP por 24 horas', preco: 500, tipo: 'power' },
             { id: 'mestre', icone: '🧙‍♂️', nome: 'Mestre Matemático', desc: 'Avatar exclusivo', preco: 500, tipo: 'avatar' },
             { id: 'robo', icone: '🤖', nome: 'Calculadora Humana', desc: 'Avatar exclusivo', preco: 1000, tipo: 'avatar' },
             { id: 'alien', icone: '👽', nome: 'Gênio Alienígena', desc: 'Avatar exclusivo', preco: 1500, tipo: 'avatar' },
             { id: 'cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar exclusivo', preco: 2000, tipo: 'avatar' },
-            { id: 'ninja', icone: '🥷', nome: 'Ninja dos Números', desc: 'Avatar exclusivo', preco: 3000, tipo: 'avatar' }
+            { id: 'ninja', icone: '🥷', nome: 'Ninja dos Números', desc: 'Avatar exclusivo', preco: 2500, tipo: 'avatar' },
+            { id: 'unicornio', icone: '🦄', nome: 'Unicórnio Cálculo', desc: 'Avatar exclusivo', preco: 3000, tipo: 'avatar' },
+            { id: 'dragao', icone: '🐉', nome: 'Dragão da Matemática', desc: 'Avatar exclusivo', preco: 5000, tipo: 'avatar' }
         ];
 
         // ==========================================
-        // GERADOR INFINITO AVANÇADO (MÓDULO 6)
+        // GERADOR INFINITO AVANÇADO (MÓDULO 6.1)
         // ==========================================
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
@@ -386,19 +376,19 @@
             if (serie === "5") {
                 const op = rand(1, 4);
                 if(op === 1) {
-                    let a = rand(10, 99), b = rand(10, 99);
+                    let a = rand(1, 50), b = rand(1, 50);
                     pergunta = `Quanto é ${a} + ${b}?`; resp = a + b;
-                    exp = `Somando unidade com unidade, dezena com dezena: ${a} + ${b} = ${resp}.`; mat = "Soma";
+                    exp = `Somando: ${a} + ${b} = ${resp}.`; mat = "Soma";
                 } else if(op === 2) {
-                    let a = rand(50, 99), b = rand(10, 40);
+                    let a = rand(10, 50), b = rand(1, 10);
                     pergunta = `Quanto é ${a} - ${b}?`; resp = a - b;
-                    exp = `${a} - ${b} = ${resp}.`; mat = "Subtração";
+                    exp = `Subtraindo: ${a} - ${b} = ${resp}.`; mat = "Subtração";
                 } else if(op === 3) {
-                    let a = rand(2, 10), b = rand(2, 10);
+                    let a = rand(1, 10), b = rand(1, 10);
                     pergunta = `Quanto é ${a} x ${b}?`; resp = a * b;
-                    exp = `A tabuada do ${a} diz que ${a} x ${b} = ${resp}.`; mat = "Multiplicação";
+                    exp = `Multiplicando: ${a} x ${b} = ${resp}.`; mat = "Multiplicação";
                 } else {
-                    let b = rand(2, 10), resp_div = rand(2, 10);
+                    let b = rand(1, 10), resp_div = rand(1, 10);
                     let a = b * resp_div;
                     pergunta = `Quanto é ${a} ÷ ${b}?`; resp = resp_div;
                     exp = `${b} x ${resp} = ${a}, então ${a} ÷ ${b} = ${resp}.`; mat = "Divisão";
@@ -485,7 +475,6 @@
                 return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]);
             }
 
-            // Se resp for string (decimais), o tratamento é diferente
             if (typeof resp === 'string') {
                 let opcoesSet = new Set([resp]);
                 let attempts = 0;
@@ -515,7 +504,6 @@
             }
         }
 
-        // Áudio
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
         function tocarSom(tipo) {
@@ -573,7 +561,7 @@
                 jogador.conquistas = u.conquistas || [];
                 jogador.stats = u.stats_materias || {};
                 jogador.missoes = u.missoes || {acertos: 0, jogos: 0, desafios: 0};
-                jogador.inventario = u.inventario || {multiplicador: 0};
+                jogador.multiplicador_expira = u.multiplicador_expira;
                 jogador.nivel = Math.floor(jogador.xp / 100) + 1;
                 
                 document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel}`;
@@ -593,9 +581,16 @@
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
 
-            // Verifica se tem multiplicador
-            if(jogador.inventario.multiplicador > 0) {
-                document.getElementById('box-multiplier').classList.remove('hidden');
+            // Checa se o multiplicador está ativo
+            if(jogador.multiplicador_expira) {
+                let agora = new Date();
+                let expira = new Date(jogador.multiplicador_expira);
+                if (expira > agora) {
+                    document.getElementById('box-multiplier').classList.remove('hidden');
+                } else {
+                    document.getElementById('box-multiplier').classList.add('hidden');
+                    usarMultiplicador = false;
+                }
             } else {
                 document.getElementById('box-multiplier').classList.add('hidden');
                 usarMultiplicador = false;
@@ -609,9 +604,6 @@
             else toggle.classList.remove('on');
         }
 
-        // ==========================================
-        // MISSÕES E LOJA
-        // ==========================================
         function renderizarMissoes() {
             const container = document.getElementById('lista-missoes');
             container.innerHTML = '';
@@ -640,15 +632,25 @@
             const container = document.getElementById('lista-loja');
             container.innerHTML = '';
 
+            let multAtivo = false;
+            if(jogador.multiplicador_expira) {
+                let expira = new Date(jogador.multiplicador_expira);
+                if(expira > new Date()) multAtivo = true;
+            }
+
             LOJA_DB.forEach(item => {
                 let isEquipado = false;
                 if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
-                if(item.tipo === 'power' && jogador.inventario.multiplicador > 0) isEquipado = true;
+                if(item.tipo === 'power' && multAtivo) isEquipado = true;
 
                 let podeComprar = jogador.moedas >= item.preco && !isEquipado;
                 let btnTexto = 'COMPRAR';
-                if(isEquipado) btnTexto = item.tipo === 'avatar' ? 'EQUIPADO' : `TENHO (${jogador.inventario.multiplicador})`;
-                else if (!podeComprar) btnTexto = 'FALTA 🪙';
+                
+                if(isEquipado) {
+                    btnTexto = item.tipo === 'avatar' ? 'EQUIPADO' : 'ATIVO';
+                } else if (!podeComprar) {
+                    btnTexto = 'FALTA 🪙';
+                }
                 
                 container.innerHTML += `
                     <div class="store-item">
@@ -678,12 +680,15 @@
                     document.getElementById('home-avatar').innerText = item.icone;
                     document.getElementById('perfil-avatar').innerText = item.icone;
                 } else if (item.tipo === 'power') {
-                    jogador.inventario.multiplicador = (jogador.inventario.multiplicador || 0) + 1;
+                    let umDia = new Date();
+                    umDia.setDate(umDia.getDate() + 1);
+                    jogador.multiplicador_expira = umDia.toISOString();
                 }
                 
                 await salvarPerfilNoBanco();
                 alert(`Você comprou: ${item.nome}!`);
                 renderizarLoja();
+                atualizarDashboard();
             }
         }
 
@@ -691,13 +696,10 @@
             await banco.from('ranking').update({ 
                 avatar: jogador.avatar, 
                 moedas: jogador.moedas,
-                inventario: jogador.inventario 
+                multiplicador_expira: jogador.multiplicador_expira
             }).eq('nome', jogador.nome);
         }
 
-        // ==========================================
-        // JOGO
-        // ==========================================
         function renderizarDesafios() {
             const container = document.getElementById('lista-desafios');
             container.innerHTML = '';
@@ -793,7 +795,6 @@
             if(!jogador.stats[mat]) jogador.stats[mat] = { acertos: 0, total: 0 };
             jogador.stats[mat].total++;
 
-            // REGRA DE PONTUAÇÃO AUMENTADA (15 e -5)
             let ptsGanhos = 15;
             let ptsPerdidos = -5;
 
@@ -847,14 +848,10 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('tela-resultado').classList.add('active');
             
-            // APLICA MULTIPLICADOR SE ESTIVER ATIVO
             let pontosFinais = estado.pontos;
-            if(usarMultiplicador && jogador.inventario.multiplicador > 0) {
+            // APLICA MULTIPLICADOR (NÃO GASTA, POIS DURA 1 DIA)
+            if(usarMultiplicador) {
                 pontosFinais = estado.pontos * 2;
-                jogador.inventario.multiplicador--; // Consome 1 multiplicador
-                if(jogador.inventario.multiplicador <= 0) {
-                    usarMultiplicador = false;
-                }
             }
 
             document.getElementById('result-score').innerText = pontosFinais;
@@ -884,7 +881,6 @@
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos;
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
 
-                // Moedas ganhas baseadas nos pontos finais (com multiplicador aplicado)
                 jogador.moedas = (jogador.moedas || 0) + pontosFinais;
 
                 const { data } = await banco.from('ranking').select('last_played, streak').eq('nome', jogador.nome).order('id', { ascending: true }).limit(1);
@@ -901,7 +897,6 @@
                         streak: novoStreak,
                         moedas: jogador.moedas,
                         missoes: jogador.missoes,
-                        inventario: jogador.inventario, // Salva o multiplicador consumido
                         last_played: hoje,
                         conquistas: jogador.conquistas,
                         stats_materias: jogador.stats
@@ -909,7 +904,7 @@
                 } else {
                     await banco.from('ranking').insert([{
                         nome: jogador.nome, pontuacao: pontosFinais, xp: pontosFinais,
-                        streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, inventario: jogador.inventario,
+                        streak: 1, moedas: jogador.moedas, missoes: jogador.missoes,
                         last_played: hoje, conquistas: jogador.conquistas,
                         stats_materias: jogador.stats, nivel: 'Geral'
                     }]);
