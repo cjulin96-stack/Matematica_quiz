@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 13</title>
+    <title>MATH ARENA - Módulo 13.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -206,7 +206,7 @@
             </div>
         </div>
 
-        <!-- TELA: ACADEMIA (NOVO) -->
+        <!-- TELA: ACADEMIA -->
         <div id="tela-academia" class="screen">
             <h2 class="text-gradient text-center mb-20">ACADEMIA MATEMÁTICA</h2>
             <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Aprenda a teoria antes de praticar!</p>
@@ -431,7 +431,15 @@
             { id: 'av_alien2', icone: '👾', nome: 'Invasor', desc: 'Avatar', preco: 6000, tipo: 'avatar' }
         ];
 
-        // ACADEMIA DB (MÓDULO 13)
+        // RESTAURANDO OS DESAFIOS (O QUE ESTAVA FALTANDO)
+        const DESAFIOS_DB = [ 
+            { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' }, 
+            { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' }, 
+            { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' }, 
+            { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' }, 
+            { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' } 
+        ];
+
         const ACADEMIA_DB = [
             { titulo: 'O que são Frações?', conteudo: 'Uma fração representa uma parte de um todo. Ex: 1/2 (metade). O número de cima é o numerador (parte) e o de baixo é o denominador (total). <br><br>Para somar frações com o mesmo denominador, some apenas os numeradores: 1/4 + 2/4 = 3/4.' },
             { titulo: 'Equações de 1º Grau', conteudo: 'O objetivo é isolar a letra (incógnita). <br><br>Ex: 2x + 5 = 15.<br>1º passo: Passe o 5 para o outro lado subtraindo: 2x = 15 - 5 -> 2x = 10.<br>2º passo: Divida por 2: x = 10/2 -> x = 5.' },
@@ -525,7 +533,7 @@
             }
             if (idTela === 'tela-home') atualizarDashboard();
             if (idTela === 'tela-desafios') renderizarDesafios();
-            if (idTela === 'tela-academia') renderizarAcademia(); // NOVO
+            if (idTela === 'tela-academia') renderizarAcademia();
             if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
             if (idTela === 'tela-conquistas') renderizarConquistas();
             if (idTela === 'tela-estatisticas') renderizarEstatisticas();
@@ -687,7 +695,6 @@
             }
         }
 
-        // --- ACADEMIA (MÓDULO 13) ---
         function renderizarAcademia() {
             const container = document.getElementById('lista-academia');
             container.innerHTML = '';
@@ -716,7 +723,6 @@
             }
         }
 
-        // --- CRIAR E ENTRAR NO DUELO (CORRIGIDO) ---
         async function criarDuelo(event) {
             if(!jogador.id) { alert("Erro: Você não está logado."); return; }
             const serie = document.getElementById('select-serie') ? document.getElementById('select-serie').value : '5';
@@ -958,6 +964,11 @@
         }
         
         function pararJogo() { if(confirm("Deseja realmente parar agora e salvar seus pontos?")) finalizarJogo(); }
+
+        function renderizarDesafios() {
+            const container = document.getElementById('lista-desafios'); container.innerHTML = '';
+            DESAFIOS_DB.forEach(d => { container.innerHTML += `<div class="challenge-card"><div class="challenge-info"><h4>${d.nome}</h4><p>${d.desc}</p></div><button class="btn-play-challenge" onclick="iniciarDesafio(${d.id})">JOGAR</button></div>`; });
+        }
 
         function renderizarMissoes() {
             const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
