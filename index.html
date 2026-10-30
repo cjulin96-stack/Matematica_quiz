@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 5</title>
+    <title>MATH ARENA - Módulo 6</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -139,7 +139,6 @@
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
         .btn-play-challenge { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #6b21a8; margin: 0; width: auto;}
         
-        /* MÓDULO 5: MISSÕES E LOJA */
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; padding: 15px; }
         .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 0 #064e3b; padding: 15px; }
@@ -156,6 +155,13 @@
         .store-price { color: var(--gold); font-weight: 800; font-size: 14px; }
         .btn-buy { background: var(--primary); color: #000; padding: 8px 15px; border-radius: 8px; font-size: 12px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto;}
         .btn-buy:disabled { background: var(--text-muted); box-shadow: none; color: #333; cursor: not-allowed; opacity: 0.5; }
+
+        .multiplier-box { display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; }
+        .multiplier-text { font-size: 13px; font-weight: 700; color: var(--accent); }
+        .multiplier-toggle { width: 40px; height: 22px; background: rgba(255,255,255,0.2); border-radius: 20px; position: relative; cursor: pointer; }
+        .multiplier-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        .multiplier-toggle.on { background: var(--accent); }
+        .multiplier-toggle.on::after { transform: translateX(18px); }
 
         .hidden { display: none !important; }
         .text-center { text-align: center; }
@@ -187,6 +193,12 @@
                 </div>
             </div>
 
+            <!-- NOVO: MULTIPLICADOR ATIVO -->
+            <div id="box-multiplier" class="multiplier-box hidden">
+                <div class="multiplier-text">🚀 MULTIPLICADOR 2X ATIVO</div>
+                <div class="multiplier-toggle" id="toggle-multiplier" onclick="toggleMultiplicador()"></div>
+            </div>
+
             <div class="grid-buttons">
                 <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
                 <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
@@ -213,14 +225,13 @@
         <!-- TELA: MISSÕES -->
         <div id="tela-missoes" class="screen">
             <h2 class="text-gradient text-center mb-20">MISSÕES DIÁRIAS</h2>
-            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Complete missões para ganhar moedas extras!</p>
             <div id="lista-missoes"></div>
             <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
         </div>
 
         <!-- TELA: LOJA -->
         <div id="tela-loja" class="screen">
-            <h2 class="text-gradient text-center mb-20">LOJA DE AVATARES</h2>
+            <h2 class="text-gradient text-center mb-20">LOJA</h2>
             <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Suas moedas: 🪙 <span id="loja-moedas" style="color:var(--gold); font-weight:800;">0</span></p>
             <div id="lista-loja"></div>
             <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
@@ -229,7 +240,6 @@
         <!-- TELA: DESAFIOS -->
         <div id="tela-desafios" class="screen">
             <h2 class="text-gradient text-center mb-20">ARENA DE DESAFIOS</h2>
-            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Tempo limitado. Questões infinitas!</p>
             <div id="lista-desafios"></div>
         </div>
 
@@ -263,7 +273,7 @@
                 <h2 id="result-title">FIM DE JOGO</h2>
                 <div style="font-size: 60px; margin: 15px 0;" id="result-emoji">🎉</div>
                 <div style="font-size: 48px; font-weight: 900; color: var(--primary);" id="result-score">0</div>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">PONTOS & MOEDAS</p>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">PONTOS</p>
                 <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
                     <div><span style="color: var(--success); font-size: 24px; font-weight: bold;" id="result-acertos">0</span><br><small>Acertos</small></div>
                     <div><span style="color: var(--danger); font-size: 24px; font-weight: bold;" id="result-erros">0</span><br><small>Erros</small></div>
@@ -330,12 +340,13 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0} };
+        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, inventario: {multiplicador: 0} };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
         let perguntaAtual = null;
         let timerInterval = null;
         let tempoRestante = 0;
+        let usarMultiplicador = false;
 
         document.getElementById('perfil-nome-input').value = jogador.nome;
 
@@ -354,17 +365,17 @@
             { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' }
         ];
 
-        // LOJA DB
         const LOJA_DB = [
-            { id: 'default', icone: '🧑‍🚀', nome: 'Explorador', preco: 0 },
-            { id: 'mestre', icone: '🧙‍♂️', nome: 'Mestre Matemático', preco: 500 },
-            { id: 'robo', icone: '🤖', nome: 'Calculadora Humana', preco: 1000 },
-            { id: 'alien', icone: '👽', nome: 'Gênio Alienígena', preco: 1500 },
-            { id: 'cerebro', icone: '🧠', nome: 'Super Cérebro', preco: 2000 }
+            { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos e XP por 1 partida', preco: 200, tipo: 'power' },
+            { id: 'mestre', icone: '🧙‍♂️', nome: 'Mestre Matemático', desc: 'Avatar exclusivo', preco: 500, tipo: 'avatar' },
+            { id: 'robo', icone: '🤖', nome: 'Calculadora Humana', desc: 'Avatar exclusivo', preco: 1000, tipo: 'avatar' },
+            { id: 'alien', icone: '👽', nome: 'Gênio Alienígena', desc: 'Avatar exclusivo', preco: 1500, tipo: 'avatar' },
+            { id: 'cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar exclusivo', preco: 2000, tipo: 'avatar' },
+            { id: 'ninja', icone: '🥷', nome: 'Ninja dos Números', desc: 'Avatar exclusivo', preco: 3000, tipo: 'avatar' }
         ];
 
         // ==========================================
-        // GERADOR INFINITO DE QUESTÕES (À PROVA DE BUGS)
+        // GERADOR INFINITO AVANÇADO (MÓDULO 6)
         // ==========================================
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
@@ -373,87 +384,135 @@
             let pergunta = "", resp = 0, exp = "", mat = "";
             
             if (serie === "5") {
-                const op = rand(1,3);
+                const op = rand(1, 4);
                 if(op === 1) {
-                    let a = rand(10, 50), b = rand(10, 40);
+                    let a = rand(10, 99), b = rand(10, 99);
                     pergunta = `Quanto é ${a} + ${b}?`; resp = a + b;
-                    exp = `${a} + ${b} = ${resp}.`; mat = "Soma";
+                    exp = `Somando unidade com unidade, dezena com dezena: ${a} + ${b} = ${resp}.`; mat = "Soma";
                 } else if(op === 2) {
-                    let a = rand(30, 99), b = rand(10, 30);
+                    let a = rand(50, 99), b = rand(10, 40);
                     pergunta = `Quanto é ${a} - ${b}?`; resp = a - b;
                     exp = `${a} - ${b} = ${resp}.`; mat = "Subtração";
-                } else {
+                } else if(op === 3) {
                     let a = rand(2, 10), b = rand(2, 10);
                     pergunta = `Quanto é ${a} x ${b}?`; resp = a * b;
-                    exp = `${a} x ${b} = ${resp}.`; mat = "Multiplicação";
+                    exp = `A tabuada do ${a} diz que ${a} x ${b} = ${resp}.`; mat = "Multiplicação";
+                } else {
+                    let b = rand(2, 10), resp_div = rand(2, 10);
+                    let a = b * resp_div;
+                    pergunta = `Quanto é ${a} ÷ ${b}?`; resp = resp_div;
+                    exp = `${b} x ${resp} = ${a}, então ${a} ÷ ${b} = ${resp}.`; mat = "Divisão";
                 }
             } else if (serie === "6") {
-                const op = rand(1,2);
+                const op = rand(1, 3);
                 if(op === 1) {
-                    let a = rand(2, 20), b = rand(2, 20);
+                    let a = rand(5, 20), b = rand(5, 20);
                     pergunta = `Quanto é (-${a}) + ${b}?`; resp = -a + b;
                     exp = `Devendo ${a} e pagando ${b}, sobram ${resp}.`; mat = "Números Inteiros";
-                } else {
-                    let a = rand(1, 10) * 10;
+                } else if(op === 2) {
+                    let a = rand(1, 5) * 10;
                     let total = rand(2,10)*100;
                     pergunta = `Quanto é ${a}% de ${total}?`;
                     resp = (a/100) * total;
                     exp = `${a}/100 x ${total} = ${resp}.`; mat = "Porcentagem";
+                } else {
+                    let a = rand(10, 50) / 10, b = rand(10, 50) / 10;
+                    pergunta = `Quanto é ${a.toFixed(1).replace('.',',')} + ${b.toFixed(1).replace('.',',')}?`;
+                    resp = (a + b).toFixed(1).replace('.',',');
+                    exp = `Some os inteiros e depois os decimais: ${resp}.`; mat = "Decimais";
                 }
             } else if (serie === "7") {
-                let x = rand(2, 10), b = rand(1, 10), c = (2*x) + b;
-                pergunta = `Se 2x + ${b} = ${c}, qual o valor de x?`; resp = x;
-                exp = `2x = ${c} - ${b} = ${c-b}. Então x = ${x}.`; mat = "Equações";
+                const op = rand(1, 2);
+                if(op === 1) {
+                    let x = rand(2, 10), b = rand(1, 10), c = (2*x) + b;
+                    pergunta = `Se 2x + ${b} = ${c}, qual o valor de x?`; resp = x;
+                    exp = `2x = ${c} - ${b} = ${c-b}. Então x = ${x}.`; mat = "Equações";
+                } else {
+                    let a = rand(2, 10);
+                    pergunta = `Qual é a área de um quadrado de lado ${a}cm?`; resp = a*a;
+                    exp = `Área = lado x lado = ${a} x ${a} = ${resp} cm².`; mat = "Geometria";
+                }
             } else if (serie === "8") {
-                let a = rand(2, 10);
-                pergunta = `Quanto é ${a}²?`; resp = a*a;
-                exp = `${a} x ${a} = ${resp}.`; mat = "Potenciação";
+                const op = rand(1, 2);
+                if(op === 1) {
+                    let a = rand(2, 10);
+                    pergunta = `Quanto é ${a}²?`; resp = a*a;
+                    exp = `${a} x ${a} = ${resp}.`; mat = "Potenciação";
+                } else {
+                    let a = rand(2, 12);
+                    pergunta = `Qual é a raiz quadrada de ${a*a}?`; resp = a;
+                    exp = `Pois ${a} x ${a} = ${a*a}.`; mat = "Radiciação";
+                }
             } else if (serie === "9") {
-                const triples = [[3,4,5], [6,8,10], [5,12,13], [8,15,17]];
-                let t = triples[rand(0, triples.length-1)];
-                pergunta = `Num triângulo retângulo, os catetos são ${t[0]} e ${t[1]}. Qual a hipotenusa?`;
-                resp = t[2];
-                exp = `a² = ${t[0]}² + ${t[1]}² = ${t[0]*t[0] + t[1]*t[1]}. A raiz é ${resp}.`; mat = "Geometria";
+                const op = rand(1, 2);
+                if(op === 1) {
+                    const triples = [[3,4,5], [6,8,10], [5,12,13], [8,15,17], [9,12,15]];
+                    let t = triples[rand(0, triples.length-1)];
+                    pergunta = `Num triângulo retângulo, os catetos são ${t[0]} e ${t[1]}. Qual a hipotenusa?`;
+                    resp = t[2];
+                    exp = `a² = ${t[0]}² + ${t[1]}² = ${t[0]*t[0] + t[1]*t[1]}. A raiz é ${resp}.`; mat = "Geometria";
+                } else {
+                    let x = rand(2, 5);
+                    pergunta = `Se x² = ${x*x}, qual o valor positivo de x?`; resp = x;
+                    exp = `A raiz quadrada de ${x*x} é ${x}.`; mat = "Equações";
+                }
             } else if (serie === "1em") {
                 let a = rand(2, 5), b = rand(1, 10), x = rand(1, 5);
                 pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`; resp = a*x + b;
-                exp = `f(${x}) = ${a}(${x}) + ${b} = ${resp}.`; mat = "Funções";
+                exp = `Substituindo x por ${x}: f(${x}) = ${a}(${x}) + ${b} = ${resp}.`; mat = "Funções";
             } else if (serie === "2em") {
                 const trig = [
-                    {q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é sempre 1/2."},
+                    {q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é 1/2."},
                     {q: "Quanto é cos(60º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O cosseno de 60º é 1/2."},
                     {q: "Quanto é sen(90º)?", o: ["0", "1/2", "√2/2", "1"], c: 3, exp: "O seno de 90º é 1."},
-                    {q: "Quanto é cos(0º)?", o: ["0", "1/2", "1", "√3/2"], c: 2, exp: "O cosseno de 0º é 1."}
+                    {q: "Quanto é cos(0º)?", o: ["0", "1/2", "1", "√3/2"], c: 2, exp: "O cosseno de 0º é 1."},
+                    {q: "Quanto é tg(45º)?", o: ["0", "1", "√3", "1/2"], c: 1, exp: "A tangente de 45º é 1."}
                 ];
                 let escolhida = trig[rand(0, trig.length-1)];
                 return { q: escolhida.q, o: escolhida.o, c: escolhida.c, exp: escolhida.exp, serie: "2em", mat: "Trigonometria" };
             } else if (serie === "3em") {
-                let a = rand(2, 5);
-                pergunta = `Quanto é log₁₀(10^${a})?`; resp = a;
-                exp = `O log de base 10 de 10 elevado a ${a} é ${a}.`; mat = "Logaritmos";
+                const op = rand(1, 2);
+                if(op === 1) {
+                    let a = rand(2, 5);
+                    pergunta = `Quanto é log₁₀(10^${a})?`; resp = a;
+                    exp = `O log de base 10 de 10 elevado a ${a} é ${a}.`; mat = "Logaritmos";
+                } else {
+                    let a = rand(2, 6), r = rand(2, 4);
+                    pergunta = `Numa PG onde a1=${a} e a razão é ${r}, qual é o 2º termo?`; resp = a * r;
+                    exp = `O 2º termo é a1 x razão = ${a} x ${r} = ${resp}.`; mat = "Progressões";
+                }
             } else {
                 return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]);
             }
 
-            let opcoesSet = new Set([resp]);
-            let attempts = 0;
-            while(opcoesSet.size < 4 && attempts < 50) {
-                let offset = rand(1, 10) * (Math.random() > 0.5 ? 1 : -1);
-                let erro = resp + offset;
-                if(erro !== resp && erro >= 0) opcoesSet.add(erro);
-                attempts++;
+            // Se resp for string (decimais), o tratamento é diferente
+            if (typeof resp === 'string') {
+                let opcoesSet = new Set([resp]);
+                let attempts = 0;
+                while(opcoesSet.size < 4 && attempts < 50) {
+                    let val = (parseFloat(resp.replace(',', '.')) + rand(-30, 30)/10).toFixed(1).replace('.', ',');
+                    if(val !== resp && parseFloat(val.replace(',', '.')) >= 0) opcoesSet.add(val);
+                    attempts++;
+                }
+                let opcoes = Array.from(opcoesSet).sort();
+                let indexCorreta = opcoes.indexOf(resp);
+                return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
+            } else {
+                let opcoesSet = new Set([resp]);
+                let attempts = 0;
+                while(opcoesSet.size < 4 && attempts < 50) {
+                    let offset = rand(1, 10) * (Math.random() > 0.5 ? 1 : -1);
+                    let erro = resp + offset;
+                    if(erro !== resp && erro >= 0) opcoesSet.add(erro);
+                    attempts++;
+                }
+                let fallback = 1;
+                while(opcoesSet.size < 4) { opcoesSet.add(resp + fallback); fallback++; }
+                
+                let opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String);
+                let indexCorreta = opcoes.indexOf(String(resp));
+                return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
             }
-            
-            let fallback = 1;
-            while(opcoesSet.size < 4) {
-                opcoesSet.add(resp + fallback);
-                fallback++;
-            }
-            
-            let opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String);
-            let indexCorreta = opcoes.indexOf(String(resp));
-            
-            return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
         }
 
         // Áudio
@@ -514,6 +573,7 @@
                 jogador.conquistas = u.conquistas || [];
                 jogador.stats = u.stats_materias || {};
                 jogador.missoes = u.missoes || {acertos: 0, jogos: 0, desafios: 0};
+                jogador.inventario = u.inventario || {multiplicador: 0};
                 jogador.nivel = Math.floor(jogador.xp / 100) + 1;
                 
                 document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel}`;
@@ -532,15 +592,29 @@
             const xpAtualNivel = jogador.xp % 100;
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
+
+            // Verifica se tem multiplicador
+            if(jogador.inventario.multiplicador > 0) {
+                document.getElementById('box-multiplier').classList.remove('hidden');
+            } else {
+                document.getElementById('box-multiplier').classList.add('hidden');
+                usarMultiplicador = false;
+            }
+        }
+
+        function toggleMultiplicador() {
+            const toggle = document.getElementById('toggle-multiplier');
+            usarMultiplicador = !usarMultiplicador;
+            if(usarMultiplicador) toggle.classList.add('on');
+            else toggle.classList.remove('on');
         }
 
         // ==========================================
-        // MÓDULO 5: MISSÕES E LOJA
+        // MISSÕES E LOJA
         // ==========================================
         function renderizarMissoes() {
             const container = document.getElementById('lista-missoes');
             container.innerHTML = '';
-            
             const ms = jogador.missoes;
             const missoes = [
                 { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 },
@@ -553,16 +627,9 @@
                 const isConcluida = pct === 100;
                 container.innerHTML += `
                     <div class="mission-card">
-                        <div class="mission-header">
-                            <span>${m.nome}</span>
-                            <span class="mission-reward">🪙 ${m.recompensa}</span>
-                        </div>
-                        <div class="mission-progress-bar">
-                            <div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div>
-                        </div>
-                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px; text-align: right;">
-                            ${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}
-                        </div>
+                        <div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div>
+                        <div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div>
                     </div>
                 `;
             });
@@ -574,8 +641,14 @@
             container.innerHTML = '';
 
             LOJA_DB.forEach(item => {
-                const isEquipado = jogador.avatar === item.icone;
-                const podeComprar = jogador.moedas >= item.preco && !isEquipado;
+                let isEquipado = false;
+                if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
+                if(item.tipo === 'power' && jogador.inventario.multiplicador > 0) isEquipado = true;
+
+                let podeComprar = jogador.moedas >= item.preco && !isEquipado;
+                let btnTexto = 'COMPRAR';
+                if(isEquipado) btnTexto = item.tipo === 'avatar' ? 'EQUIPADO' : `TENHO (${jogador.inventario.multiplicador})`;
+                else if (!podeComprar) btnTexto = 'FALTA 🪙';
                 
                 container.innerHTML += `
                     <div class="store-item">
@@ -583,30 +656,43 @@
                             <div class="store-icon">${item.icone}</div>
                             <div class="store-info">
                                 <h4>${item.nome}</h4>
+                                <div style="font-size: 10px; color: var(--text-muted);">${item.desc}</div>
                                 <div class="store-price">🪙 ${item.preco}</div>
                             </div>
                         </div>
-                        <button class="btn-buy" onclick="comprarAvatar('${item.icone}', ${item.preco})" 
-                            ${isEquipado ? 'disabled' : (podeComprar ? '' : 'disabled')}>
-                            ${isEquipado ? 'EQUIPADO' : 'COMPRAR'}
+                        <button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>
+                            ${btnTexto}
                         </button>
                     </div>
                 `;
             });
         }
 
-        async function comprarAvatar(icone, preco) {
-            if (jogador.moedas >= preco) {
-                jogador.moedas -= preco;
-                jogador.avatar = icone;
+        async function comprarItem(id) {
+            const item = LOJA_DB.find(i => i.id === id);
+            if (jogador.moedas >= item.preco) {
+                jogador.moedas -= item.preco;
+                
+                if(item.tipo === 'avatar') {
+                    jogador.avatar = item.icone;
+                    document.getElementById('home-avatar').innerText = item.icone;
+                    document.getElementById('perfil-avatar').innerText = item.icone;
+                } else if (item.tipo === 'power') {
+                    jogador.inventario.multiplicador = (jogador.inventario.multiplicador || 0) + 1;
+                }
+                
                 await salvarPerfilNoBanco();
-                alert(`Você comprou o avatar ${icone}!`);
+                alert(`Você comprou: ${item.nome}!`);
                 renderizarLoja();
-                document.getElementById('home-avatar').innerText = icone;
-                document.getElementById('perfil-avatar').innerText = icone;
-            } else {
-                alert("Moedas insuficientes!");
             }
+        }
+
+        async function salvarPerfilNoBanco() {
+            await banco.from('ranking').update({ 
+                avatar: jogador.avatar, 
+                moedas: jogador.moedas,
+                inventario: jogador.inventario 
+            }).eq('nome', jogador.nome);
         }
 
         // ==========================================
@@ -707,16 +793,20 @@
             if(!jogador.stats[mat]) jogador.stats[mat] = { acertos: 0, total: 0 };
             jogador.stats[mat].total++;
 
+            // REGRA DE PONTUAÇÃO AUMENTADA (15 e -5)
+            let ptsGanhos = 15;
+            let ptsPerdidos = -5;
+
             if (index === perguntaAtual.c) {
                 tocarSom('acerto');
-                estado.pontos += 10;
+                estado.pontos += ptsGanhos;
                 estado.acertos++;
                 estado.sequencia++;
                 jogador.stats[mat].acertos++;
                 btn.classList.add('correct');
             } else {
                 tocarSom('erro');
-                estado.pontos = Math.max(0, estado.pontos - 4);
+                estado.pontos = Math.max(0, estado.pontos + ptsPerdidos);
                 estado.erros++;
                 estado.sequencia = 0;
                 btn.classList.add('wrong');
@@ -734,7 +824,7 @@
                 const fbExp = document.getElementById('feedback-explanation');
                 
                 fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
-                fbTitle.innerText = index === perguntaAtual.c ? "🎉 ACERTOU! +10 PTS" : "❌ ERROU! -4 PTS";
+                fbTitle.innerText = index === perguntaAtual.c ? `🎉 ACERTOU! +${ptsGanhos} PTS` : `❌ ERROU! ${ptsPerdidos} PTS`;
                 fbExp.innerText = perguntaAtual.exp;
                 
                 document.getElementById('btn-next').style.display = 'block';
@@ -757,14 +847,24 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('tela-resultado').classList.add('active');
             
-            document.getElementById('result-score').innerText = estado.pontos;
+            // APLICA MULTIPLICADOR SE ESTIVER ATIVO
+            let pontosFinais = estado.pontos;
+            if(usarMultiplicador && jogador.inventario.multiplicador > 0) {
+                pontosFinais = estado.pontos * 2;
+                jogador.inventario.multiplicador--; // Consome 1 multiplicador
+                if(jogador.inventario.multiplicador <= 0) {
+                    usarMultiplicador = false;
+                }
+            }
+
+            document.getElementById('result-score').innerText = pontosFinais;
             document.getElementById('result-acertos').innerText = estado.acertos;
             document.getElementById('result-erros').innerText = estado.erros;
             
             let novasConquistas = [];
             if(estado.acertos > 0 && !jogador.conquistas.includes('primeiro_passo')) novasConquistas.push('primeiro_passo');
             if(estado.sequencia >= 5 && !jogador.conquistas.includes('streak_fogo')) novasConquistas.push('streak_fogo');
-            if(estado.pontos >= 80 && !jogador.conquistas.includes('mente_brilhante')) novasConquistas.push('mente_brilhante');
+            if(pontosFinais >= 80 && !jogador.conquistas.includes('mente_brilhante')) novasConquistas.push('mente_brilhante');
             if(estado.modo === 'tempo' && !jogador.conquistas.includes('modo_turbo')) novasConquistas.push('modo_turbo');
 
             if(novasConquistas.length > 0) {
@@ -772,21 +872,20 @@
                 setTimeout(() => alert(`🏅 NOVA CONQUISTA DESBLOQUEADA!\nVeja na aba Medalhas.`), 500);
             }
 
-            await salvarPartida();
+            await salvarPartida(pontosFinais);
         }
 
-        async function salvarPartida() {
-            if (estado.pontos === 0 && estado.acertos === 0) return;
+        async function salvarPartida(pontosFinais) {
+            if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
                 const hoje = new Date().toISOString().split('T')[0];
                 
-                // Atualiza missões
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1;
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos;
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
 
-                // Adiciona moedas (1 ponto = 1 moeda)
-                jogador.moedas = (jogador.moedas || 0) + estado.pontos;
+                // Moedas ganhas baseadas nos pontos finais (com multiplicador aplicado)
+                jogador.moedas = (jogador.moedas || 0) + pontosFinais;
 
                 const { data } = await banco.from('ranking').select('last_played, streak').eq('nome', jogador.nome).order('id', { ascending: true }).limit(1);
                 
@@ -797,19 +896,20 @@
                         novoStreak = (data[0].last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1;
                     }
                     await banco.from('ranking').update({
-                        pontuacao: (jogador.pontos || 0) + estado.pontos,
-                        xp: (jogador.xp || 0) + estado.pontos,
+                        pontuacao: (jogador.pontos || 0) + pontosFinais,
+                        xp: (jogador.xp || 0) + pontosFinais,
                         streak: novoStreak,
                         moedas: jogador.moedas,
                         missoes: jogador.missoes,
+                        inventario: jogador.inventario, // Salva o multiplicador consumido
                         last_played: hoje,
                         conquistas: jogador.conquistas,
                         stats_materias: jogador.stats
                     }).eq('nome', jogador.nome);
                 } else {
                     await banco.from('ranking').insert([{
-                        nome: jogador.nome, pontuacao: estado.pontos, xp: estado.pontos,
-                        streak: 1, moedas: jogador.moedas, missoes: jogador.missoes,
+                        nome: jogador.nome, pontuacao: pontosFinais, xp: pontosFinais,
+                        streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, inventario: jogador.inventario,
                         last_played: hoje, conquistas: jogador.conquistas,
                         stats_materias: jogador.stats, nivel: 'Geral'
                     }]);
@@ -817,10 +917,6 @@
             } catch (e) {
                 console.error(e);
             }
-        }
-
-        async function salvarPerfilNoBanco() {
-            await banco.from('ranking').update({ avatar: jogador.avatar, moedas: jogador.moedas }).eq('nome', jogador.nome);
         }
 
         async function renderizarConquistas() {
