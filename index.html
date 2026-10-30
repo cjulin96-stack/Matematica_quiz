@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - VIP</title>
+    <title>MATH ARENA - Frames</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -20,39 +20,40 @@
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Efeito de vidro premium */
         .glass { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); margin-bottom: 15px; transition: transform 0.3s ease; }
-        .glass:hover { transform: translateY(-2px); }
         
         h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
         .text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Header */
         .user-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .user-info { display: flex; align-items: center; gap: 15px; }
         
-        /* AVATAR E MOLDURAS */
-        .avatar-container { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
-        .avatar { position: relative; width: 52px; height: 52px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; z-index: 2; border: 3px solid var(--bg-dark); box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        /* AVATAR & FRAMES */
+        .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
+        .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
         
-        /* Animações das Molduras */
-        .avatar-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; opacity: 0.9; }
+        /* O Frame é a moldura em volta */
+        .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; pointer-events: none; }
         
-        /* Padrão (Neon) */
-        .frame-default { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary)); animation: spin 4s linear infinite; filter: blur(1px); }
-        /* Ouro */
-        .frame-gold { background: conic-gradient(from 0deg, #ffd700, #fff8e1, #ffb300, #ffd700); animation: spin 3s linear infinite; box-shadow: 0 0 15px #ffd700; }
-        /* Fogo */
-        .frame-fire { background: conic-gradient(from 0deg, #ff0000, #ff8c00, #ffd700, #ff0000); animation: spin 2s linear infinite, pulseGlow 1.5s infinite alternate; box-shadow: 0 0 20px #ff4500; }
-        /* Gelo */
-        .frame-ice { background: conic-gradient(from 0deg, #00f2fe, #ffffff, #4facfe, #00f2fe); animation: spin 5s linear infinite; box-shadow: 0 0 15px #00f2fe; }
-
+        /* Moldura Padrão (Neon Giratório) */
+        .frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; filter: blur(2px); opacity: 0.8; }
+        
+        /* Moldura de Ouro */
+        .frame-ouro { border: 3px solid #ffd700; box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffd700; animation: pulse-gold 2s infinite; }
+        
+        /* Moldura de Fogo */
+        .frame-fogo { border: 3px solid #ff4500; box-shadow: 0 0 20px #ff4500, 0 0 40px #ff0000; animation: pulse-fire 1.5s infinite alternate; }
+        
+        /* Moldura de Gelo */
+        .frame-gelo { border: 3px solid #00ffff; box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00ffff; animation: pulse-ice 3s infinite; }
+        
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulseGlow { from { box-shadow: 0 0 10px #ff4500; } to { box-shadow: 0 0 25px #ff0000; } }
-        
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 25px #ffd700, 0 0 10px #fff; } 100% { box-shadow: 0 0 10px #ffd700; } }
+        @keyframes pulse-fire { 0% { box-shadow: 0 0 15px #ff4500, 0 0 30px #ff4500; } 100% { box-shadow: 0 0 30px #ff4500, 0 0 50px #ff0000; border-color: #ff0000; } }
+        @keyframes pulse-ice { 0% { box-shadow: 0 0 10px #00ffff; } 50% { box-shadow: 0 0 25px #00ffff, inset 0 0 15px #00ffff; } 100% { box-shadow: 0 0 10px #00ffff; } }
+
         .user-name { font-weight: 800; font-size: 18px; }
         .user-level { font-size: 12px; color: var(--primary); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
         
         .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .badge { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
@@ -78,39 +79,32 @@
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
         select option { background: var(--bg-dark); color: #fff; }
 
-        /* HUD do Jogo */
-        .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.3); }
-        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+        .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.3s; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
         .question-text { font-size: 22px; font-weight: 800; margin-bottom: 25px; text-align: center; line-height: 1.3;}
-        
-        /* Opções */
         .options-grid { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { padding: 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 14px; color: #fff; text-align: left; font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.4); transition: 0.2s;}
+        .option-btn { padding: 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 14px; color: #fff; text-align: left; font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
         .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.4); }
         .option-letter { background: rgba(255,255,255,0.1); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 14px; color: var(--primary); }
         .option-btn.correct { background: rgba(0, 230, 118, 0.15) !important; border-color: var(--success) !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.3) !important; }
         .option-btn.wrong { background: rgba(255, 23, 68, 0.15) !important; border-color: var(--danger) !important; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-        /* Feedback */
         .feedback { margin-top: 20px; padding: 16px; border-radius: 14px; font-size: 14px; display: none; font-weight: 600; line-height: 1.4;}
         .feedback.active { display: block; animation: slideUp 0.3s; }
-        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); color: #fff; }
-        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); color: #fff; }
+        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
+        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
 
-        /* Menu Inferior */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 800; gap: 5px; cursor: pointer; transition: 0.2s; width: 20%; height: 100%; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(0,242,254,0.5); }
         .nav-item.active .nav-icon { transform: translateY(-3px) scale(1.1); filter: drop-shadow(0 0 8px var(--primary)); }
-        .nav-icon { font-size: 22px; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-icon { font-size: 22px; transition: 0.3s; }
 
-        /* Timer */
         .timer-display { font-family: 'Orbitron'; font-size: 32px; color: var(--danger); text-align: center; margin-bottom: 15px; font-weight: 900; text-shadow: 0 0 15px rgba(255,23,68,0.6); animation: pulseRed 1s infinite;}
         @keyframes pulseRed { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Conquistas */
         .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); opacity: 0.5; transition: 0.3s;}
         .achievement-card.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); box-shadow: 0 0 15px rgba(255,215,0,0.1);}
         .ach-icon { font-size: 32px; filter: grayscale(1); transition: 0.3s;}
@@ -118,7 +112,6 @@
         .ach-info h4 { font-size: 15px; margin-bottom: 2px; color: #fff;}
         .ach-info p { font-size: 12px; color: var(--text-muted); }
 
-        /* Desafios */
         .challenge-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); }
         .challenge-info h4 { font-size: 16px; margin-bottom: 2px; color: var(--primary); }
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
@@ -128,7 +121,6 @@
         .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 5px 0 #92400e; padding: 16px; border-radius: 14px;}
         .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 5px 0 #064e3b; padding: 16px; border-radius: 14px;}
         
-        /* Missões e Loja */
         .mission-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);}
         .mission-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 14px; }
         .mission-reward { color: var(--gold); font-size: 13px; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
@@ -142,7 +134,6 @@
         .btn-buy { background: var(--primary); color: #000; padding: 10px 18px; border-radius: 10px; font-size: 13px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto;}
         .btn-buy:disabled { background: var(--text-muted); box-shadow: none; color: #333; cursor: not-allowed; opacity: 0.5; }
 
-        /* Multiplicador */
         .multiplier-box { display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 0 15px rgba(168,85,247,0.2);}
         .multiplier-text { font-size: 14px; font-weight: 800; color: var(--accent); }
         .multiplier-toggle { width: 44px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
@@ -150,7 +141,6 @@
         .multiplier-toggle.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
         .multiplier-toggle.on::after { transform: translateX(20px); }
 
-        /* Calendário e Ranking */
         .calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
         .dia-semana { font-size: 10px; color: var(--text-muted); text-align: center; font-weight: 800; }
         .dia-calendario { width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.03); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
@@ -161,38 +151,33 @@
         .rank-tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.03); border-radius: 12px; font-size: 13px; font-weight: 800; color: var(--text-muted); cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05);}
         .rank-tab.active { background: rgba(0, 242, 254, 0.1); color: var(--primary); border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(0,242,254,0.2); }
 
-        /* PÓDIO DO RANKING SEMANAL */
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 30px 0 20px 0; height: 220px;}
         .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; position: relative; animation: slideUp 0.5s ease-out;}
-        .podium-avatar-container { position: relative; width: 65px; height: 65px; display: flex; justify-content: center; align-items: center; margin-bottom: -10px; z-index: 2; }
-        .podium-avatar { position: relative; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; z-index: 2; border: 3px solid #fff; background: #1a2238;}
+        .podium-avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: -10px; z-index: 2;}
+        .podium-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
         .podium-block { width: 100%; border-radius: 12px 12px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
         .podium-name { font-size: 13px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;}
         .podium-score { font-size: 12px; font-weight: 900; color: rgba(0,0,0,0.7); background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
         
         .podium-1 .podium-block { height: 130px; background: linear-gradient(180deg, #ffd700, #b8860b); }
-        .podium-1 .podium-avatar { border-color: #ffd700; box-shadow: 0 0 20px #ffd700; font-size: 32px; width: 70px; height: 70px; z-index: 3; }
-        .podium-1 .podium-avatar-container { width: 80px; height: 80px; }
+        .podium-1 .podium-avatar { border: 3px solid #ffd700; box-shadow: 0 0 20px #ffd700; font-size: 30px; width: 60px; height: 60px; }
         .podium-1 .podium-name { color: #000; font-size: 15px;}
-        .podium-crown { position: absolute; top: -35px; font-size: 28px; animation: float 2s infinite ease-in-out; z-index: 4;}
+        .podium-crown { position: absolute; top: -35px; font-size: 28px; animation: float 2s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         
         .podium-2 .podium-block { height: 95px; background: linear-gradient(180deg, #e0e0e0, #9e9e9e); }
-        .podium-2 .podium-avatar { border-color: #e0e0e0; box-shadow: 0 0 15px #e0e0e0; }
+        .podium-2 .podium-avatar { border: 3px solid #e0e0e0; box-shadow: 0 0 15px #e0e0e0; }
         
         .podium-3 .podium-block { height: 75px; background: linear-gradient(180deg, #cd7f32, #8b4513); }
-        .podium-3 .podium-avatar { border-color: #cd7f32; box-shadow: 0 0 15px #cd7f32; }
+        .podium-3 .podium-avatar { border: 3px solid #cd7f32; box-shadow: 0 0 15px #cd7f32; }
         
-        /* Lista do Ranking */
         .ranking-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px;}
         .ranking-list-item:nth-child(1) { background: linear-gradient(90deg, rgba(255,215,0,0.15), transparent); border-left: 4px solid #ffd700; }
         .ranking-list-item:nth-child(2) { background: linear-gradient(90deg, rgba(192,192,192,0.15), transparent); border-left: 4px solid #c0c0c0; }
         .ranking-list-item:nth-child(3) { background: linear-gradient(90deg, rgba(205,127,50,0.15), transparent); border-left: 4px solid #cd7f32; }
 
-        /* Histórico */
         .historico-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
 
-        /* Perfil VIP Cards */
         .stat-row { margin-bottom: 20px; }
         .stat-label-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; font-weight: 800; color: #fff; }
         .stat-bar-bg { height: 12px; background: rgba(0,0,0,0.5); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
@@ -231,9 +216,9 @@
         <div id="tela-home" class="screen">
             <div class="user-header">
                 <div class="user-info">
-                    <div class="avatar-container">
-                        <div class="avatar-ring frame-default" id="home-avatar-ring"></div>
-                        <div class="avatar" id="home-avatar">🧑‍🚀</div>
+                    <div class="avatar-wrapper">
+                        <div class="frame frame-padrao" id="home-frame"></div>
+                        <div class="avatar-img" id="home-avatar">🧑‍🚀</div>
                     </div>
                     <div>
                         <div class="user-name" id="home-nome">Jogador</div>
@@ -425,9 +410,9 @@
             <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL VIP</h2>
             
             <div class="glass text-center" style="border-color: var(--accent); box-shadow: 0 0 30px rgba(168,85,247,0.15);">
-                <div class="avatar-container" style="width: 100px; height: 100px; margin: 0 auto 15px auto;">
-                    <div class="avatar-ring frame-default" id="perfil-avatar-ring"></div>
-                    <div class="avatar" id="perfil-avatar" style="width: 86px; height: 86px; font-size: 48px;">🧑‍🚀</div>
+                <div class="avatar-wrapper" style="width: 100px; height: 100px; margin: 0 auto 15px auto;">
+                    <div class="frame frame-padrao" id="perfil-frame"></div>
+                    <div class="avatar-img" id="perfil-avatar" style="width: 80px; height: 80px; font-size: 46px;">🧑‍🚀</div>
                 </div>
                 
                 <div style="position: relative; display: inline-block;">
@@ -475,7 +460,7 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'default', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
+        let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         
         let isDuelo = false;
@@ -515,12 +500,18 @@
             { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.' }
         ];
 
+        // LOJA ATUALIZADA COM MOLDURAS
         const LOJA_DB = [ 
             { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
             { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
-            { id: 'frame_gold', icone: '👑', nome: 'Moldura de Ouro', desc: 'Brilho lendário', preco: 2000, tipo: 'moldura', valor: 'gold' },
-            { id: 'frame_fire', icone: '🔥', nome: 'Moldura de Fogo', desc: 'Chamas ardentes', preco: 2500, tipo: 'moldura', valor: 'fire' },
-            { id: 'frame_ice', icone: '❄️', nome: 'Moldura de Gelo', desc: 'Frio congelante', preco: 2500, tipo: 'moldura', valor: 'ice' },
+            
+            // MOLDURAS
+            { id: 'frame-ouro', icone: '👑', nome: 'Moldura de Ouro', desc: 'Brilho dourado VIP', preco: 800, tipo: 'frame' },
+            { id: 'frame-fogo', icone: '🔥', nome: 'Moldura de Fogo', desc: 'Chamas ardentes', preco: 1500, tipo: 'frame' },
+            { id: 'frame-gelo', icone: '❄️', nome: 'Moldura de Gelo', desc: 'Congelante e brilhante', preco: 1500, tipo: 'frame' },
+            { id: 'frame-neon', icone: '🔮', nome: 'Moldura Neon', desc: 'Energia roxa infinita', preco: 2000, tipo: 'frame' },
+
+            // AVATARES
             { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' },
             { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
             { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
@@ -592,8 +583,10 @@
             if (data) {
                 jogador.nome = data.nome || jogador.nome || 'Jogador';
                 jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
-                jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; jogador.avatar = data.avatar || '🧑‍🚀';
-                jogador.moldura = data.moldura || 'default'; // PUXA A MOLDURA
+                jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
+                jogador.avatar = data.avatar || '🧑‍🚀';
+                jogador.moldura = data.moldura || 'frame-padrao'; // Carrega a moldura
+                
                 jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
                 jogador.missoes = data.missoes || { acertos: 0, jogos: 0, desafios: 0 };
                 jogador.multiplicador_expira = data.multiplicador_expira;
@@ -603,11 +596,26 @@
                 jogador.melhorSequencia = data.melhor_sequencia || 0;
             } else {
                 const { error: erroInsert } = await banco.from('ranking').insert([{ 
-                    user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'default', moedas: 0, streak: 0,
+                    user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
                     conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
                 }]);
                 if(erroInsert) console.error("Erro ao criar perfil:", erroInsert.message);
             }
+        }
+
+        function aplicarMolduras() {
+            // Home
+            const homeFrame = document.getElementById('home-frame');
+            homeFrame.className = `frame ${jogador.moldura}`;
+            document.getElementById('home-avatar').innerText = jogador.avatar;
+            
+            // Perfil
+            const perfilFrame = document.getElementById('perfil-frame');
+            perfilFrame.className = `frame ${jogador.moldura}`;
+            document.getElementById('perfil-avatar').innerText = jogador.avatar;
+            
+            document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
+            document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
         }
 
         async function atualizarDashboard() {
@@ -618,15 +626,7 @@
             document.getElementById('home-streak').innerText = jogador.streak || 0;
             document.getElementById('home-moedas').innerText = jogador.moedas || 0;
             
-            // Atualiza o avatar e a moldura na home
-            document.getElementById('home-avatar').innerText = jogador.avatar;
-            document.getElementById('home-avatar-ring').className = `avatar-ring frame-${jogador.moldura}`;
-            
-            // Atualiza o perfil
-            document.getElementById('perfil-avatar').innerText = jogador.avatar;
-            document.getElementById('perfil-avatar-ring').className = `avatar-ring frame-${jogador.moldura}`;
-            document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
-            document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
+            aplicarMolduras();
 
             const xpAtualNivel = jogador.xp % 100;
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
@@ -656,10 +656,7 @@
             if (idTela === 'tela-perfil') { 
                 carregarPerfil().then(() => {
                     document.getElementById('perfil-nome-input').value = jogador.nome;
-                    document.getElementById('perfil-avatar').innerText = jogador.avatar;
-                    document.getElementById('perfil-avatar-ring').className = `avatar-ring frame-${jogador.moldura}`;
-                    document.getElementById('profile-xp-display').innerText = jogador.xp;
-                    document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
+                    aplicarMolduras();
                     renderizarCalendario();
                     renderizarHistorico();
                 });
@@ -686,7 +683,7 @@
                 const { error } = await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
                 if(error) {
                     await banco.from('ranking').insert([{ 
-                        user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'default', moedas: 0, streak: 0,
+                        user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
                         conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
                     }]); 
                 }
@@ -792,24 +789,20 @@
                 
                 lista.innerHTML = '';
                 
-                // PÓDIO SEMANAL
                 if (tipo === 'semanal' && topIds.length >= 1) {
                     let podiumHTML = '<div class="podium-container">';
                     
-                    // 2º Lugar
                     if (topIds.length >= 2) {
                         const j2 = jogadores.find(j => j.user_id === topIds[1]);
-                        if(j2) podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar-container"><div class="avatar-ring frame-${j2.moldura || 'default'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[1]]}</div></div></div>`;
+                        if(j2) podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[1]]}</div></div></div>`;
                     }
                     
-                    // 1º Lugar
                     const j1 = jogadores.find(j => j.user_id === topIds[0]);
-                    if(j1) podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-container"><div class="avatar-ring frame-${j1.moldura || 'default'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[0]]}</div></div></div>`;
+                    if(j1) podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[0]]}</div></div></div>`;
 
-                    // 3º Lugar
                     if (topIds.length >= 3) {
                         const j3 = jogadores.find(j => j.user_id === topIds[2]);
-                        if(j3) podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar-container"><div class="avatar-ring frame-${j3.moldura || 'default'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[2]]}</div></div></div>`;
+                        if(j3) podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[2]]}</div></div></div>`;
                     }
                     
                     podiumHTML += '</div>';
@@ -822,7 +815,7 @@
                             lista.innerHTML += `<div class="ranking-list-item">
                                 <div style="display:flex; gap: 10px; align-items:center;">
                                     <span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i+1}º</span>
-                                    <div class="avatar-container" style="width: 35px; height: 35px;"><div class="avatar-ring frame-${jog.moldura || 'default'}"></div><div class="avatar" style="width:31px; height:31px; font-size:16px; border-width:2px;">${jog.avatar || '🧑‍🚀'}</div></div>
+                                    <div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${jog.avatar || '🧑‍🚀'}</div></div>
                                     <div style="font-weight:800; font-size:14px;">${jog.nome}</div>
                                 </div>
                                 <div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div>
@@ -838,7 +831,7 @@
                             lista.innerHTML += `<div class="ranking-list-item">
                                 <div style="display:flex; gap: 10px; align-items:center;">
                                     <span style="font-size:18px; width:30px;">${medalha}</span>
-                                    <div class="avatar-container" style="width: 45px; height: 45px;"><div class="avatar-ring frame-${jog.moldura || 'default'}"></div><div class="avatar" style="width:39px; height:39px; font-size:20px; border-width:2px;">${jog.avatar || '🧑‍🚀'}</div></div>
+                                    <div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${jog.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${jog.avatar || '🧑‍🚀'}</div></div>
                                     <div style="font-weight:800; font-size:15px;">${jog.nome}</div>
                                 </div>
                                 <div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div>
@@ -853,8 +846,14 @@
                 lista.innerHTML = '';
                 data.forEach((user, index) => { 
                     let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; 
-                    let avatar = user.avatar || '🧑‍🚀'; 
-                    lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-container" style="width: 45px; height: 45px;"><div class="avatar-ring frame-${user.moldura || 'default'}"></div><div class="avatar" style="width:39px; height:39px; font-size:20px; border-width:2px;">${avatar}</div></div><div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; 
+                    lista.innerHTML += `<div class="ranking-list-item">
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <span style="font-size:18px; width:30px;">${medalha}</span>
+                            <div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${user.avatar || '🧑‍🚀'}</div></div>
+                            <div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div>
+                        </div>
+                        <div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div>
+                    </div>`; 
                 });
             }
         }
@@ -978,7 +977,7 @@
                     }).eq('user_id', jogador.id);
                 } else {
                     await banco.from('ranking').insert([{ 
-                        user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral',
+                        user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral', moldura: 'frame-padrao',
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }]);
                 }
@@ -1191,15 +1190,22 @@
         function renderizarLoja() {
             document.getElementById('loja-moedas').innerText = jogador.moedas || 0; const container = document.getElementById('lista-loja'); container.innerHTML = '';
             let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira.split('|').pop()) > new Date()) multAtivo = true; }
+            
             LOJA_DB.forEach(item => {
                 let isEquipado = false; 
                 if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true; 
-                if(item.tipo === 'moldura' && jogador.moldura === item.valor) isEquipado = true;
+                if(item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
                 if(item.tipo.includes('power') && multAtivo) isEquipado = true;
                 
-                let podeComprar = jogador.moedas >= item.preco && !isEquipado; let btnTexto = 'COMPRAR';
-                if(isEquipado) { btnTexto = item.tipo.includes('power') ? 'ATIVO' : 'EQUIPADO'; } else if (!podeComprar) { btnTexto = 'FALTA 🪙'; }
-                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${item.icone}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
+                let podeComprar = jogador.moedas >= item.preco && !isEquipado; 
+                let btnTexto = 'COMPRAR';
+                if(isEquipado) { btnTexto = 'EQUIPADO'; } 
+                else if (!podeComprar) { btnTexto = 'FALTA 🪙'; }
+                
+                // Pequeno preview visual do frame na loja
+                let iconVisual = item.tipo === 'frame' ? `<div class="frame ${item.id}" style="position:relative; width:40px; height:40px; border-radius:50%; display:flex; justify-content:center; align-items:center;"><span style="font-size:20px; z-index:5;">${item.icone}</span></div>` : item.icone;
+
+                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${iconVisual}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
             });
         }
 
@@ -1207,18 +1213,16 @@
             const item = LOJA_DB.find(i => i.id === id);
             if (jogador.moedas >= item.preco) {
                 jogador.moedas -= item.preco;
-                if(item.tipo === 'avatar') { 
-                    jogador.avatar = item.icone; 
-                } else if (item.tipo === 'moldura') {
-                    jogador.moldura = item.valor;
-                } else if (item.tipo.includes('power')) { 
+                if(item.tipo === 'avatar') { jogador.avatar = item.icone; } 
+                else if(item.tipo === 'frame') { jogador.moldura = item.id; }
+                else if (item.tipo.includes('power')) { 
                     let umDia = new Date(); 
                     umDia.setDate(umDia.getDate() + 1); 
                     jogador.multiplicador_expira = umDia.toISOString(); 
                     if(item.tipo === 'power3') jogador.multiplicador_expira = '3x|' + umDia.toISOString();
                 }
                 await banco.from('ranking').update({ avatar: jogador.avatar, moldura: jogador.moldura, moedas: jogador.moedas, multiplicador_expira: jogador.multiplicador_expira }).eq('user_id', jogador.id);
-                alert(`Você comprou: ${item.nome}!`); renderizarLoja(); atualizarDashboard();
+                alert(`Você comprou/equipou: ${item.nome}!`); renderizarLoja(); atualizarDashboard();
             }
         }
 
