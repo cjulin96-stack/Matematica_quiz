@@ -31,7 +31,7 @@ h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
 .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
 .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; border: 1px solid rgba(255,255,255,0.1);}
 .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; pointer-events: none; }
-.frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; filter: blur(2px); opacity: 0.8; }
+.frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--8)); animation: spin 4s linear infinite; filter: blur(2px); opacity: 0.8; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 .user-name { font-weight: 800; font-size: 18px; }
@@ -134,3 +134,16 @@ select option { background: var(--bg-dark); color: #fff; }
 .dia-calendario { width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.03); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
 .dia-calendario.jogou { background: rgba(255, 69, 0, 0.15); color: #ff4500; border: 1px solid rgba(255,69,0,0.5); box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
 .dia-calendario.hoje { border: 2px solid var(--primary); color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
+/* CONSERTO: LOJA E MISSÕES */
+.store-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); }
+.store-icon { font-size: 32px; background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);}
+.store-info h4 { font-size: 15px; font-weight: 800; }
+.store-price { color: var(--gold); font-weight: 800; font-size: 14px; margin-top: 5px;}
+.btn-buy { background: var(--primary); color: #000; padding: 10px 18px; border-radius: 10px; font-size: 13px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto; font-weight: 900; text-transform: uppercase;}
+.btn-buy:disabled { background: var(--text-muted); box-shadow: none; color: #333; cursor: not-allowed; opacity: 0.5; }
+
+.mission-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);}
+.mission-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 14px; }
+.mission-reward { color: var(--gold); font-size: 13px; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
+.mission-progress-bar { height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
+.mission-progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.3s; box-shadow: 0 0 8px var(--success);}
