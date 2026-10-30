@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 6.1</title>
+    <title>MATH ARENA - Módulo 7</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -243,7 +243,7 @@
             <div class="hud">
                 <span id="hud-pontos">🏆 0 PTS</span>
                 <span id="hud-sequencia" style="color: var(--accent);">🔥 0</span>
-                <span id="hud-questao">1/10</span>
+                <span id="hud-questao">∞</span>
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
             
@@ -364,9 +364,6 @@
             { id: 'dragao', icone: '🐉', nome: 'Dragão da Matemática', desc: 'Avatar exclusivo', preco: 5000, tipo: 'avatar' }
         ];
 
-        // ==========================================
-        // GERADOR INFINITO AVANÇADO (MÓDULO 6.1)
-        // ==========================================
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
@@ -581,7 +578,6 @@
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
 
-            // Checa se o multiplicador está ativo
             if(jogador.multiplicador_expira) {
                 let agora = new Date();
                 let expira = new Date(jogador.multiplicador_expira);
@@ -700,6 +696,9 @@
             }).eq('nome', jogador.nome);
         }
 
+        // ==========================================
+        // MÓDULO 7: JOGO INFINITO (CLASSICO E RANQUEADO)
+        // ==========================================
         function renderizarDesafios() {
             const container = document.getElementById('lista-desafios');
             container.innerHTML = '';
@@ -721,7 +720,11 @@
 
             const serie = document.getElementById('select-serie').value;
             filaPerguntas = [];
-            for(let i=0; i<10; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
+            
+            // Gera um lote inicial de 20 questões
+            for(let i=0; i<20; i++) {
+                filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
+            }
 
             estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
             
@@ -737,6 +740,7 @@
             
             const desafio = DESAFIOS_DB.find(d => d.id === idDesafio);
             filaPerguntas = [];
+            // Desafios geram lote grande
             for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(desafio.serie));
 
             estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
@@ -760,13 +764,23 @@
         }
 
         function carregarQuestao() {
+            // SE ACABAREM AS QUESTÕES, GERA MAIS (INFINITO)
+            if (estado.questaoAtual >= filaPerguntas.length) {
+                const serie = document.getElementById('select-serie').value;
+                for(let i=0; i<10; i++) {
+                    filaPerguntas.push(gerarQuestao(estado.modo === 'rankeado' ? 'mix' : serie));
+                }
+            }
+
             estado.respondidas = false;
             perguntaAtual = filaPerguntas[estado.questaoAtual];
             
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
             document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
-            document.getElementById('hud-questao').innerText = estado.modo === 'tempo' ? '∞' : `${estado.questaoAtual + 1}/10`;
-            document.getElementById('progress-fill').style.width = estado.modo === 'tempo' ? '100%' : `${((estado.questaoAtual) / 10) * 100}%`;
+            document.getElementById('hud-questao').innerText = `∞`; // Sempre infinito
+            
+            // Progress bar dá a volta a cada 10 questões
+            document.getElementById('progress-fill').style.width = `${((estado.questaoAtual % 10) / 10) * 100}%`;
             
             document.getElementById('question-text').innerText = perguntaAtual.q;
             document.getElementById('feedback-box').classList.remove('active');
@@ -829,12 +843,11 @@
                 fbExp.innerText = perguntaAtual.exp;
                 
                 document.getElementById('btn-next').style.display = 'block';
-                if (estado.questaoAtual >= 9) document.getElementById('btn-next').innerText = "FINALIZAR 🏁";
+                document.getElementById('btn-next').innerText = "PRÓXIMA ➡"; // Sempre próxima
             }
         }
 
         function proximaQuestao() {
-            if (estado.modo !== 'tempo' && estado.questaoAtual >= 9) return finalizarJogo();
             estado.questaoAtual++;
             carregarQuestao();
         }
@@ -849,10 +862,7 @@
             document.getElementById('tela-resultado').classList.add('active');
             
             let pontosFinais = estado.pontos;
-            // APLICA MULTIPLICADOR (NÃO GASTA, POIS DURA 1 DIA)
-            if(usarMultiplicador) {
-                pontosFinais = estado.pontos * 2;
-            }
+            if(usarMultiplicador) pontosFinais = estado.pontos * 2;
 
             document.getElementById('result-score').innerText = pontosFinais;
             document.getElementById('result-acertos').innerText = estado.acertos;
