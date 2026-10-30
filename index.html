@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 4 (Corrigido)</title>
+    <title>MATH ARENA - Módulo 5</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -65,7 +65,10 @@
         .user-name { font-weight: 800; font-size: 18px; }
         .user-level { font-size: 12px; color: var(--primary); font-weight: 700; }
         
-        .streak-badge { display: flex; align-items: center; gap: 5px; background: rgba(255, 69, 0, 0.2); padding: 8px 12px; border-radius: 20px; border: 1px solid rgba(255, 69, 0, 0.5); font-weight: 800; color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.3); }
+        .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-weight: 800; font-size: 12px; }
+        .badge-fire { background: rgba(255, 69, 0, 0.2); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.3); }
+        .badge-coin { background: rgba(255, 215, 0, 0.2); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
         .xp-container { margin-top: 10px; }
         .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
@@ -131,16 +134,28 @@
         .ach-info h4 { font-size: 14px; margin-bottom: 2px; }
         .ach-info p { font-size: 11px; color: var(--text-muted); }
 
-        .stat-row { margin-bottom: 12px; }
-        .stat-label-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: 700; }
-        .stat-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .stat-bar-fill { height: 100%; border-radius: 4px; transition: 0.5s; }
-
         .challenge-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .challenge-info h4 { font-size: 16px; margin-bottom: 2px; color: var(--primary); }
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
         .btn-play-challenge { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #6b21a8; margin: 0; width: auto;}
-        .btn-play-challenge:active { transform: translateY(4px); box-shadow: 0 0 0 #6b21a8; }
+        
+        /* MÓDULO 5: MISSÕES E LOJA */
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; padding: 15px; }
+        .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 0 #064e3b; padding: 15px; }
+        
+        .mission-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .mission-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; font-size: 14px; }
+        .mission-reward { color: var(--gold); font-size: 12px; }
+        .mission-progress-bar { height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
+        .mission-progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.3s; }
+
+        .store-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .store-icon { font-size: 30px; background: rgba(0,0,0,0.3); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 12px; }
+        .store-info h4 { font-size: 14px; }
+        .store-price { color: var(--gold); font-weight: 800; font-size: 14px; }
+        .btn-buy { background: var(--primary); color: #000; padding: 8px 15px; border-radius: 8px; font-size: 12px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto;}
+        .btn-buy:disabled { background: var(--text-muted); box-shadow: none; color: #333; cursor: not-allowed; opacity: 0.5; }
 
         .hidden { display: none !important; }
         .text-center { text-align: center; }
@@ -150,22 +165,31 @@
 <body>
 
     <div class="main-content">
+        <!-- TELA: HOME -->
         <div id="tela-home" class="screen active">
             <div class="user-header">
                 <div class="user-info">
-                    <div class="avatar">🧑‍🚀</div>
+                    <div class="avatar" id="home-avatar">🧑‍🚀</div>
                     <div>
                         <div class="user-name" id="home-nome">Jogador</div>
                         <div class="user-level" id="home-nivel">NÍVEL 1</div>
                     </div>
                 </div>
-                <div class="streak-badge">🔥 <span id="home-streak">0</span></div>
+                <div class="header-stats">
+                    <div class="badge badge-fire">🔥 <span id="home-streak">0</span></div>
+                    <div class="badge badge-coin">🪙 <span id="home-moedas">0</span></div>
+                </div>
             </div>
             <div class="glass">
                 <div class="xp-container">
                     <div class="xp-text"><span>PROGRESSO</span><span id="home-xp-txt">0 / 100 XP</span></div>
                     <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
                 </div>
+            </div>
+
+            <div class="grid-buttons">
+                <button class="btn-missions" onclick="mudarAba('tela-missoes')">📋 MISSÕES</button>
+                <button class="btn-store" onclick="mudarAba('tela-loja')">🛒 LOJA</button>
             </div>
             
             <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO (MIX)</button>
@@ -186,12 +210,30 @@
             </div>
         </div>
 
+        <!-- TELA: MISSÕES -->
+        <div id="tela-missoes" class="screen">
+            <h2 class="text-gradient text-center mb-20">MISSÕES DIÁRIAS</h2>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Complete missões para ganhar moedas extras!</p>
+            <div id="lista-missoes"></div>
+            <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: LOJA -->
+        <div id="tela-loja" class="screen">
+            <h2 class="text-gradient text-center mb-20">LOJA DE AVATARES</h2>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Suas moedas: 🪙 <span id="loja-moedas" style="color:var(--gold); font-weight:800;">0</span></p>
+            <div id="lista-loja"></div>
+            <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
+        </div>
+
+        <!-- TELA: DESAFIOS -->
         <div id="tela-desafios" class="screen">
             <h2 class="text-gradient text-center mb-20">ARENA DE DESAFIOS</h2>
             <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Tempo limitado. Questões infinitas!</p>
             <div id="lista-desafios"></div>
         </div>
 
+        <!-- TELA: JOGO -->
         <div id="tela-jogo" class="screen">
             <div id="timer-box" class="timer-display hidden">60s</div>
             <div class="hud">
@@ -215,12 +257,13 @@
             <button class="btn-danger" onclick="pararJogo()">Parar e Salvar 🏁</button>
         </div>
 
+        <!-- TELA: RESULTADO -->
         <div id="tela-resultado" class="screen">
             <div class="glass text-center">
                 <h2 id="result-title">FIM DE JOGO</h2>
                 <div style="font-size: 60px; margin: 15px 0;" id="result-emoji">🎉</div>
                 <div style="font-size: 48px; font-weight: 900; color: var(--primary);" id="result-score">0</div>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">PONTOS</p>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">PONTOS & MOEDAS</p>
                 <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
                     <div><span style="color: var(--success); font-size: 24px; font-weight: bold;" id="result-acertos">0</span><br><small>Acertos</small></div>
                     <div><span style="color: var(--danger); font-size: 24px; font-weight: bold;" id="result-erros">0</span><br><small>Erros</small></div>
@@ -229,11 +272,13 @@
             </div>
         </div>
 
+        <!-- TELA: MEDALHAS -->
         <div id="tela-conquistas" class="screen">
             <h2 class="text-gradient text-center mb-20">MEDALHAS</h2>
             <div id="lista-conquistas"></div>
         </div>
 
+        <!-- TELA: ESTATÍSTICAS -->
         <div id="tela-estatisticas" class="screen">
             <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
             <div class="glass">
@@ -242,15 +287,17 @@
             </div>
         </div>
 
+        <!-- TELA: RANKING -->
         <div id="tela-ranking" class="screen">
             <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
             <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
 
+        <!-- TELA: PERFIL -->
         <div id="tela-perfil" class="screen">
             <h2 class="text-gradient text-center mb-20">PERFIL</h2>
             <div class="glass text-center">
-                <div class="avatar" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 40px;">🧑‍🚀</div>
+                <div class="avatar" id="perfil-avatar" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 40px;">🧑‍🚀</div>
                 <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNome()" style="text-align: center; font-size: 18px; font-weight: bold;">
                 <p style="color: var(--accent); font-weight: 800;" id="perfil-nivel-txt">NÍVEL 1</p>
             </div>
@@ -259,6 +306,7 @@
         </div>
     </div>
 
+    <!-- MENU INFERIOR -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="mudarAba('tela-home', this)">
             <span class="nav-icon">🏠</span><span>Início</span>
@@ -282,7 +330,7 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, conquistas: [], stats: {} };
+        let jogador = { nome: localStorage.getItem('ma_nome') || '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0} };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
         let perguntaAtual = null;
@@ -304,6 +352,15 @@
             { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' },
             { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' },
             { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' }
+        ];
+
+        // LOJA DB
+        const LOJA_DB = [
+            { id: 'default', icone: '🧑‍🚀', nome: 'Explorador', preco: 0 },
+            { id: 'mestre', icone: '🧙‍♂️', nome: 'Mestre Matemático', preco: 500 },
+            { id: 'robo', icone: '🤖', nome: 'Calculadora Humana', preco: 1000 },
+            { id: 'alien', icone: '👽', nome: 'Gênio Alienígena', preco: 1500 },
+            { id: 'cerebro', icone: '🧠', nome: 'Super Cérebro', preco: 2000 }
         ];
 
         // ==========================================
@@ -378,7 +435,6 @@
                 return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]);
             }
 
-            // Gerar opções (só para as questões com resposta numérica)
             let opcoesSet = new Set([resp]);
             let attempts = 0;
             while(opcoesSet.size < 4 && attempts < 50) {
@@ -435,6 +491,8 @@
             if (idTela === 'tela-conquistas') renderizarConquistas();
             if (idTela === 'tela-estatisticas') renderizarEstatisticas();
             if (idTela === 'tela-perfil') carregarPerfil();
+            if (idTela === 'tela-missoes') renderizarMissoes();
+            if (idTela === 'tela-loja') renderizarLoja();
         }
 
         function salvarNome() {
@@ -451,10 +509,16 @@
                 jogador.xp = u.xp || 0;
                 jogador.pontos = u.pontuacao || 0;
                 jogador.streak = u.streak || 0;
+                jogador.moedas = u.moedas || 0;
+                jogador.avatar = u.avatar || '🧑‍🚀';
                 jogador.conquistas = u.conquistas || [];
                 jogador.stats = u.stats_materias || {};
+                jogador.missoes = u.missoes || {acertos: 0, jogos: 0, desafios: 0};
                 jogador.nivel = Math.floor(jogador.xp / 100) + 1;
+                
                 document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel}`;
+                document.getElementById('home-avatar').innerText = jogador.avatar;
+                document.getElementById('perfil-avatar').innerText = jogador.avatar;
             }
         }
 
@@ -463,11 +527,91 @@
             document.getElementById('home-nome').innerText = jogador.nome || 'Jogador';
             document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel || 1}`;
             document.getElementById('home-streak').innerText = jogador.streak || 0;
+            document.getElementById('home-moedas').innerText = jogador.moedas || 0;
+            
             const xpAtualNivel = jogador.xp % 100;
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
         }
 
+        // ==========================================
+        // MÓDULO 5: MISSÕES E LOJA
+        // ==========================================
+        function renderizarMissoes() {
+            const container = document.getElementById('lista-missoes');
+            container.innerHTML = '';
+            
+            const ms = jogador.missoes;
+            const missoes = [
+                { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 },
+                { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 },
+                { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 }
+            ];
+
+            missoes.forEach(m => {
+                const pct = Math.min(100, (m.prog / m.meta) * 100);
+                const isConcluida = pct === 100;
+                container.innerHTML += `
+                    <div class="mission-card">
+                        <div class="mission-header">
+                            <span>${m.nome}</span>
+                            <span class="mission-reward">🪙 ${m.recompensa}</span>
+                        </div>
+                        <div class="mission-progress-bar">
+                            <div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div>
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px; text-align: right;">
+                            ${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderizarLoja() {
+            document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
+            const container = document.getElementById('lista-loja');
+            container.innerHTML = '';
+
+            LOJA_DB.forEach(item => {
+                const isEquipado = jogador.avatar === item.icone;
+                const podeComprar = jogador.moedas >= item.preco && !isEquipado;
+                
+                container.innerHTML += `
+                    <div class="store-item">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="store-icon">${item.icone}</div>
+                            <div class="store-info">
+                                <h4>${item.nome}</h4>
+                                <div class="store-price">🪙 ${item.preco}</div>
+                            </div>
+                        </div>
+                        <button class="btn-buy" onclick="comprarAvatar('${item.icone}', ${item.preco})" 
+                            ${isEquipado ? 'disabled' : (podeComprar ? '' : 'disabled')}>
+                            ${isEquipado ? 'EQUIPADO' : 'COMPRAR'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        async function comprarAvatar(icone, preco) {
+            if (jogador.moedas >= preco) {
+                jogador.moedas -= preco;
+                jogador.avatar = icone;
+                await salvarPerfilNoBanco();
+                alert(`Você comprou o avatar ${icone}!`);
+                renderizarLoja();
+                document.getElementById('home-avatar').innerText = icone;
+                document.getElementById('perfil-avatar').innerText = icone;
+            } else {
+                alert("Moedas insuficientes!");
+            }
+        }
+
+        // ==========================================
+        // JOGO
+        // ==========================================
         function renderizarDesafios() {
             const container = document.getElementById('lista-desafios');
             container.innerHTML = '';
@@ -489,10 +633,7 @@
 
             const serie = document.getElementById('select-serie').value;
             filaPerguntas = [];
-            
-            for(let i=0; i<10; i++) {
-                filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
-            }
+            for(let i=0; i<10; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
 
             estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
             
@@ -524,10 +665,7 @@
             timerInterval = setInterval(() => {
                 tempoRestante--;
                 timerBox.innerText = `${tempoRestante}s`;
-                if (tempoRestante <= 0) {
-                    clearInterval(timerInterval);
-                    finalizarJogo();
-                }
+                if (tempoRestante <= 0) { clearInterval(timerInterval); finalizarJogo(); }
             }, 1000);
 
             carregarQuestao();
@@ -611,9 +749,7 @@
         }
 
         function pararJogo() {
-            if(confirm("Deseja realmente parar agora e salvar seus pontos?")) {
-                finalizarJogo();
-            }
+            if(confirm("Deseja realmente parar agora e salvar seus pontos?")) finalizarJogo();
         }
 
         async function finalizarJogo() {
@@ -643,6 +779,15 @@
             if (estado.pontos === 0 && estado.acertos === 0) return;
             try {
                 const hoje = new Date().toISOString().split('T')[0];
+                
+                // Atualiza missões
+                jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1;
+                jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos;
+                if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
+
+                // Adiciona moedas (1 ponto = 1 moeda)
+                jogador.moedas = (jogador.moedas || 0) + estado.pontos;
+
                 const { data } = await banco.from('ranking').select('last_played, streak').eq('nome', jogador.nome).order('id', { ascending: true }).limit(1);
                 
                 let novoStreak = jogador.streak || 0;
@@ -655,6 +800,8 @@
                         pontuacao: (jogador.pontos || 0) + estado.pontos,
                         xp: (jogador.xp || 0) + estado.pontos,
                         streak: novoStreak,
+                        moedas: jogador.moedas,
+                        missoes: jogador.missoes,
                         last_played: hoje,
                         conquistas: jogador.conquistas,
                         stats_materias: jogador.stats
@@ -662,13 +809,18 @@
                 } else {
                     await banco.from('ranking').insert([{
                         nome: jogador.nome, pontuacao: estado.pontos, xp: estado.pontos,
-                        streak: 1, last_played: hoje, conquistas: jogador.conquistas,
+                        streak: 1, moedas: jogador.moedas, missoes: jogador.missoes,
+                        last_played: hoje, conquistas: jogador.conquistas,
                         stats_materias: jogador.stats, nivel: 'Geral'
                     }]);
                 }
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        async function salvarPerfilNoBanco() {
+            await banco.from('ranking').update({ avatar: jogador.avatar, moedas: jogador.moedas }).eq('nome', jogador.nome);
         }
 
         async function renderizarConquistas() {
@@ -720,10 +872,12 @@
             lista.innerHTML = '';
             data.forEach((user, index) => {
                 let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+                let avatar = user.avatar || '🧑‍🚀';
                 lista.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <div style="display:flex; gap: 10px; align-items:center;">
                             <span style="font-size:18px; width:30px;">${medalha}</span>
+                            <div style="font-size: 24px;">${avatar}</div>
                             <div>
                                 <div style="font-weight:800; font-size:14px;">${user.nome}</div>
                                 <div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div>
