@@ -84,10 +84,29 @@ async function fazerCadastro() {
 }
 
 async function fazerLogin() {
-    const email = document.getElementById('auth-email').value.trim(); const senha = document.getElementById('auth-password').value;
-    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    alert("1. O botão de entrar foi clicado!");
+    
+    const email = document.getElementById('auth-email').value.trim(); 
+    const senha = document.getElementById('auth-password').value;
+    
+    if (!email || !senha) { 
+        alert("2. Erro: Preencha e-mail e senha."); 
+        return; 
+    }
+    
+    alert("3. Tentando conectar com o Supabase...");
+    
     const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
-    if (error) { mostrarToast(error.message, "error"); } else { jogador.id = data.user.id; jogador.email = data.user.email; await carregarPerfil(); mostrarApp(); }
+    
+    if (error) { 
+        alert("ERRO DO SUPABASE: " + error.message); 
+    } else { 
+        alert("4. Login feito com sucesso! Entrando...");
+        jogador.id = data.user.id; 
+        jogador.email = data.user.email; 
+        await carregarPerfil(); 
+        mostrarApp(); 
+    }
 }
 
 async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
