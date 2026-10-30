@@ -279,32 +279,45 @@
 
         const nivelTexto = nivelAluno + "º Ano";
 
-        const { data: existentes, error: erroBusca } = await banco
-            .from('ranking')
-            .select('id, pontuacao')
-            .eq('nome', nomeDoAluno)
-            .eq('nivel', nivelTexto)
-            .order('pontuacao', { ascending: false })
-            .limit(1);
+        try {
+            const { data: existentes, error: erroBusca } = await banco
+                .from('ranking')
+                .select('id, pontuacao')
+                .eq('nome', nomeDoAluno)
+                .eq('nivel', nivelTexto)
+                .order('pontuacao', { ascending: false })
+                .limit(1);
 
-        if (erroBusca) {
-            status.innerText = "Erro ao conectar com o ranking.";
+            if (erroBusca) throw new Error("Erro na busca: " + erroBusca.message);
+
+            const existente = (existentes && existentes.length > 0) ? existentes[0] : null;
+
+            if (existente) {
+                const novaPontuacaoTotal = Math.max(0, existente.pontuacao + pontuacao);
+                const { error: erroUpdate } = await banco
+                    .from('ranking')
+                    .update({ pontuacao: novaPontuacaoTotal })
+                    .eq('id', existente.id);
+                
+                if (erroUpdate) throw new Error("Erro no update: " + erroUpdate.message);
+
+                status.innerText = `Você somou ${pontuacao > 0 ? '+' : ''}${pontuacao} pts! Seu total agora é ${novaPontuacaoTotal} pts! 🚀`;
+                status.style.color = "#2ecc71";
+            } else {
+                const pontosIniciais = Math.max(0, pontuacao);
+                const { error: erroInsert } = await banco
+                    .from('ranking')
+                    .insert([{ nome: nomeDoAluno, pontuacao: pontosIniciais, nivel: nivelTexto }]);
+                
+                if (erroInsert) throw new Error("Erro no insert: " + erroInsert.message);
+
+                status.innerText = "Pontuação inicial salva no ranking!";
+                status.style.color = "#2ecc71";
+            }
+        } catch (erro) {
+            console.error(erro);
+            status.innerText = "Erro ao salvar no ranking. Verifique a conexão.";
             status.style.color = "#e74c3c";
-            return;
-        }
-
-        const existente = (existentes && existentes.length > 0) ? existentes[0] : null;
-
-        if (existente) {
-            const novaPontuacaoTotal = Math.max(0, existente.pontuacao + pontuacao);
-            await banco.from('ranking').update({ pontuacao: novaPontuacaoTotal }).eq('id', existente.id);
-            status.innerText = `Você somou ${pontuacao > 0 ? '+' : ''}${pontuacao} pts! Seu total agora é ${novaPontuacaoTotal} pts! 🚀`;
-            status.style.color = "#2ecc71";
-        } else {
-            const pontosIniciais = Math.max(0, pontuacao);
-            await banco.from('ranking').insert([{ nome: nomeDoAluno, pontuacao: pontosIniciais, nivel: nivelTexto }]);
-            status.innerText = "Pontuação inicial salva no ranking!";
-            status.style.color = "#2ecc71";
         }
     }
 
@@ -344,7 +357,6 @@
         });
     }
 
-    // --- CORREÇÃO AQUI: Força o preenchimento do nome ao voltar ---
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
         document.getElementById('tela-inicio').style.display = 'block';
@@ -354,7 +366,6 @@
         }
     }
 
-    // --- CORREÇÃO AQUI: Força o preenchimento do nome ao jogar de novo ---
     function reiniciarTudo() {
         document.getElementById('tela-resultado').style.display = 'none';
         document.getElementById('tela-inicio').style.display = 'block';
