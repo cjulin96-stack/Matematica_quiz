@@ -827,7 +827,8 @@
         async function salvarPartida(pontosFinais) {
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
-                await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
+                const { error: erroPartida } = await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
+                if (erroPartida) console.error("Erro ao salvar partida:", erroPartida);
 
                 const hoje = new Date().toISOString().split('T')[0];
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; 
@@ -847,15 +848,20 @@
 
                 if (data) {
                     if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
-                    await banco.from('ranking').update({ 
+                    
+                    const { error: erroUpdate } = await banco.from('ranking').update({ 
                         pontuacao: novaPontuacao, xp: novoXP, streak: novoStreak, moedas: novasMoedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats,
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }).eq('user_id', jogador.id);
+
+                    if(erroUpdate) alert("Erro ao atualizar o perfil: " + erroUpdate.message);
                 } else {
-                    await banco.from('ranking').insert([{ 
+                    const { error: erroInsert } = await banco.from('ranking').insert([{ 
                         user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral',
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }]);
+                    
+                    if(erroInsert) alert("Erro ao criar o perfil: " + erroInsert.message);
                 }
                 
                 jogador.xp = novoXP;
@@ -1134,8 +1140,6 @@
             });
         }
 
-        // AQUI ESTÁ A MÁGICA DA SESSÃO BLINDADA
-        // O Supabase vai avisar o site sempre que o status de login mudar
         banco.auth.onAuthStateChange((event, session) => {
             if (session) {
                 jogador.id = session.user.id;
@@ -1144,7 +1148,6 @@
                     mostrarApp();
                 });
             } else {
-                // Se não tem sessão, mostra a tela de login
                 document.getElementById('bottom-nav').style.display = 'none';
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById('tela-auth').classList.add('active');
