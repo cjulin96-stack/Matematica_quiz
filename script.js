@@ -1026,3 +1026,107 @@ async function carregarRanking(tipo, element) {
         `; 
     });
 }
+function renderizarTemporada() {
+    let divName = "BRONZE"; let divIcon = "🥉";
+    if (jogador.nivel >= 10) { divName = "PRATA"; divIcon = "🥈"; }
+    if (jogador.nivel >= 20) { divName = "OURO"; divIcon = "🥇"; }
+    if (jogador.nivel >= 30) { divName = "PLATINA"; divIcon = "💎"; }
+    if (jogador.nivel >= 40) { divName = "DIAMANTE"; divIcon = "💠"; }
+    if (jogador.nivel >= 50) { divName = "MESTRE"; divIcon = "🔮"; }
+    if (jogador.nivel >= 75) { divName = "LENDÁRIO"; divIcon = "👑"; }
+
+    const iconEl = document.getElementById('season-icon');
+    const nameEl = document.getElementById('season-name');
+    if (iconEl) iconEl.innerText = divIcon;
+    if (nameEl) nameEl.innerText = divName;
+}
+
+function renderizarConquistas() {
+    const container = document.getElementById('lista-conquistas'); 
+    if (!container) return;
+    container.innerHTML = '';
+    CONQUISTAS_DB.forEach(c => { 
+        const unlocked = jogador.conquistas.includes(c.id); 
+        let pct = unlocked ? 100 : 0; // Simplificado para mostrar visualmente
+        
+        container.innerHTML += `
+            <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                <div class="ach-info">
+                    <h4>${c.titulo}</h4>
+                    <p>${c.desc}</p>
+                </div>
+            </div>
+        `; 
+    });
+}
+
+function renderizarMissoes() {
+    const container = document.getElementById('lista-missoes'); 
+    if (!container) return;
+    container.innerHTML = ''; const ms = jogador.missoes;
+    const missoes = [ 
+        { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, 
+        { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 },
+        { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, 
+        { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 },
+        { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } 
+    ];
+    missoes.forEach(m => { 
+        const pct = Math.min(100, (m.prog / m.meta) * 100); 
+        const isConcluida = pct >= 100; 
+        container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; 
+    });
+}
+function renderizarTemporada() {
+    let divName = "BRONZE"; let divIcon = "🥉";
+    if (jogador.nivel >= 10) { divName = "PRATA"; divIcon = "🥈"; }
+    if (jogador.nivel >= 20) { divName = "OURO"; divIcon = "🥇"; }
+    if (jogador.nivel >= 30) { divName = "PLATINA"; divIcon = "💎"; }
+    if (jogador.nivel >= 40) { divName = "DIAMANTE"; divIcon = "💠"; }
+    if (jogador.nivel >= 50) { divName = "MESTRE"; divIcon = "🔮"; }
+    if (jogador.nivel >= 75) { divName = "LENDÁRIO"; divIcon = "👑"; }
+
+    const iconEl = document.getElementById('season-icon');
+    const nameEl = document.getElementById('season-name');
+    if (iconEl) iconEl.innerText = divIcon;
+    if (nameEl) nameEl.innerText = divName;
+}
+
+function renderizarConquistas() {
+    const container = document.getElementById('lista-conquistas'); 
+    if (!container) return;
+    container.innerHTML = '';
+    CONQUISTAS_DB.forEach(c => { 
+        const unlocked = jogador.conquistas.includes(c.id); 
+        let pct = unlocked ? 100 : 0; // Simplificado para mostrar visualmente
+        
+        container.innerHTML += `
+            <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                <div class="ach-info">
+                    <h4>${c.titulo}</h4>
+                    <p>${c.desc}</p>
+                </div>
+            </div>
+        `; 
+    });
+}
+
+function renderizarMissoes() {
+    const container = document.getElementById('lista-missoes'); 
+    if (!container) return;
+    container.innerHTML = ''; const ms = jogador.missoes;
+    const missoes = [ 
+        { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, 
+        { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 },
+        { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, 
+        { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 },
+        { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } 
+    ];
+    missoes.forEach(m => { 
+        const pct = Math.min(100, (m.prog / m.meta) * 100); 
+        const isConcluida = pct >= 100; 
+        container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; 
+    });
+}
