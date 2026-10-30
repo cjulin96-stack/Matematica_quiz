@@ -656,8 +656,39 @@
         }
 
         function renderizarConquistas() {
-            const container = document.getElementById('lista-conquistas'); container.innerHTML = '';
-            CONQUISTAS_DB.forEach(c => { const unlocked = jogador.conquistas.includes(c.id); container.innerHTML += `<div class="achievement-card ${unlocked ? 'unlocked' : ''}"><div class="ach-icon">${unlocked ? c.icone : '🔒'}</div><div class="ach-info"><h4>${c.titulo}</h4><p>${c.desc}</p></div></div>`; });
+    const container = document.getElementById('lista-conquistas'); 
+    container.innerHTML = '';
+    CONQUISTAS_DB.forEach(c => { 
+        const unlocked = jogador.conquistas.includes(c.id); 
+        
+        let progressoAtual = 0;
+        if(c.tipo === 'jogos') progressoAtual = jogador.missoes.jogos || 0;
+        if(c.tipo === 'acertos') progressoAtual = jogador.totalAcertos || 0;
+        if(c.tipo === 'sequencia') progressoAtual = jogador.melhorSequencia || 0;
+        if(c.tipo === 'streak') progressoAtual = jogador.streak || 0;
+        if(c.tipo === 'nivel') progressoAtual = jogador.nivel || 1;
+        if(c.tipo === 'materias') progressoAtual = Object.keys(jogador.stats).length;
+        if(c.tipo === 'desafio' || c.tipo === 'hardcore') progressoAtual = jogador.missoes.desafios || 0;
+        
+        let pct = Math.min(100, (progressoAtual / c.meta) * 100);
+        if(unlocked) pct = 100;
+
+        container.innerHTML += `
+            <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                <div class="ach-info">
+                    <h4>${c.titulo}</h4>
+                    <p>${c.desc}</p>
+                    <div class="ach-progress-bar">
+                        <div class="ach-progress-fill" style="width:${pct}%"></div>
+                    </div>
+                    <div style="font-size:10px; color:var(--text-muted); text-align:right; margin-top:3px;">
+                        ${unlocked ? 'Concluído' : `${progressoAtual} / ${c.meta}`}
+                    </div>
+                </div>
+            </div>
+        `; 
+    });
         }
 
         function renderizarEstatisticas() {
