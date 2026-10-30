@@ -32,8 +32,6 @@
         .ranking-item:nth-child(2) { background: #dfe6e9; font-weight: bold; }
         .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
         .pontuacao-viva { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
-        
-        /* NOVO: Estilo da mensagem de feedback */
         .feedback { font-size: 18px; font-weight: bold; min-height: 30px; margin-top: 15px; transition: 0.3s; }
     </style>
 </head>
@@ -67,7 +65,6 @@
         <div class="quiz-card">
             <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
             <div id="opcoes-container"></div>
-            <!-- NOVO: Div para mostrar as mensagens -->
             <div id="feedback-text" class="feedback"></div>
         </div>
         <div class="controles">
@@ -101,11 +98,10 @@
     let perguntas = [];
     let indiceAtual = 0;
     let pontuacao = 0;
-    let combo = 0; // NOVO: Contador de acertos seguidos
+    let combo = 0;
     let nomeDoAluno = "";
     let nivelAluno = "5";
 
-    // NOVO: Listas de mensagens
     const mensagensAcerto = [
         "Parabéns, você acertou! 🎉",
         "Isso aí! Mandou muito bem! 🌟",
@@ -212,7 +208,7 @@
         }
 
         document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
-        document.getElementById('feedback-text').innerText = ""; // Limpa mensagem anterior
+        document.getElementById('feedback-text').innerText = "";
         const container = document.getElementById('opcoes-container');
         container.innerHTML = ''; 
         document.getElementById('btn-proximo').style.display = 'none';
@@ -237,16 +233,13 @@
 
         if (indexEscolhido === perguntaAtual.correta) {
             botaoClicado.classList.add('correta');
-            pontuacao += 10; // +10 pontos
-            combo++; // Aumenta o combo
+            pontuacao += 10;
+            combo++;
             
-            // Lógica de mensagens baseada no combo
             if (combo >= 3) {
-                // Se estiver em combo alto, pega as mensagens mais épicas (do meio pro fim da lista)
                 const msgIndex = Math.floor(Math.random() * (mensagensAcerto.length - 3)) + 3;
                 feedback.innerText = mensagensAcerto[msgIndex];
             } else {
-                // Mensagens normais para o começo
                 feedback.innerText = mensagensAcerto[Math.floor(Math.random() * 3)];
             }
             feedback.style.color = "#2ecc71";
@@ -254,9 +247,8 @@
         } else {
             botaoClicado.classList.add('errada');
             todosBotoes[perguntaAtual.correta].classList.add('correta');
-            pontuacao = Math.max(0, pontuacao - 4); // -4 pontos (não deixa ficar negativo)
-            combo = 0; // Zera o combo
-            
+            pontuacao = Math.max(0, pontuacao - 4);
+            combo = 0;
             feedback.innerText = mensagensErro[Math.floor(Math.random() * mensagensErro.length)];
             feedback.style.color = "#e74c3c";
         }
@@ -285,18 +277,22 @@
 
         const nivelTexto = nivelAluno + "º Ano";
 
-        const { data: existente, error: erroBusca } = await banco
+        // --- CORREÇÃO AQUI: Busca segura para evitar erro se houver nomes duplicados ---
+        const { data: existentes, error: erroBusca } = await banco
             .from('ranking')
             .select('id, pontuacao')
             .eq('nome', nomeDoAluno)
             .eq('nivel', nivelTexto)
-            .maybeSingle();
+            .order('pontuacao', { ascending: false })
+            .limit(1);
 
         if (erroBusca) {
             status.innerText = "Erro ao conectar com o ranking.";
             status.style.color = "#e74c3c";
             return;
         }
+
+        const existente = (existentes && existentes.length > 0) ? existentes[0] : null;
 
         if (existente) {
             if (pontuacao > existente.pontuacao) {
