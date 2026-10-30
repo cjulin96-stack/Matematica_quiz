@@ -521,8 +521,25 @@ select option { background: var(--bg-dark); color: #fff; }
     let somAtivado = true; 
     function toggleSom() {
         somAtivado = !somAtivado;
-        mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary');
-    }
+       mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary');
+   
+    }const AVATARES_GRATIS = ['🧑‍🚀', '🐯', '🐺', '🦊', '🐼', '🦁', '🦄', '🐲', '🤖', '👽', '👾', '🧙‍♂️', '🧛‍♂️', '🧜‍♀️', '🧚', '🦸‍♂️', '🦹‍♂️', '🥷', '👮‍♂️', '🕵️‍♂️'];
+
+const DESAFIOS_DB = [ 
+    { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' }, 
+    { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' }, 
+    { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' }, 
+    { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' }, 
+    { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos' } 
+];
+
+const ACADEMIA_DB = [
+    { titulo: 'O que são Frações?', conteudo: 'Uma fração representa uma parte de um todo. Ex: 1/2 (metade). O número de cima é o numerador (parte) e o de baixo é o denominador (total). <br><br>Para somar frações com o mesmo denominador, some apenas os numeradores: 1/4 + 2/4 = 3/4.' },
+    { titulo: 'Equações de 1º Grau', conteudo: 'O objetivo é isolar a letra (incógnita). <br><br>Ex: 2x + 5 = 15.<br>1º passo: Passe o 5 para o outro lado subtraindo: 2x = 15 - 5 -> 2x = 10.<br>2º passo: Divida por 2: x = 10/2 -> x = 5.' },
+    { titulo: 'Teorema de Pitágoras', conteudo: 'Usado em triângulos retângulos. A fórmula é <strong>a² = b² + c²</strong>.<br><br>O "a" é a hipotenusa (maior lado). Ex: Se os catetos são 3 e 4. a² = 3² + 4² -> a² = 9 + 16 -> a² = 25 -> a = 5.' },
+    { titulo: 'Porcentagem', conteudo: 'Porcentagem é uma fração com denominador 100. <br><br>Ex: 20% de 150. Basta multiplicar 20/100 por 150. <br>20 x 150 = 3000. 3000 / 100 = 30. <br><br>Dica: 10% é só andar com a vírgula uma casa para a esquerda.' },
+    { titulo: 'Regra de Três Simples', conteudo: 'Usada para resolver proporções.<br><br>Ex: Se 2 canetas custam R$ 5, quanto custam 6 canetas?<br>2 --- 5<br>6 --- x<br>Multiplique cruzado: 2x = 30 -> x = 15.' }
+];
     function mostrarToast(mensagem, tipo = 'primary') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
