@@ -47,10 +47,8 @@
 
     <div id="tela-inicio">
         <p>Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
-        <!-- NOVO: Adicionado oninput para salvar o nome enquanto digita -->
         <input type="text" id="nome-aluno" placeholder="Digite seu nome" oninput="salvarPerfilRapido()">
         
-        <!-- NOVO: Adicionado onchange para salvar o nível quando muda -->
         <select id="nivel-aluno" onchange="salvarPerfilRapido()">
             <option value="5">5º Ano</option>
             <option value="6">6º Ano</option>
@@ -122,7 +120,6 @@
         "Cuidado com as continhas! Você consegue!"
     ];
 
-    // --- NOVA FUNÇÃO: Salva o perfil no momento que digita ---
     function salvarPerfilRapido() {
         const nome = document.getElementById('nome-aluno').value.trim();
         const nivel = document.getElementById('nivel-aluno').value;
@@ -347,16 +344,24 @@
         });
     }
 
+    // --- CORREÇÃO AQUI: Força o preenchimento do nome ao voltar ---
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
         document.getElementById('tela-inicio').style.display = 'block';
+        if(nomeDoAluno) {
+            document.getElementById('nome-aluno').value = nomeDoAluno;
+            document.getElementById('nivel-aluno').value = nivelAluno;
+        }
     }
 
-    // --- FUNÇÃO MODIFICADA: Não recarrega a página para não perder o nome ---
+    // --- CORREÇÃO AQUI: Força o preenchimento do nome ao jogar de novo ---
     function reiniciarTudo() {
         document.getElementById('tela-resultado').style.display = 'none';
         document.getElementById('tela-inicio').style.display = 'block';
-        // O nome e o nível já vão continuar preenchidos na tela!
+        if(nomeDoAluno) {
+            document.getElementById('nome-aluno').value = nomeDoAluno;
+            document.getElementById('nivel-aluno').value = nivelAluno;
+        }
     }
 </script>
 
