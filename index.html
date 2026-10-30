@@ -32,6 +32,9 @@
         .ranking-item:nth-child(2) { background: #dfe6e9; font-weight: bold; }
         .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
         .pontuacao-viva { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
+        
+        /* NOVO: Estilo da mensagem de feedback */
+        .feedback { font-size: 18px; font-weight: bold; min-height: 30px; margin-top: 15px; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -64,6 +67,8 @@
         <div class="quiz-card">
             <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
             <div id="opcoes-container"></div>
+            <!-- NOVO: Div para mostrar as mensagens -->
+            <div id="feedback-text" class="feedback"></div>
         </div>
         <div class="controles">
             <button class="btn-principal" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
@@ -96,12 +101,29 @@
     let perguntas = [];
     let indiceAtual = 0;
     let pontuacao = 0;
+    let combo = 0; // NOVO: Contador de acertos seguidos
     let nomeDoAluno = "";
     let nivelAluno = "5";
 
-    // ==========================================
-    // GERADOR DE PERGUNTAS INFINITAS
-    // ==========================================
+    // NOVO: Listas de mensagens
+    const mensagensAcerto = [
+        "Parabéns, você acertou! 🎉",
+        "Isso aí! Mandou muito bem! 🌟",
+        "Acertou de novo! Você é fera! 🦁",
+        "Uau, melhor que professor! 👨‍🏫",
+        "Cálculo perfeito! Imparável! 🚀",
+        "Você está voando! 💯",
+        "Gênio da matemática! 🧠"
+    ];
+
+    const mensagensErro = [
+        "Ops, não foi dessa vez. Tente a próxima!",
+        "Quase! A resposta certa está em verde.",
+        "Não desanime, continue tentando! 💪",
+        "Errou, mas todo mundo erra. Bora pra cima!",
+        "Cuidado com as continhas! Você consegue!"
+    ];
+
     function gerarQuestaoAleatoria(nivel) {
         let pergunta, respostaCorreta;
         
@@ -135,7 +157,6 @@
             respostaCorreta = a * x + b;
         }
 
-        // Gera 3 opções erradas baseadas na correta
         const opcoesSet = new Set([respostaCorreta]);
         while (opcoesSet.size < 4) {
             const erro = respostaCorreta + (Math.floor(Math.random() * 10) - 5);
@@ -148,9 +169,6 @@
         return { pergunta: pergunta, opcoes: opcoes, correta: indexCorreta };
     }
 
-    // ==========================================
-    // CONTROLE DO JOGO
-    // ==========================================
     function salvarPerfil() {
         localStorage.setItem('quizPerfil', JSON.stringify({ nome: nomeDoAluno, nivel: nivelAluno }));
     }
@@ -175,7 +193,8 @@
         
         indiceAtual = 0;
         pontuacao = 0;
-        perguntas = []; // Zera as perguntas
+        combo = 0;
+        perguntas = []; 
         
         salvarPerfil(); 
         
@@ -186,7 +205,6 @@
     }
 
     function carregarPergunta() {
-        // Se estiver acabando as perguntas, gera mais 5 (MODO INFINITO)
         if (indiceAtual >= perguntas.length) {
             for(let i=0; i<5; i++) {
                 perguntas.push(gerarQuestaoAleatoria(nivelAluno));
@@ -194,6 +212,7 @@
         }
 
         document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
+        document.getElementById('feedback-text').innerText = ""; // Limpa mensagem anterior
         const container = document.getElementById('opcoes-container');
         container.innerHTML = ''; 
         document.getElementById('btn-proximo').style.display = 'none';
@@ -213,16 +232,36 @@
     function verificarResposta(indexEscolhido, botaoClicado) {
         const perguntaAtual = perguntas[indiceAtual];
         const todosBotoes = document.querySelectorAll('.opcao');
+        const feedback = document.getElementById('feedback-text');
         todosBotoes.forEach(btn => btn.disabled = true);
 
         if (indexEscolhido === perguntaAtual.correta) {
             botaoClicado.classList.add('correta');
-            pontuacao++;
-            document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
+            pontuacao += 10; // +10 pontos
+            combo++; // Aumenta o combo
+            
+            // Lógica de mensagens baseada no combo
+            if (combo >= 3) {
+                // Se estiver em combo alto, pega as mensagens mais épicas (do meio pro fim da lista)
+                const msgIndex = Math.floor(Math.random() * (mensagensAcerto.length - 3)) + 3;
+                feedback.innerText = mensagensAcerto[msgIndex];
+            } else {
+                // Mensagens normais para o começo
+                feedback.innerText = mensagensAcerto[Math.floor(Math.random() * 3)];
+            }
+            feedback.style.color = "#2ecc71";
+
         } else {
             botaoClicado.classList.add('errada');
             todosBotoes[perguntaAtual.correta].classList.add('correta');
+            pontuacao = Math.max(0, pontuacao - 4); // -4 pontos (não deixa ficar negativo)
+            combo = 0; // Zera o combo
+            
+            feedback.innerText = mensagensErro[Math.floor(Math.random() * mensagensErro.length)];
+            feedback.style.color = "#e74c3c";
         }
+
+        document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
         document.getElementById('btn-proximo').style.display = 'block';
     }
 
@@ -231,9 +270,6 @@
         carregarPergunta();
     }
 
-    // ==========================================
-    // FINALIZAR E SALVAR
-    // ==========================================
     async function mostrarResultado() {
         if(pontuacao === 0) {
             if(!confirm("Você ainda não fez nenhum ponto. Deseja realmente parar?")) return;
@@ -249,7 +285,6 @@
 
         const nivelTexto = nivelAluno + "º Ano";
 
-        // Verificar se o aluno já existe para não duplicar
         const { data: existente, error: erroBusca } = await banco
             .from('ranking')
             .select('id, pontuacao')
@@ -264,7 +299,6 @@
         }
 
         if (existente) {
-            // Atualiza se a nova nota for MAIOR
             if (pontuacao > existente.pontuacao) {
                 await banco.from('ranking').update({ pontuacao: pontuacao }).eq('id', existente.id);
                 status.innerText = "Novo recorde salvo no ranking! 🚀";
@@ -274,16 +308,12 @@
                 status.style.color = "#3498db";
             }
         } else {
-            // Insere se for a primeira vez
             await banco.from('ranking').insert([{ nome: nomeDoAluno, pontuacao: pontuacao, nivel: nivelTexto }]);
             status.innerText = "Pontuação salva no ranking com sucesso!";
             status.style.color = "#2ecc71";
         }
     }
 
-    // ==========================================
-    // RANKING
-    // ==========================================
     async function abrirRanking() {
         document.getElementById('tela-inicio').style.display = 'none';
         document.getElementById('tela-quiz').style.display = 'none';
