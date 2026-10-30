@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 4</title>
+    <title>MATH ARENA - Módulo 4 (Corrigido)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -307,16 +307,16 @@
         ];
 
         // ==========================================
-        // GERADOR INFINITO DE QUESTÕES
+        // GERADOR INFINITO DE QUESTÕES (À PROVA DE BUGS)
         // ==========================================
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
         function gerarQuestao(serie) {
-            let pergunta = "", resp = 0, opcoes = [], exp = "", mat = "";
+            let pergunta = "", resp = 0, exp = "", mat = "";
             
             if (serie === "5") {
-                const op = rand(1,3); // 1 soma, 2 sub, 3 mult
+                const op = rand(1,3);
                 if(op === 1) {
                     let a = rand(10, 50), b = rand(10, 40);
                     pergunta = `Quanto é ${a} + ${b}?`; resp = a + b;
@@ -338,8 +338,6 @@
                     exp = `Devendo ${a} e pagando ${b}, sobram ${resp}.`; mat = "Números Inteiros";
                 } else {
                     let a = rand(1, 10) * 10;
-                    pergunta = `Quanto é ${a}% de ${rand(2,10)*100}?`; resp = (a/100) * (Math.floor(resp)); // logic fix
-                    // logic fix:
                     let total = rand(2,10)*100;
                     pergunta = `Quanto é ${a}% de ${total}?`;
                     resp = (a/100) * total;
@@ -354,43 +352,49 @@
                 pergunta = `Quanto é ${a}²?`; resp = a*a;
                 exp = `${a} x ${a} = ${resp}.`; mat = "Potenciação";
             } else if (serie === "9") {
-                let b = rand(2, 5), c = rand(2, 5);
-                // Pitágoras simples
-                let a2 = b*b + c*c;
-                pergunta = `Num triângulo retângulo, os catetos são ${b} e ${c}. Qual a hipotenusa?`;
-                resp = Math.sqrt(a2);
-                exp = `a² = ${b}² + ${c}² = ${a2}. A raiz é ${resp}.`; mat = "Geometria";
+                const triples = [[3,4,5], [6,8,10], [5,12,13], [8,15,17]];
+                let t = triples[rand(0, triples.length-1)];
+                pergunta = `Num triângulo retângulo, os catetos são ${t[0]} e ${t[1]}. Qual a hipotenusa?`;
+                resp = t[2];
+                exp = `a² = ${t[0]}² + ${t[1]}² = ${t[0]*t[0] + t[1]*t[1]}. A raiz é ${resp}.`; mat = "Geometria";
             } else if (serie === "1em") {
                 let a = rand(2, 5), b = rand(1, 10), x = rand(1, 5);
                 pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`; resp = a*x + b;
                 exp = `f(${x}) = ${a}(${x}) + ${b} = ${resp}.`; mat = "Funções";
             } else if (serie === "2em") {
-                pergunta = `Quanto é sen(30º)?`;
-                opcoes = ["1/2", "√2/2", "√3/2", "1"]; resp = "1/2";
-                exp = `O seno de 30º é sempre 1/2.`; mat = "Trigonometria";
+                const trig = [
+                    {q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é sempre 1/2."},
+                    {q: "Quanto é cos(60º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O cosseno de 60º é 1/2."},
+                    {q: "Quanto é sen(90º)?", o: ["0", "1/2", "√2/2", "1"], c: 3, exp: "O seno de 90º é 1."},
+                    {q: "Quanto é cos(0º)?", o: ["0", "1/2", "1", "√3/2"], c: 2, exp: "O cosseno de 0º é 1."}
+                ];
+                let escolhida = trig[rand(0, trig.length-1)];
+                return { q: escolhida.q, o: escolhida.o, c: escolhida.c, exp: escolhida.exp, serie: "2em", mat: "Trigonometria" };
             } else if (serie === "3em") {
                 let a = rand(2, 5);
                 pergunta = `Quanto é log₁₀(10^${a})?`; resp = a;
                 exp = `O log de base 10 de 10 elevado a ${a} é ${a}.`; mat = "Logaritmos";
             } else {
-                // Rankeado (Mix) - Pega um nível aleatório
                 return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]);
             }
 
-            // Gerar opções erradas falsas
+            // Gerar opções (só para as questões com resposta numérica)
             let opcoesSet = new Set([resp]);
-            while(opcoesSet.size < 4) {
-                let erro = resp + rand(-10, 10);
+            let attempts = 0;
+            while(opcoesSet.size < 4 && attempts < 50) {
+                let offset = rand(1, 10) * (Math.random() > 0.5 ? 1 : -1);
+                let erro = resp + offset;
                 if(erro !== resp && erro >= 0) opcoesSet.add(erro);
+                attempts++;
             }
             
-            opcoes = Array.from(opcoesSet).map(String);
-            // Se for a questão de trigonometria que usa string nas opções, não embaralha os números
-            if(typeof resp === 'number') {
-                opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String);
+            let fallback = 1;
+            while(opcoesSet.size < 4) {
+                opcoesSet.add(resp + fallback);
+                fallback++;
             }
             
-            // Descobre o index da resposta correta
+            let opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String);
             let indexCorreta = opcoes.indexOf(String(resp));
             
             return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
@@ -531,11 +535,6 @@
 
         function carregarQuestao() {
             estado.respondidas = false;
-            // Se no modo tempo, gera uma nova questão a cada rodada para ser infinito
-            if(estado.modo === 'tempo' && estado.questaoAtual >= filaPerguntas.length) {
-                filaPerguntas.push(gerarQuestao(document.getElementById('select-serie').value));
-            }
-            
             perguntaAtual = filaPerguntas[estado.questaoAtual];
             
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`;
