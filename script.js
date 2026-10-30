@@ -1131,3 +1131,65 @@ function renderizarMissoes() {
         container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; 
     });
 }
+async function carregarRanking(tipo, element) {
+    document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
+    if (element) element.classList.add('active');
+    const lista = document.getElementById('rank-list-container');
+    lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
+
+    const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+    
+    if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogador encontrado.</p>'; return; }
+    
+    lista.innerHTML = '';
+    
+    if (data.length >= 1) {
+        let podiumHTML = '<div class="podium-container">';
+        
+        if (data.length >= 2) {
+            const j2 = data[1];
+            podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${j2.xp||0}</div></div></div>`;
+        }
+        
+        const j1 = data[0];
+        podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${j1.xp||0}</div></div></div>`;
+        
+        if (data.length >= 3) {
+            const j3 = data[2];
+            podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${j3.xp||0}</div></div></div>`;
+        }
+        podiumHTML += '</div>';
+        lista.innerHTML += podiumHTML;
+        
+        for(let i = 3; i < data.length; i++) {
+            const user = data[i];
+            lista.innerHTML += `
+                <div class="ranking-list-item">
+                    <div style="display:flex; gap: 10px; align-items:center;">
+                        <span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i + 1}º</span>
+                        <div class="avatar-wrapper" style="width:45px; height:45px;">
+                            <div class="frame ${user.moldura||'frame-padrao'}"></div>
+                            <div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${user.avatar || '🧑‍🚀'}</div>
+                        </div>
+                        <div style="font-weight:800; font-size:14px;">${user.nome}</div>
+                    </div>
+                    <div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div>
+                </div>`;
+        }
+    }
+}
+
+function renderizarTemporada() {
+    let divName = "BRONZE"; let divIcon = "🥉";
+    if (jogador.nivel >= 10) { divName = "PRATA"; divIcon = "🥈"; }
+    if (jogador.nivel >= 20) { divName = "OURO"; divIcon = "🥇"; }
+    if (jogador.nivel >= 30) { divName = "PLATINA"; divIcon = "💎"; }
+    if (jogador.nivel >= 40) { divName = "DIAMANTE"; divIcon = "💠"; }
+    if (jogador.nivel >= 50) { divName = "MESTRE"; divIcon = "🔮"; }
+    if (jogador.nivel >= 75) { divName = "LENDÁRIO"; divIcon = "👑"; }
+
+    const iconEl = document.getElementById('season-icon');
+    const nameEl = document.getElementById('season-name');
+    if (iconEl) iconEl.innerText = divIcon;
+    if (nameEl) nameEl.innerText = divName;
+}
