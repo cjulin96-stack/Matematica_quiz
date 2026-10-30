@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matemática Quiz - Modo Infinito</title>
-    <!-- Fonte do Google -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -59,7 +58,7 @@
             width: 100%; 
             margin-top: 10px; 
             font-size: 18px; 
-            display: none;
+            display: block; /* CORRIGIDO AQUI */
         }
         .btn-verde { background-color: var(--verde); box-shadow: 0 5px 0 var(--verde-escuro); }
         .btn-verde:active { transform: translateY(5px); box-shadow: 0 0 0 var(--verde-escuro); }
@@ -67,7 +66,7 @@
         .btn-azul { background-color: var(--azul); box-shadow: 0 5px 0 var(--azul-escuro); }
         .btn-azul:active { transform: translateY(5px); box-shadow: 0 0 0 var(--azul-escuro); }
 
-        .btn-vermelho { background-color: var(--vermelho); box-shadow: 0 5px 0 var(--vermelho-escuro); display: block;}
+        .btn-vermelho { background-color: var(--vermelho); box-shadow: 0 5px 0 var(--vermelho-escuro); }
         .btn-vermelho:active { transform: translateY(5px); box-shadow: 0 0 0 var(--vermelho-escuro); }
 
         .btn-cinza { background-color: var(--cinza); box-shadow: 0 5px 0 var(--cinza-escuro); }
@@ -120,7 +119,7 @@
         
         .pontuacao-viva { font-size: 20px; font-weight: 900; color: var(--azul); margin-bottom: 15px; background: #e3f2fd; padding: 10px; border-radius: 10px; }
         .feedback { font-size: 18px; font-weight: 900; min-height: 30px; margin-top: 15px; transition: 0.3s; }
-        .btn-trocar { background: none; border: none; color: #a4b0be; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 14px; }
+        .btn-trocar { background: none; border: none; color: #a4b0be; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 14px; box-shadow: none;}
     </style>
 </head>
 <body>
@@ -156,7 +155,7 @@
             <div id="feedback-text" class="feedback"></div>
         </div>
         <div class="controles">
-            <button class="btn-principal btn-azul" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
+            <button class="btn-principal btn-azul" id="btn-proximo" style="display: none;" onclick="proximaPergunta()">Próxima ➡️</button>
             <button class="btn-principal btn-vermelho" onclick="mostrarResultado()">Parar e Salvar 🏁</button>
         </div>
         <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
@@ -167,7 +166,7 @@
         <p style="font-size: 18px;">Você fez <strong id="pontuacao-final" style="color: var(--azul); font-size: 24px;">0</strong> pontos nesta rodada.</p>
         <p id="status-salvamento" style="font-size: 16px; font-weight: bold; color: #7f8c8d; margin-bottom: 20px;"></p>
         <button class="btn-principal btn-verde" onclick="abrirRanking()">Ver Ranking 🏆</button>
-        <button class="btn-principal btn-cinza" onclick="jogarNovamente()">Jogar de Novo 🔄</button>
+        <button class="btn-principal btn-cinza" style="margin-top: 15px;" onclick="jogarNovamente()">Jogar de Novo 🔄</button>
         <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
     </div>
 
@@ -311,7 +310,7 @@
         document.getElementById('feedback-text').innerText = "";
         const container = document.getElementById('opcoes-container');
         container.innerHTML = ''; 
-        document.getElementById('btn-proximo').style.display = 'none';
+        document.getElementById('btn-proximo').style.display = 'none'; // Esconde o botão próxima
 
         const perguntaAtual = perguntas[indiceAtual];
         document.getElementById('texto-pergunta').innerText = perguntaAtual.pergunta;
@@ -354,7 +353,7 @@
         }
 
         document.getElementById('placar-vivo').innerText = `Pontos da Rodada: ${pontuacao}`;
-        document.getElementById('btn-proximo').style.display = 'block';
+        document.getElementById('btn-proximo').style.display = 'block'; // Mostra o botão próxima
     }
 
     function proximaPergunta() {
@@ -445,46 +444,4 @@
         }
 
         lista.innerHTML = '';
-        data.forEach((aluno, index) => {
-            const item = document.createElement('div');
-            item.classList.add('ranking-item');
-            const ano = aluno.nivel ? `(${aluno.nivel})` : '';
-            
-            // Adicionando as medalhas para o Top 3
-            let medalha = "";
-            if (index === 0) medalha = "🥇 ";
-            else if (index === 1) medalha = "🥈 ";
-            else if (index === 2) medalha = "🥉 ";
-            else medalha = `${index + 1}º `;
-
-            item.innerHTML = `<span>${medalha}${aluno.nome} ${ano}</span> <span>${aluno.pontuacao} pts</span>`;
-            lista.appendChild(item);
-        });
-    }
-
-    function voltarAoJogo() {
-        document.getElementById('tela-ranking').style.display = 'none';
-        
-        if (!jogoEmAndamento) {
-            iniciarQuiz();
-        } else {
-            document.getElementById('tela-inicio').style.display = 'none';
-            document.getElementById('tela-quiz').style.display = 'block';
-            carregarPergunta();
-        }
-    }
-
-    function jogarNovamente() {
-        iniciarQuiz();
-    }
-
-    function trocarJogador() {
-        jogoEmAndamento = false;
-        document.getElementById('tela-quiz').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'none';
-        document.getElementById('tela-inicio').style.display = 'block';
-    }
-</script>
-
-</body>
-</html>
+ 
