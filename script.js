@@ -1,3 +1,4 @@
+alert("O script carregou!");
 const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
 const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
 const banco = supabase.createClient(supabaseUrl, supabaseKey);
