@@ -3,51 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Ultimate</title>
+    <title>MATH ARENA - Medalhas</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg-dark: #070b14;
-            --bg-panel: rgba(20, 25, 40, 0.7);
-            --primary: #00f2fe;
-            --secondary: #4facfe;
-            --accent: #a855f7;
-            --success: #00e676;
-            --danger: #ff1744;
-            --gold: #ffd700;
-            --text-main: #ffffff;
-            --text-muted: #8b9bb4;
+            --bg-dark: #070b14; --bg-panel: rgba(20, 25, 40, 0.7);
+            --primary: #00f2fe; --secondary: #4facfe; --accent: #a855f7;
+            --success: #00e676; --danger: #ff1744; --gold: #ffd700;
+            --text-main: #ffffff; --text-muted: #8b9bb4;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.15), transparent 50%),
-                              radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 50%);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
+        body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.15), transparent 50%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 50%); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         .main-content { flex: 1; overflow-y: auto; padding: 20px 20px 90px 20px; display: flex; flex-direction: column; }
         .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease-out; }
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .glass { background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 15px; }
         h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
         .text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
+        
         .user-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .user-info { display: flex; align-items: center; gap: 15px; }
         .avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--secondary), var(--accent)); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
         .user-name { font-weight: 800; font-size: 18px; }
         .user-level { font-size: 12px; color: var(--primary); font-weight: 700; }
-        
         .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-weight: 800; font-size: 12px; }
         .badge-fire { background: rgba(255, 69, 0, 0.2); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.3); }
@@ -61,13 +41,10 @@
         button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px;}
         .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 6px 0 #00a8b5, 0 10px 20px rgba(0, 242, 254, 0.2); }
         .btn-primary:active { transform: translateY(6px); box-shadow: 0 0 0 #00a8b5; }
-        
         .btn-rankeado { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 6px 0 #b8860b, 0 10px 20px rgba(255, 215, 0, 0.2); margin-bottom: 10px;}
         .btn-rankeado:active { transform: translateY(6px); box-shadow: 0 0 0 #b8860b; }
-
         .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.5); margin-bottom: 10px;}
         .btn-secondary:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
-
         .btn-danger { width: 100%; padding: 12px; background: rgba(255, 23, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 4px 0 rgba(178, 16, 47, 0.5); margin-top: 10px; font-size: 14px;}
         .btn-danger:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(178, 16, 47, 0.5); }
 
@@ -77,13 +54,11 @@
         .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; }
         .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.3s; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
-        
         .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; text-align: center; }
         .options-grid { display: flex; flex-direction: column; gap: 10px; }
         .option-btn { padding: 16px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; text-align: left; font-size: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.5);}
         .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
         .option-letter { background: rgba(255,255,255,0.1); width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; border-radius: 6px; font-weight: 800; font-size: 13px; }
-        
         .option-btn.correct { background: rgba(0, 230, 118, 0.2) !important; border-color: var(--success) !important; box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important; }
         .option-btn.wrong { background: rgba(255, 23, 68, 0.2) !important; border-color: var(--danger) !important; animation: shake 0.3s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
@@ -111,7 +86,7 @@
         .challenge-info h4 { font-size: 16px; margin-bottom: 2px; color: var(--primary); }
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
         .btn-play-challenge { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #6b21a8; margin: 0; width: auto;}
-        
+
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; padding: 15px; }
         .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 0 #064e3b; padding: 15px; }
@@ -144,18 +119,15 @@
 <body>
 
     <div class="main-content">
-        <!-- TELA: LOGIN / CADASTRO -->
+        <!-- TELA: LOGIN -->
         <div id="tela-auth" class="screen active">
             <div class="glass">
                 <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
-                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Faça login ou crie sua conta para começar.</p>
-                
+                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Faça login ou crie sua conta.</p>
                 <input type="email" id="auth-email" placeholder="Seu E-mail">
                 <input type="password" id="auth-password" placeholder="Sua Senha">
-                
                 <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
                 <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
-                
                 <p id="auth-mensagem" class="text-center" style="font-size: 12px; margin-top: 15px;"></p>
             </div>
         </div>
@@ -270,7 +242,7 @@
             </div>
         </div>
 
-        <!-- TELA: MEDALHAS -->
+        <!-- TELA: MEDALHAS (25 CONQUISTAS) -->
         <div id="tela-conquistas" class="screen">
             <h2 class="text-gradient text-center mb-20">MEDALHAS</h2>
             <div id="lista-conquistas"></div>
@@ -307,21 +279,11 @@
 
     <!-- MENU INFERIOR -->
     <div class="bottom-nav" id="bottom-nav" style="display: none;">
-        <div class="nav-item active" onclick="mudarAba('tela-home', this)">
-            <span class="nav-icon">🏠</span><span>Início</span>
-        </div>
-        <div class="nav-item" onclick="mudarAba('tela-desafios', this)">
-            <span class="nav-icon">⏱️</span><span>Desafios</span>
-        </div>
-        <div class="nav-item" onclick="mudarAba('tela-conquistas', this)">
-            <span class="nav-icon">🏅</span><span>Medalhas</span>
-        </div>
-        <div class="nav-item" onclick="mudarAba('tela-ranking', this)">
-            <span class="nav-icon">🏆</span><span>Ranking</span>
-        </div>
-        <div class="nav-item" onclick="mudarAba('tela-perfil', this)">
-            <span class="nav-icon">👤</span><span>Perfil</span>
-        </div>
+        <div class="nav-item active" onclick="mudarAba('tela-home', this)"><span class="nav-icon">🏠</span><span>Início</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-desafios', this)"><span class="nav-icon">⏱️</span><span>Desafios</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-conquistas', this)"><span class="nav-icon">🏅</span><span>Medalhas</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-ranking', this)"><span class="nav-icon">🏆</span><span>Ranking</span></div>
+        <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
     </div>
 
     <script>
@@ -330,12 +292,49 @@
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
         let jogador = { id: null, email: '', nome: '', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
-        let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
+        let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         let filaPerguntas = [];
         let perguntaAtual = null;
         let timerInterval = null;
         let tempoRestante = 0;
         let usarMultiplicador = false;
+
+        // ==========================================
+        // 25 MEDALHAS (MÓDULO 9)
+        // ==========================================
+        const CONQUISTAS_DB = [
+            // Primeiros Passos
+            { id: 'c1', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.' },
+            { id: 'c2', icone: '🧐', titulo: 'Mente Curiosa', desc: 'Respondeu 10 questões.' },
+            { id: 'c3', icone: '🌱', titulo: 'Iniciante', desc: 'Respondeu 50 questões.' },
+            { id: 'c4', icone: '📚', titulo: 'Aprendiz', desc: 'Respondeu 100 questões.' },
+            { id: 'c5', icone: '🎓', titulo: 'Dedicado', desc: 'Respondeu 500 questões.' },
+            { id: 'c6', icone: '🏛️', titulo: 'Veterano', desc: 'Respondeu 1000 questões.' },
+            // Precisão
+            { id: 'c7', icone: '🎯', titulo: 'Atirador de Elite', desc: 'Acertou 10 seguidas.' },
+            { id: 'c8', icone: '🔪', titulo: 'Precisão Absoluta', desc: 'Acertou 25 seguidas.' },
+            { id: 'c9', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos.' },
+            { id: 'c10', icone: '💎', titulo: 'Perfeição', desc: 'Completou 10 questões sem errar.' },
+            { id: 'c11', icone: '🧮', titulo: 'Calculadora Humana', desc: 'Atingiu 95% de aproveitamento.' },
+            // Sequência Diária
+            { id: 'c12', icone: '🔥', titulo: 'Chama Inicial', desc: '3 dias consecutivos.' },
+            { id: 'c13', icone: '☄️', titulo: 'Uma Semana de Fogo', desc: '7 dias consecutivos.' },
+            { id: 'c14', icone: '🌋', titulo: 'Duas Semanas', desc: '14 dias consecutivos.' },
+            { id: 'c15', icone: '🛡️', titulo: 'Disciplina de Ferro', desc: '30 dias consecutivos.' },
+            { id: 'c16', icone: '🚀', titulo: 'Imparável', desc: '60 dias consecutivos.' },
+            { id: 'c17', icone: '💯', titulo: 'Centenário', desc: '100 dias consecutivos.' },
+            { id: 'c18', icone: '👑', titulo: 'Lenda', desc: '365 dias consecutivos.' },
+            // Velocidade e Modos
+            { id: 'c19', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou um desafio de tempo.' },
+            { id: 'c20', icone: '⏱️', titulo: 'Reflexos Matemáticos', desc: 'Jogou o Desafio Hardcore.' },
+            // Nível
+            { id: 'c21', icone: '⭐', titulo: 'Subindo na Vida', desc: 'Alcançou o Nível 5.' },
+            { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou o Nível 10.' },
+            { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou o Nível 20.' },
+            { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou o Nível 50.' },
+            // Exploração
+            { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.' }
+        ];
 
         // AUTH
         async function fazerCadastro() {
@@ -381,6 +380,9 @@
                 jogador.missoes = data.missoes || { acertos: 0, jogos: 0, desafios: 0 };
                 jogador.multiplicador_expira = data.multiplicador_expira;
                 jogador.nivel = Math.floor(jogador.xp / 100) + 1;
+                jogador.totalAcertos = data.acertos || 0;
+                jogador.totalErros = data.erros || 0;
+                jogador.melhorSequencia = data.melhor_sequencia || 0;
             }
         }
 
@@ -428,18 +430,12 @@
         }
 
         // JOGO E LOJA
-        const CONQUISTAS_DB = [
-            { id: 'primeiro_passo', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.' },
-            { id: 'streak_fogo', icone: '🔥', titulo: 'Sequência de Fogo', desc: 'Acertou 5 seguidas.' },
-            { id: 'mente_brilhante', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos.' }
-        ];
-
         const DESAFIOS_DB = [
             { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' },
             { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' },
             { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' },
             { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' },
-            { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos' }
+            { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' }
         ];
 
         const LOJA_DB = [
@@ -529,7 +525,7 @@
             const serie = document.getElementById('select-serie').value;
             filaPerguntas = [];
             for(let i=0; i<20; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
-            estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
+            estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
             document.getElementById('timer-box').classList.add('hidden'); carregarQuestao();
         }
@@ -538,7 +534,7 @@
             if (!jogador.nome) { alert("Vá em Perfil e digite seu Nickname primeiro!"); return; }
             const desafio = DESAFIOS_DB.find(d => d.id === idDesafio); filaPerguntas = [];
             for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(desafio.serie));
-            estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, questaoAtual: 0, respondidas: false };
+            estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
             const timerBox = document.getElementById('timer-box'); timerBox.classList.remove('hidden'); tempoRestante = desafio.tempo; timerBox.innerText = `${tempoRestante}s`;
             clearInterval(timerInterval);
@@ -567,8 +563,14 @@
             const botoes = document.querySelectorAll('.option-btn'); botoes.forEach(b => b.style.pointerEvents = 'none');
             const mat = perguntaAtual.mat; if(!jogador.stats[mat]) jogador.stats[mat] = { acertos: 0, total: 0 }; jogador.stats[mat].total++;
             let ptsGanhos = 15; let ptsPerdidos = -5;
-            if (index === perguntaAtual.c) { tocarSom('acerto'); estado.pontos += ptsGanhos; estado.acertos++; estado.sequencia++; jogador.stats[mat].acertos++; btn.classList.add('correct'); } 
-            else { tocarSom('erro'); estado.pontos = Math.max(0, estado.pontos + ptsPerdidos); estado.erros++; estado.sequencia = 0; btn.classList.add('wrong'); botoes[perguntaAtual.c].classList.add('correct'); }
+            if (index === perguntaAtual.c) {
+                tocarSom('acerto'); estado.pontos += ptsGanhos; estado.acertos++; estado.sequencia++;
+                if(estado.sequencia > estado.melhorSequencia) estado.melhorSequencia = estado.sequencia;
+                jogador.stats[mat].acertos++; btn.classList.add('correct');
+            } else {
+                tocarSom('erro'); estado.pontos = Math.max(0, estado.pontos + ptsPerdidos); estado.erros++; estado.sequencia = 0;
+                btn.classList.add('wrong'); botoes[perguntaAtual.c].classList.add('correct');
+            }
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
             if (estado.modo === 'tempo') { setTimeout(() => { estado.questaoAtual++; carregarQuestao(); }, 400); } 
             else {
@@ -586,11 +588,50 @@
             clearInterval(timerInterval); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-resultado').classList.add('active');
             let pontosFinais = estado.pontos; if(usarMultiplicador) pontosFinais = estado.pontos * 2;
             document.getElementById('result-score').innerText = pontosFinais; document.getElementById('result-acertos').innerText = estado.acertos; document.getElementById('result-erros').innerText = estado.erros;
+            
+            // VERIFICA CONQUISTAS (MÓDULO 9)
             let novasConquistas = [];
-            if(estado.acertos > 0 && !jogador.conquistas.includes('primeiro_passo')) novasConquistas.push('primeiro_passo');
-            if(estado.sequencia >= 5 && !jogador.conquistas.includes('streak_fogo')) novasConquistas.push('streak_fogo');
-            if(pontosFinais >= 80 && !jogador.conquistas.includes('mente_brilhante')) novasConquistas.push('mente_brilhante');
-            if(novasConquistas.length > 0) { jogador.conquistas = jogador.conquistas.concat(novasConquistas); setTimeout(() => alert(`🏅 NOVA CONQUISTA!\nVeja na aba Medalhas.`), 500); }
+            const totalRespondidas = (jogador.totalAcertos || 0) + (jogador.totalErros || 0) + estado.acertos + estado.erros;
+            
+            function desbloquear(id) { if(!jogador.conquistas.includes(id) && !novasConquistas.includes(id)) novasConquistas.push(id); }
+
+            if(estado.acertos > 0) desbloquear('c1');
+            if(totalRespondidas >= 10) desbloquear('c2');
+            if(totalRespondidas >= 50) desbloquear('c3');
+            if(totalRespondidas >= 100) desbloquear('c4');
+            if(totalRespondidas >= 500) desbloquear('c5');
+            if(totalRespondidas >= 1000) desbloquear('c6');
+            if(estado.melhorSequencia >= 10) desbloquear('c7');
+            if(estado.melhorSequencia >= 25) desbloquear('c8');
+            if(pontosFinais >= 80) desbloquear('c9');
+            if(estado.erros === 0 && estado.acertos >= 10) desbloquear('c10');
+            const acertosTotais = (jogador.totalAcertos || 0) + estado.acertos;
+            const taxaAcerto = (acertosTotais / (totalRespondidas || 1)) * 100;
+            if(totalRespondidas >= 50 && taxaAcerto >= 95) desbloquear('c11');
+            
+            if(jogador.streak >= 3) desbloquear('c12');
+            if(jogador.streak >= 7) desbloquear('c13');
+            if(jogador.streak >= 14) desbloquear('c14');
+            if(jogador.streak >= 30) desbloquear('c15');
+            if(jogador.streak >= 60) desbloquear('c16');
+            if(jogador.streak >= 100) desbloquear('c17');
+            if(jogador.streak >= 365) desbloquear('c18');
+            
+            if(estado.modo === 'tempo') desbloquear('c19');
+            if(estado.modo === 'tempo' && tempoRestante <= 30) desbloquear('c20'); // Aproximação de hardcore
+            
+            if(jogador.nivel >= 5) desbloquear('c21');
+            if(jogador.nivel >= 10) desbloquear('c22');
+            if(jogador.nivel >= 20) desbloquear('c23');
+            if(jogador.nivel >= 50) desbloquear('c24');
+
+            if(Object.keys(jogador.stats).length >= 5) desbloquear('c25');
+
+            if(novasConquistas.length > 0) {
+                jogador.conquistas = jogador.conquistas.concat(novasConquistas);
+                setTimeout(() => alert(`🏅 NOVAS CONQUISTAS DESBLOQUEADAS! \nVeja na aba Medalhas.`), 500);
+            }
+
             await salvarPartida(pontosFinais);
         }
 
@@ -600,13 +641,24 @@
                 const hoje = new Date().toISOString().split('T')[0];
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
                 jogador.moedas = (jogador.moedas || 0) + pontosFinais;
-                const { data } = await banco.from('ranking').select('id, last_played, streak').eq('user_id', jogador.id).maybeSingle();
+                const { data } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia').eq('user_id', jogador.id).maybeSingle();
                 let novoStreak = jogador.streak || 0;
+                
+                let totalAcertos = (data?.acertos || 0) + estado.acertos;
+                let totalErros = (data?.erros || 0) + estado.erros;
+                let melhorSeq = Math.max(data?.melhor_sequencia || 0, estado.melhorSequencia);
+
                 if (data) {
                     if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
-                    await banco.from('ranking').update({ pontuacao: (jogador.pontos || 0) + pontosFinais, xp: (jogador.xp || 0) + pontosFinais, streak: novoStreak, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats }).eq('user_id', jogador.id);
+                    await banco.from('ranking').update({ 
+                        pontuacao: (jogador.pontos || 0) + pontosFinais, xp: (jogador.xp || 0) + pontosFinais, streak: novoStreak, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats,
+                        acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
+                    }).eq('user_id', jogador.id);
                 } else {
-                    await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral' }]);
+                    await banco.from('ranking').insert([{ 
+                        user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral',
+                        acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
+                    }]);
                 }
             } catch (e) { console.error(e); }
         }
@@ -641,7 +693,10 @@
 
         async function renderizarConquistas() {
             await carregarPerfil(); const container = document.getElementById('lista-conquistas'); container.innerHTML = '';
-            CONQUISTAS_DB.forEach(c => { const unlocked = jogador.conquistas.includes(c.id); container.innerHTML += `<div class="achievement-card ${unlocked ? 'unlocked' : ''}"><div class="ach-icon">${unlocked ? c.icone : '🔒'}</div><div class="ach-info"><h4>${c.titulo}</h4><p>${c.desc}</p></div></div>`; });
+            CONQUISTAS_DB.forEach(c => { 
+                const unlocked = jogador.conquistas.includes(c.id); 
+                container.innerHTML += `<div class="achievement-card ${unlocked ? 'unlocked' : ''}"><div class="ach-icon">${unlocked ? c.icone : '🔒'}</div><div class="ach-info"><h4>${c.titulo}</h4><p>${c.desc}</p></div></div>`; 
+            });
         }
 
         async function renderizarEstatisticas() {
@@ -658,7 +713,7 @@
             data.forEach((user, index) => { let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; let avatar = user.avatar || '🧑‍🚀'; lista.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div style="font-size: 24px;">${avatar}</div><div><div style="font-weight:800; font-size:14px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; });
         }
 
-        // INICIALIZAÇÃO (VERIFICA LOGIN)
+        // INICIALIZAÇÃO
         window.onload = async () => {
             const { data: { session } } = await banco.auth.getSession();
             if (session) {
