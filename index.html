@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matemática Quiz - Fundamental</title>
+    <title>Matemática Quiz - Modo Infinito</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; color: #333; }
@@ -18,11 +18,11 @@
         .opcao:hover { background: #ecf0f1; border-color: #3498db; }
         .correta { background: #2ecc71 !important; color: white; border-color: #27ae60 !important; }
         .errada { background: #e74c3c !important; color: white; border-color: #c0392b !important; }
-        .controles { margin-top: 20px; }
+        .controles { margin-top: 20px; display: flex; flex-direction: column; gap: 10px;}
         .btn-principal { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; width: 100%; box-sizing: border-box;}
         .btn-verde { background: #2ecc71; }
+        .btn-vermelho { background: #e74c3c; display: block; }
         
-        /* Estilo para os inputs e selects */
         input[type="text"], select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: white; appearance: none; -webkit-appearance: none; }
         
         .resultado { display: none; text-align: center; }
@@ -31,6 +31,7 @@
         .ranking-item:nth-child(1) { background: #ffeaa7; font-weight: bold; }
         .ranking-item:nth-child(2) { background: #dfe6e9; font-weight: bold; }
         .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
+        .pontuacao-viva { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -44,10 +45,9 @@
     </div>
 
     <div id="tela-inicio">
-        <p>Bem-vindo! Teste seus conhecimentos de matemática.</p>
+        <p>Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
         <input type="text" id="nome-aluno" placeholder="Digite seu nome">
         
-        <!-- NOVO: Escolha do nível -->
         <select id="nivel-aluno">
             <option value="5">5º Ano</option>
             <option value="6">6º Ano</option>
@@ -56,22 +56,24 @@
             <option value="9">9º Ano</option>
         </select>
 
-        <button class="btn-principal btn-verde" style="display:block; margin: 0 auto;" onclick="iniciarQuiz()">Começar Quiz</button>
+        <button class="btn-principal btn-verde" style="display:block; margin: 0 auto;" onclick="iniciarQuiz()">Começar Modo Infinito 🚀</button>
     </div>
 
     <div id="tela-quiz" style="display: none;">
+        <div class="pontuacao-viva" id="placar-vivo">Pontos: 0</div>
         <div class="quiz-card">
             <div class="pergunta" id="texto-pergunta">Carregando pergunta...</div>
             <div id="opcoes-container"></div>
         </div>
         <div class="controles">
             <button class="btn-principal" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
+            <button class="btn-principal btn-vermelho" onclick="mostrarResultado()">Parar e Salvar 🏁</button>
         </div>
     </div>
 
     <div id="tela-resultado" class="resultado">
-        <h2>Fim do Quiz! 🎉</h2>
-        <p>Sua pontuação: <strong id="pontuacao-final">0</strong> de <span id="total-perguntas">0</span></p>
+        <h2>Fim do Jogo! 🎉</h2>
+        <p>Sua pontuação final: <strong id="pontuacao-final">0</strong></p>
         <p id="status-salvamento" style="font-size: 14px; color: #7f8c8d;"></p>
         <button class="btn-principal btn-verde" style="display:block; margin: 10px auto;" onclick="abrirRanking()">Ver Ranking</button>
         <button class="btn-principal" style="display:block; margin: 0 auto; background:#95a5a6;" onclick="reiniciarTudo()">Jogar de Novo</button>
@@ -87,77 +89,80 @@
 </div>
 
 <script>
-    // ==========================================
-    // CONFIGURAÇÃO DO SUPABASE
-    // ==========================================
     const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
     const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
     const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // ==========================================
-    // BANCO DE QUESTÕES POR NÍVEL
-    // ==========================================
-    const bancoDeQuestoes = {
-        "5": [
-            { pergunta: "Quanto é 15 + 27?", opcoes: ["32", "42", "52", "38"], correta: 1 },
-            { pergunta: "Qual o resultado de 8 x 7?", opcoes: ["48", "56", "64", "54"], correta: 1 },
-            { pergunta: "Quanto é a metade de 50?", opcoes: ["20", "25", "30", "15"], correta: 1 }
-        ],
-        "6": [
-            { pergunta: "Quanto é (-5) + 8?", opcoes: ["-3", "3", "13", "-13"], correta: 1 },
-            { pergunta: "Qual é o MMC de 4 e 6?", opcoes: ["10", "12", "24", "8"], correta: 1 },
-            { pergunta: "Quanto é 30% de 200?", opcoes: ["50", "60", "70", "80"], correta: 1 }
-        ],
-        "7": [
-            { pergunta: "Se 2x + 5 = 15, qual o valor de x?", opcoes: ["5", "10", "15", "20"], correta: 0 },
-            { pergunta: "Quanto é (-3) * (-4)?", opcoes: ["-12", "12", "-7", "7"], correta: 1 },
-            { pergunta: "Qual é a área de um quadrado de lado 5cm?", opcoes: ["10 cm²", "20 cm²", "25 cm²", "15 cm²"], correta: 2 }
-        ],
-        "8": [
-            { pergunta: "Quanto é 2³ (dois elevado ao cubo)?", opcoes: ["6", "8", "9", "12"], correta: 1 },
-            { pergunta: "Qual o valor de √81?", opcoes: ["7", "8", "9", "10"], correta: 2 },
-            { pergunta: "No Teorema de Pitágoras, a² = b² + c². Se b=3 e c=4, qual o valor de a?", opcoes: ["5", "6", "7", "25"], correta: 0 }
-        ],
-        "9": [
-            { pergunta: "Na função f(x) = 2x + 1, qual o valor de f(3)?", opcoes: ["5", "6", "7", "8"], correta: 2 },
-            { pergunta: "Quais são as raízes de x² - 5x + 6 = 0?", opcoes: ["1 e 6", "2 e 3", "-2 e -3", "0 e 5"], correta: 1 },
-            { pergunta: "Quanto é sen(30º)?", opcoes: ["1/2", "√2/2", "√3/2", "1"], correta: 0 }
-        ]
-    };
-
-    // ==========================================
-    // LÓGICA DO QUIZ COM PERSISTÊNCIA
-    // ==========================================
     let perguntas = [];
     let indiceAtual = 0;
     let pontuacao = 0;
     let nomeDoAluno = "";
     let nivelAluno = "5";
 
-    function salvarEstado() {
-        const estado = { nomeDoAluno, nivelAluno, indiceAtual, pontuacao };
-        sessionStorage.setItem('quizEstado', JSON.stringify(estado));
+    // ==========================================
+    // GERADOR DE PERGUNTAS INFINITAS
+    // ==========================================
+    function gerarQuestaoAleatoria(nivel) {
+        let pergunta, respostaCorreta;
+        
+        if (nivel === '5') {
+            const isSoma = Math.random() > 0.5;
+            const a = Math.floor(Math.random() * 50) + 10;
+            const b = Math.floor(Math.random() * 40) + 10;
+            if (isSoma) { pergunta = `Quanto é ${a} + ${b}?`; respostaCorreta = a + b; } 
+            else { const maior = Math.max(a, b); const menor = Math.min(a, b); pergunta = `Quanto é ${maior} - ${menor}?`; respostaCorreta = maior - menor; }
+        } else if (nivel === '6') {
+            const isMult = Math.random() > 0.5;
+            const a = Math.floor(Math.random() * 10) + 2;
+            const b = Math.floor(Math.random() * 10) + 2;
+            if (isMult) { pergunta = `Quanto é ${a} x ${b}?`; respostaCorreta = a * b; } 
+            else { pergunta = `Quanto é ${a * b} ÷ ${a}?`; respostaCorreta = b; }
+        } else if (nivel === '7') {
+            const x = Math.floor(Math.random() * 10) + 1;
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = x + a;
+            pergunta = `Se x + ${a} = ${b}, qual o valor de x?`;
+            respostaCorreta = x;
+        } else if (nivel === '8') {
+            const a = Math.floor(Math.random() * 10) + 2;
+            pergunta = `Quanto é ${a}²?`;
+            respostaCorreta = a * a;
+        } else if (nivel === '9') {
+            const a = Math.floor(Math.random() * 5) + 1;
+            const b = Math.floor(Math.random() * 10);
+            const x = Math.floor(Math.random() * 5) + 1;
+            pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`;
+            respostaCorreta = a * x + b;
+        }
+
+        // Gera 3 opções erradas baseadas na correta
+        const opcoesSet = new Set([respostaCorreta]);
+        while (opcoesSet.size < 4) {
+            const erro = respostaCorreta + (Math.floor(Math.random() * 10) - 5);
+            if (erro !== respostaCorreta && erro >= 0) { opcoesSet.add(erro); }
+        }
+        
+        let opcoes = Array.from(opcoesSet).sort(() => Math.random() - 0.5).map(String);
+        let indexCorreta = opcoes.indexOf(String(respostaCorreta));
+
+        return { pergunta: pergunta, opcoes: opcoes, correta: indexCorreta };
     }
 
-    function carregarEstado() {
-        const estadoSalvo = sessionStorage.getItem('quizEstado');
-        if (estadoSalvo) {
-            const estado = JSON.parse(estadoSalvo);
-            if (estado.indiceAtual < bancoDeQuestoes[estado.nivelAluno].length) {
-                nomeDoAluno = estado.nomeDoAluno;
-                nivelAluno = estado.nivelAluno;
-                indiceAtual = estado.indiceAtual;
-                pontuacao = estado.pontuacao;
-                perguntas = bancoDeQuestoes[nivelAluno];
-                
-                document.getElementById('tela-inicio').style.display = 'none';
-                document.getElementById('tela-quiz').style.display = 'block';
-                carregarPergunta();
-            } else {
-                sessionStorage.removeItem('quizEstado');
-            }
-        }
+    // ==========================================
+    // CONTROLE DO JOGO
+    // ==========================================
+    function salvarPerfil() {
+        localStorage.setItem('quizPerfil', JSON.stringify({ nome: nomeDoAluno, nivel: nivelAluno }));
     }
+
+    window.onload = function() {
+        const perfilSalvo = localStorage.getItem('quizPerfil');
+        if (perfilSalvo) {
+            const perfil = JSON.parse(perfilSalvo);
+            document.getElementById('nome-aluno').value = perfil.nome;
+            document.getElementById('nivel-aluno').value = perfil.nivel;
+        }
+    };
 
     function iniciarQuiz() {
         nomeDoAluno = document.getElementById('nome-aluno').value.trim();
@@ -168,19 +173,27 @@
             return;
         }
         
-        // Pega as perguntas do nível escolhido
-        perguntas = bancoDeQuestoes[nivelAluno]; 
-        
         indiceAtual = 0;
         pontuacao = 0;
-        salvarEstado();
+        perguntas = []; // Zera as perguntas
+        
+        salvarPerfil(); 
         
         document.getElementById('tela-inicio').style.display = 'none';
         document.getElementById('tela-quiz').style.display = 'block';
+        
         carregarPergunta();
     }
 
     function carregarPergunta() {
+        // Se estiver acabando as perguntas, gera mais 5 (MODO INFINITO)
+        if (indiceAtual >= perguntas.length) {
+            for(let i=0; i<5; i++) {
+                perguntas.push(gerarQuestaoAleatoria(nivelAluno));
+            }
+        }
+
+        document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
         const container = document.getElementById('opcoes-container');
         container.innerHTML = ''; 
         document.getElementById('btn-proximo').style.display = 'none';
@@ -205,52 +218,71 @@
         if (indexEscolhido === perguntaAtual.correta) {
             botaoClicado.classList.add('correta');
             pontuacao++;
+            document.getElementById('placar-vivo').innerText = `Pontos: ${pontuacao}`;
         } else {
             botaoClicado.classList.add('errada');
             todosBotoes[perguntaAtual.correta].classList.add('correta');
         }
-        salvarEstado();
         document.getElementById('btn-proximo').style.display = 'block';
     }
 
     function proximaPergunta() {
         indiceAtual++;
-        salvarEstado();
-        if (indiceAtual < perguntas.length) {
-            carregarPergunta();
-        } else {
-            mostrarResultado();
-        }
-    }
-
-    async function mostrarResultado() {
-        document.getElementById('tela-quiz').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'block';
-        document.getElementById('pontuacao-final').innerText = pontuacao;
-        document.getElementById('total-perguntas').innerText = perguntas.length;
-        
-        const status = document.getElementById('status-salvamento');
-        status.innerText = "Salvando pontuação...";
-        status.style.color = "#f39c12";
-
-        // Salva no banco incluindo o nível
-        const { error } = await banco
-            .from('ranking')
-            .insert([{ nome: nomeDoAluno, pontuacao: pontuacao, nivel: nivelAluno + "º Ano" }]);
-
-        if (error) {
-            console.error(error);
-            status.innerText = "Erro ao salvar no ranking.";
-            status.style.color = "#e74c3c";
-        } else {
-            status.innerText = "Pontuação salva no ranking com sucesso!";
-            status.style.color = "#2ecc71";
-        }
-        sessionStorage.removeItem('quizEstado');
+        carregarPergunta();
     }
 
     // ==========================================
-    // LÓGICA DO RANKING
+    // FINALIZAR E SALVAR
+    // ==========================================
+    async function mostrarResultado() {
+        if(pontuacao === 0) {
+            if(!confirm("Você ainda não fez nenhum ponto. Deseja realmente parar?")) return;
+        }
+
+        document.getElementById('tela-quiz').style.display = 'none';
+        document.getElementById('tela-resultado').style.display = 'block';
+        document.getElementById('pontuacao-final').innerText = pontuacao;
+        
+        const status = document.getElementById('status-salvamento');
+        status.innerText = "Verificando pontuação...";
+        status.style.color = "#f39c12";
+
+        const nivelTexto = nivelAluno + "º Ano";
+
+        // Verificar se o aluno já existe para não duplicar
+        const { data: existente, error: erroBusca } = await banco
+            .from('ranking')
+            .select('id, pontuacao')
+            .eq('nome', nomeDoAluno)
+            .eq('nivel', nivelTexto)
+            .maybeSingle();
+
+        if (erroBusca) {
+            status.innerText = "Erro ao conectar com o ranking.";
+            status.style.color = "#e74c3c";
+            return;
+        }
+
+        if (existente) {
+            // Atualiza se a nova nota for MAIOR
+            if (pontuacao > existente.pontuacao) {
+                await banco.from('ranking').update({ pontuacao: pontuacao }).eq('id', existente.id);
+                status.innerText = "Novo recorde salvo no ranking! 🚀";
+                status.style.color = "#2ecc71";
+            } else {
+                status.innerText = `Sua nota anterior (${existente.pontuacao} pts) foi mantida.`;
+                status.style.color = "#3498db";
+            }
+        } else {
+            // Insere se for a primeira vez
+            await banco.from('ranking').insert([{ nome: nomeDoAluno, pontuacao: pontuacao, nivel: nivelTexto }]);
+            status.innerText = "Pontuação salva no ranking com sucesso!";
+            status.style.color = "#2ecc71";
+        }
+    }
+
+    // ==========================================
+    // RANKING
     // ==========================================
     async function abrirRanking() {
         document.getElementById('tela-inicio').style.display = 'none';
@@ -265,11 +297,11 @@
             .from('ranking')
             .select('nome, pontuacao, nivel')
             .order('pontuacao', { ascending: false })
+            .order('nome', { ascending: true })
             .limit(10);
 
         if (error) {
             lista.innerHTML = '<p>Erro ao carregar o ranking.</p>';
-            console.error(error);
             return;
         }
 
@@ -290,25 +322,12 @@
 
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
-        const estadoSalvo = sessionStorage.getItem('quizEstado');
-        if (estadoSalvo) {
-            const estado = JSON.parse(estadoSalvo);
-            if (estado.indiceAtual < bancoDeQuestoes[estado.nivelAluno].length) {
-                perguntas = bancoDeQuestoes[estado.nivelAluno];
-                document.getElementById('tela-quiz').style.display = 'block';
-                carregarPergunta();
-                return;
-            }
-        }
         document.getElementById('tela-inicio').style.display = 'block';
     }
 
     function reiniciarTudo() {
-        sessionStorage.removeItem('quizEstado');
         location.reload();
     }
-
-    window.onload = carregarEstado;
 </script>
 
 </body>
