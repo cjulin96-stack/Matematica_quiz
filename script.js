@@ -85,3 +85,196 @@ const ACADEMIA_DB = [
     { titulo: 'Trilha 4: Porcentagem', conteudo: 'Porcentagem é uma fração com denominador 100. Ex: 20% de 150 = 20/100 x 150 = 30.' },
     { titulo: 'Trilha 5: Geometria', conteudo: 'Área do quadrado = lado x lado. Área do retângulo = base x altura.' }
 ];
+function mostrarToast(mensagem, tipo = 'primary') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    let icone = 'ℹ️';
+    if(tipo === 'success') icone = '✅';
+    if(tipo === 'error') icone = '❌';
+    if(tipo === 'gold') icone = '🪙';
+    toast.innerHTML = `<span style="font-size: 20px;">${icone}</span> <span>${mensagem}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 3300);
+}
+
+function mostrarModalConquista(titulo, icone, raridade = "Comum") {
+    const modal = document.getElementById('modal-conquista');
+    document.getElementById('modal-icone').innerText = icone;
+    document.getElementById('modal-titulo').innerText = titulo;
+    const raridadeTxt = document.getElementById('modal-raridade');
+    raridadeTxt.innerText = raridade;
+    if(raridade === "Lendária") { raridadeTxt.style.color = "#ffd700"; }
+    else if(raridade === "Épica") { raridadeTxt.style.color = "#a855f7"; }
+    else if(raridade === "Rara") { raridadeTxt.style.color = "#00f2fe"; }
+    else { raridadeTxt.style.color = "#ffffff"; }
+    
+    modal.classList.add('active');
+    setTimeout(() => { modal.classList.remove('active'); }, 3000);
+}
+
+function toggleSom() {
+    somAtivado = !somAtivado;
+    document.getElementById('toggle-som').classList.toggle('on', somAtivado);
+    mostrarToast(`Som ${somAtivado ? 'Ativado' : 'Desativado'}`, 'primary');
+}
+
+function toggleAnimacoes() {
+    animacoesAtivadas = !animacoesAtivadas;
+    document.getElementById('toggle-animacoes').classList.toggle('on', animacoesAtivadas);
+    mostrarToast(`Animações ${animacoesAtivadas ? 'Ativadas' : 'Desativadas'}`, 'primary');
+}
+
+async function fazerCadastro() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-password').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    mostrarToast("Criando conta...", "primary");
+    const { error } = await banco.auth.signUp({ email, password: senha });
+    if (error) { mostrarToast(error.message, "error"); } 
+    else { mostrarToast("Conta criada! Faça login.", "success"); }
+}
+
+async function fazerLogin() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-password').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    mostrarToast("Entrando...", "primary");
+    const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
+    if (error) { mostrarToast(error.message, "error"); } 
+    else {
+        jogador.id = data.user.id; jogador.email = data.user.email;
+        await carregarPerfil(); mostrarApp();
+    }
+}
+
+async function sair() { await banco.auth.signOut(); localStorage.removeItem('mathArenaNome'); location.reload(); }
+
+function mostrarApp() {
+    document.getElementById('bottom-nav').style.display = 'flex';
+    mudarAba('tela-home');
+}
+
+async function carregarPerfil() {
+    if (!jogador.id) return;
+    const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+    if (error) { console.error("Erro ao carregar perfil:", error); return; }
+
+    if (data) {
+        jogador.nome = data.nome || jogador.nome || 'Jogador';
+        jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
+        jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
+        jogador.avatar = data.avatar || '🧑‍🚀';
+        jogador.moldura = data.moldura || 'frame-padrao'; 
+        jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
+        
+        let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0 };
+        if(missoesDB.pontos_dia === undefined) missoesDB.pontos_dia = 0;
+        if(missoesDB.last_chest === undefined) missoesDB.last_chest = 0;
+        jogador.missoes = missoesDB;
+
+        jogador.multiplicador_expira = data.multiplicador_expira;
+        jogador.nivel = getNivel(jogador.xp).nivel;
+        jogador.totalAcertos = data.acertos || 0;
+        jogador.totalErros = data.erros || 0;
+        jogador.melhorSequencia = data.melhor_sequencia || 0;
+    } else {
+        await banco.from('ranking').insert([{ 
+            user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
+            conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
+        }]);
+    }
+}
+
+function aplicarMolduras() {
+    const homeFrame = document.getElementById('home-frame');
+    homeFrame.className = `frame ${jogador.moldura}`;
+    document.getElementById('home-avatar').innerText = jogador.avatar;
+    
+    const perfilFrame = document.getElementById('perfil-frame');
+    perfilFrame.className = `frame ${jogador.moldura}`;
+    document.getElementById('perfil-avatar').innerText = jogador.avatar;
+    
+    document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
+    document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+    renderizarSeletorAvatar();
+}
+
+function renderizarSeletorAvatar() {
+    const container = document.getElementById('avatar-selector');
+    if(!container) return;
+    container.innerHTML = '';
+    AVATARES_GRATIS.forEach(av => {
+        const btn = document.createElement('button');
+        btn.className = `avatar-option ${jogador.avatar === av ? 'selected' : ''}`;
+        btn.innerText = av;
+        btn.onclick = () => selecionarAvatar(av);
+        container.appendChild(btn);
+    });
+}
+
+async function selecionarAvatar(emoji) {
+    jogador.avatar = emoji;
+    await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+    aplicarMolduras();
+}
+
+async function atualizarDashboard() {
+    if (!jogador.id) return;
+    await carregarPerfil();
+    document.getElementById('home-nome').innerText = jogador.nome || 'Jogador';
+    document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel} - ${getNomeNivel(jogador.nivel)}`;
+    document.getElementById('home-streak').innerText = jogador.streak || 0;
+    document.getElementById('home-moedas').innerText = jogador.moedas || 0;
+    
+    // Lógica visual para Divisão de Temporada
+    let div = "🥉 BRONZE"; let cor = "#cd7f32";
+    if (jogador.nivel >= 10) { div = "🥈 PRATA"; cor = "#c0c0c0"; }
+    if (jogador.nivel >= 20) { div = "🥇 OURO"; cor = "#ffd700"; }
+    if (jogador.nivel >= 30) { div = "💎 PLATINA"; cor = "#00f2fe"; }
+    if (jogador.nivel >= 40) { div = "💠 DIAMANTE"; cor = "#a855f7"; }
+    if (jogador.nivel >= 50) { div = "🔮 MESTRE"; cor = "#ff1744"; }
+    if (jogador.nivel >= 75) { div = "👑 LENDÁRIO"; cor = "#ffd700"; }
+    
+    const elDivisao = document.getElementById('home-divisao');
+    if (elDivisao) { elDivisao.innerText = div; elDivisao.style.color = cor; }
+
+    aplicarMolduras();
+
+    const infoNivel = getNivel(jogador.xp);
+    document.getElementById('home-xp-txt').innerText = `${infoNivel.xpAtual} / ${infoNivel.xpProximo} XP`;
+    document.getElementById('home-xp-bar').style.width = `${(infoNivel.xpAtual / infoNivel.xpProximo) * 100}%`;
+
+    if (jogador.multiplicador_expira) {
+        let expira = new Date(jogador.multiplicador_expira.split('|').pop());
+        if (expira > new Date()) { document.getElementById('box-multiplier').classList.remove('hidden'); } 
+        else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
+    } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
+    
+    checarBauDiario();
+}
+
+function mudarAba(idTela, element) {
+    if (idTela === 'tela-jogo') return;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(idTela).classList.add('active');
+    if (element) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        element.classList.add('active');
+    }
+    if (idTela === 'tela-home') atualizarDashboard();
+    if (idTela === 'tela-academia') renderizarAcademia();
+    if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
+    if (idTela === 'tela-conquistas') renderizarConquistas();
+    if (idTela === 'tela-estatisticas') renderizarEstatisticas();
+    if (idTela === 'tela-perfil') { 
+        carregarPerfil().then(() => {
+            document.getElementById('perfil-nome-input').value = jogador.nome;
+            aplicarMolduras();
+            renderizarCalendario();
+            renderizarHistorico();
+        });
+    }
+    if (idTela === 'tela-missoes') renderizarMissoes();
+    if (idTela === 'tela-loja') renderizarLoja();
+            }
