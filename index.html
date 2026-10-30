@@ -33,6 +33,7 @@
         .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
         .pontuacao-viva { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
         .feedback { font-size: 18px; font-weight: bold; min-height: 30px; margin-top: 15px; transition: 0.3s; }
+        .btn-trocar { background: none; border: none; color: #7f8c8d; text-decoration: underline; cursor: pointer; margin-top: 15px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -45,6 +46,7 @@
         <button class="btn-ranking" onclick="abrirRanking()">🏆 Ranking</button>
     </div>
 
+    <!-- TELA DE INÍCIO (Só aparece na primeira vez) -->
     <div id="tela-inicio">
         <p>Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
         <input type="text" id="nome-aluno" placeholder="Digite seu nome" oninput="salvarPerfilRapido()">
@@ -60,6 +62,7 @@
         <button class="btn-principal btn-verde" style="display:block; margin: 0 auto;" onclick="iniciarQuiz()">Começar Modo Infinito 🚀</button>
     </div>
 
+    <!-- TELA DO QUIZ -->
     <div id="tela-quiz" style="display: none;">
         <div class="pontuacao-viva" id="placar-vivo">Pontos da Rodada: 0</div>
         <div class="quiz-card">
@@ -71,22 +74,26 @@
             <button class="btn-principal" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
             <button class="btn-principal btn-vermelho" onclick="mostrarResultado()">Parar e Salvar 🏁</button>
         </div>
+        <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
     </div>
 
+    <!-- TELA DE RESULTADO -->
     <div id="tela-resultado" class="resultado">
         <h2>Fim da Rodada! 🎉</h2>
         <p>Você fez <strong id="pontuacao-final">0</strong> pontos nesta rodada.</p>
         <p id="status-salvamento" style="font-size: 16px; font-weight: bold; color: #7f8c8d; margin-bottom: 15px;"></p>
         <button class="btn-principal btn-verde" style="display:block; margin: 10px auto;" onclick="abrirRanking()">Ver Ranking</button>
-        <button class="btn-principal" style="display:block; margin: 0 auto; background:#95a5a6;" onclick="reiniciarTudo()">Jogar de Novo</button>
+        <button class="btn-principal" style="display:block; margin: 0 auto; background:#95a5a6;" onclick="jogarNovamente()">Jogar de Novo</button>
+        <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
     </div>
 
+    <!-- TELA DE RANKING -->
     <div id="tela-ranking" style="display: none;">
         <h2>🏆 Top 10 Ranking (XP Total)</h2>
         <div class="ranking-lista" id="lista-ranking">
             <p>Carregando ranking...</p>
         </div>
-        <button class="btn-principal" style="display:block; margin: 20px auto 0; background:#3498db;" onclick="voltarAoJogo()">Voltar</button>
+        <button class="btn-principal" style="display:block; margin: 20px auto 0; background:#3498db;" onclick="voltarAoJogo()">Voltar ao Quiz</button>
     </div>
 </div>
 
@@ -101,6 +108,7 @@
     let combo = 0;
     let nomeDoAluno = "";
     let nivelAluno = "5";
+    let jogoEmAndamento = false; // NOVO: Controla se o quiz está rolando
 
     const mensagensAcerto = [
         "Parabéns, você acertou! 🎉",
@@ -134,6 +142,8 @@
             const perfil = JSON.parse(perfilSalvo);
             document.getElementById('nome-aluno').value = perfil.nome;
             document.getElementById('nivel-aluno').value = perfil.nivel;
+            nomeDoAluno = perfil.nome;
+            nivelAluno = perfil.nivel;
         }
     };
 
@@ -195,10 +205,13 @@
         pontuacao = 0;
         combo = 0;
         perguntas = []; 
+        jogoEmAndamento = true;
         
         salvarPerfilRapido(); 
         
         document.getElementById('tela-inicio').style.display = 'none';
+        document.getElementById('tela-resultado').style.display = 'none';
+        document.getElementById('tela-ranking').style.display = 'none';
         document.getElementById('tela-quiz').style.display = 'block';
         
         carregarPergunta();
@@ -269,6 +282,7 @@
     async function mostrarResultado() {
         if(pontuacao === 0 && !confirm("Você ainda não fez nenhum ponto. Deseja realmente parar?")) return;
 
+        jogoEmAndamento = false;
         document.getElementById('tela-quiz').style.display = 'none';
         document.getElementById('tela-resultado').style.display = 'block';
         document.getElementById('pontuacao-final').innerText = pontuacao;
@@ -357,22 +371,32 @@
         });
     }
 
+    // --- NOVA LÓGICA DE NAVEGAÇÃO INTELIGENTE ---
+    
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
-        document.getElementById('tela-inicio').style.display = 'block';
-        if(nomeDoAluno) {
-            document.getElementById('nome-aluno').value = nomeDoAluno;
-            document.getElementById('nivel-aluno').value = nivelAluno;
+        
+        // Se o jogo já tinha acabado, começa um novo automaticamente
+        if (!jogoEmAndamento) {
+            iniciarQuiz();
+        } else {
+            // Se estava no meio do jogo (clicou no ranking), apenas volta
+            document.getElementById('tela-quiz').style.display = 'block';
+            carregarPergunta();
         }
     }
 
-    function reiniciarTudo() {
+    function jogarNovamente() {
+        // Começa um novo jogo direto, sem mostrar a tela inicial
+        iniciarQuiz();
+    }
+
+    function trocarJogador() {
+        // Se o aluno quiser mudar de nome, ele volta pra tela inicial
+        jogoEmAndamento = false;
+        document.getElementById('tela-quiz').style.display = 'none';
         document.getElementById('tela-resultado').style.display = 'none';
         document.getElementById('tela-inicio').style.display = 'block';
-        if(nomeDoAluno) {
-            document.getElementById('nome-aluno').value = nomeDoAluno;
-            document.getElementById('nivel-aluno').value = nivelAluno;
-        }
     }
 </script>
 
