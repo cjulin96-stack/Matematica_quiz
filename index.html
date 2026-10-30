@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - VIP</title>
+    <title>MATH ARENA - Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -30,7 +30,7 @@
         
         /* AVATAR & FRAMES */
         .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
-        .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
+        .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; border: 1px solid rgba(255,255,255,0.1);}
         
         .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; pointer-events: none; }
         .frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; filter: blur(2px); opacity: 0.8; }
@@ -38,17 +38,22 @@
         .frame-fogo { border: 3px solid #ff4500; box-shadow: 0 0 20px #ff4500, 0 0 40px #ff0000; animation: pulse-fire 1.5s infinite alternate; }
         .frame-gelo { border: 3px solid #00ffff; box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00ffff; animation: pulse-ice 3s infinite; }
         .frame-neon { border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent), inset 0 0 15px var(--accent); animation: pulse-neon 2s infinite; }
+        .frame-galaxy { border: 3px solid #8a2be2; box-shadow: 0 0 25px #8a2be2, inset 0 0 20px #4b0082; animation: spin 3s linear infinite; background: radial-gradient(circle, transparent, rgba(138,43,226,0.2)); }
+        .frame-matrix { border: 3px dashed #00ff00; box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00; animation: pulse-matrix 1s infinite; }
+        .frame-diamante { border: 3px double #e0ffff; box-shadow: 0 0 25px #ffffff, inset 0 0 15px #87ceeb; animation: pulse-diamond 2s infinite alternate; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 25px #ffd700, 0 0 10px #fff; } 100% { box-shadow: 0 0 10px #ffd700; } }
         @keyframes pulse-fire { 0% { box-shadow: 0 0 15px #ff4500, 0 0 30px #ff4500; } 100% { box-shadow: 0 0 30px #ff4500, 0 0 50px #ff0000; border-color: #ff0000; } }
         @keyframes pulse-ice { 0% { box-shadow: 0 0 10px #00ffff; } 50% { box-shadow: 0 0 25px #00ffff, inset 0 0 15px #00ffff; } 100% { box-shadow: 0 0 10px #00ffff; } }
         @keyframes pulse-neon { 0% { box-shadow: 0 0 10px var(--accent); } 50% { box-shadow: 0 0 25px var(--accent), inset 0 0 15px var(--accent); } 100% { box-shadow: 0 0 10px var(--accent); } }
+        @keyframes pulse-matrix { 0% { box-shadow: 0 0 10px #00ff00; } 100% { box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00; } }
+        @keyframes pulse-diamond { 0% { box-shadow: 0 0 15px #ffffff; } 100% { box-shadow: 0 0 35px #87ceeb, inset 0 0 15px #ffffff; } }
 
         .user-name { font-weight: 800; font-size: 18px; }
         .user-level { font-size: 12px; color: var(--primary); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
         
-        /* XP BAR (CORRIGIDA) */
+        /* XP BAR */
         .xp-container { margin-top: 10px; }
         .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
         .xp-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
@@ -104,13 +109,23 @@
         .timer-display { font-family: 'Orbitron'; font-size: 32px; color: var(--danger); text-align: center; margin-bottom: 15px; font-weight: 900; text-shadow: 0 0 15px rgba(255,23,68,0.6); animation: pulseRed 1s infinite;}
         @keyframes pulseRed { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); opacity: 0.5; transition: 0.3s;}
-        .achievement-card.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); box-shadow: 0 0 15px rgba(255,215,0,0.1);}
-        .ach-icon { font-size: 32px; filter: grayscale(1); transition: 0.3s;}
+        /* CONQUISTAS (MISSÕES) */
+        .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;}
+        .achievement-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--text-muted); }
+        .achievement-card.unlocked { background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); border-color: rgba(255,215,0,0.3);}
+        .achievement-card.unlocked::before { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        
+        .ach-icon { font-size: 32px; filter: grayscale(1); transition: 0.3s; z-index: 1;}
         .achievement-card.unlocked .ach-icon { filter: grayscale(0) drop-shadow(0 0 8px rgba(255,215,0,0.5)); transform: scale(1.1);}
+        .ach-info { flex: 1; z-index: 1;}
         .ach-info h4 { font-size: 15px; margin-bottom: 2px; color: #fff;}
-        .ach-info p { font-size: 12px; color: var(--text-muted); }
+        .ach-info p { font-size: 12px; color: var(--text-muted); margin-bottom: 5px;}
+        
+        .ach-progress-bar { height: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; overflow: hidden; width: 100%;}
+        .ach-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; box-shadow: 0 0 5px var(--primary);}
+        .achievement-card.unlocked .ach-progress-fill { background: var(--gold); box-shadow: 0 0 5px var(--gold);}
 
+        /* DESAFIOS */
         .challenge-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); }
         .challenge-info h4 { font-size: 16px; margin-bottom: 2px; color: var(--primary); }
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
@@ -120,6 +135,7 @@
         .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 5px 0 #92400e; padding: 16px; border-radius: 14px;}
         .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 5px 0 #064e3b; padding: 16px; border-radius: 14px;}
         
+        /* MISSÕES DIÁRIAS */
         .mission-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);}
         .mission-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 14px; }
         .mission-reward { color: var(--gold); font-size: 13px; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
@@ -193,6 +209,12 @@
         .aula-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .aula-conteudo { display: none; margin-top: 15px; font-size: 15px; color: #ddd; line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
         .aula-conteudo.active { display: block; animation: slideUp 0.3s;}
+
+        /* SELETOR DE AVATARES */
+        .avatar-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .avatar-option { background: rgba(255,255,255,0.05); border: 2px solid transparent; border-radius: 50%; width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; transition: 0.2s; }
+        .avatar-option:active { transform: scale(0.9); }
+        .avatar-option.selected { border-color: var(--primary); background: rgba(0,242,254,0.1); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
     </style>
 </head>
 <body>
@@ -378,7 +400,7 @@
 
         <!-- TELA: MEDALHAS -->
         <div id="tela-conquistas" class="screen">
-            <h2 class="text-gradient text-center mb-20">GALERIA DE MEDALHAS</h2>
+            <h2 class="text-gradient text-center mb-20">GALERIA DE MISSÕES</h2>
             <div id="lista-conquistas"></div>
             <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
         </div>
@@ -425,6 +447,14 @@
                 </div>
             </div>
 
+            <!-- SELETOR DE AVATARES GRÁTIS -->
+            <div class="glass">
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">ESCOLHA SEU AVATAR</h3>
+                <div class="avatar-selector" id="avatar-selector">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+
             <!-- CALENDÁRIO -->
             <div class="glass">
                 <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">🔥 OFENSIVA DE ESTUDOS</h3>
@@ -440,7 +470,7 @@
             </div>
 
             <button class="btn-secondary" style="border-color: var(--primary); color: var(--primary);" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
-            <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER MEDALHAS</button>
+            <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER MISSÕES</button>
             <button class="btn-danger" style="margin-top: 20px;" onclick="sair()">SAIR DA CONTA</button>
         </div>
     </div>
@@ -459,7 +489,7 @@
         const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
         const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
+        let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         
         let isDuelo = false;
@@ -471,54 +501,59 @@
         let tempoRestante = 0;
         let usarMultiplicador = false;
 
+        // LISTA DE AVATARES GRÁTIS
+        const AVATARES_GRATIS = ['🧑‍🚀', '🐯', '🐺', '🦊', '🐼', '🦁', '🦄', '🐲', '🤖', '👽', '👾', '🧙‍♂️', '🧛‍♂️', '🧜‍♀️', '🧚', '🦸‍♂️', '🦹‍♂️', '🥷', '👮‍♂️', '🕵️‍♂️'];
+
+        // CONQUISTAS COM METAS (Para a barra de progresso)
         const CONQUISTAS_DB = [
-            { id: 'c1', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.' },
-            { id: 'c2', icone: '🧐', titulo: 'Mente Curiosa', desc: 'Respondeu 10 questões.' },
-            { id: 'c3', icone: '🌱', titulo: 'Iniciante', desc: 'Respondeu 50 questões.' },
-            { id: 'c4', icone: '📚', titulo: 'Aprendiz', desc: 'Respondeu 100 questões.' },
-            { id: 'c5', icone: '🎓', titulo: 'Dedicado', desc: 'Respondeu 500 questões.' },
-            { id: 'c6', icone: '🏛️', titulo: 'Veterano', desc: 'Respondeu 1000 questões.' },
-            { id: 'c7', icone: '🎯', titulo: 'Atirador de Elite', desc: 'Acertou 10 seguidas.' },
-            { id: 'c8', icone: '🔪', titulo: 'Precisão Absoluta', desc: 'Acertou 25 seguidas.' },
-            { id: 'c9', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos.' },
-            { id: 'c10', icone: '💎', titulo: 'Perfeição', desc: 'Completou 10 questões sem errar.' },
-            { id: 'c11', icone: '🧮', titulo: 'Calculadora Humana', desc: 'Atingiu 95% de aproveitamento.' },
-            { id: 'c12', icone: '🔥', titulo: 'Chama Inicial', desc: '3 dias consecutivos.' },
-            { id: 'c13', icone: '☄️', titulo: 'Uma Semana de Fogo', desc: '7 dias consecutivos.' },
-            { id: 'c14', icone: '🌋', titulo: 'Duas Semanas', desc: '14 dias consecutivos.' },
-            { id: 'c15', icone: '🛡️', titulo: 'Disciplina de Ferro', desc: '30 dias consecutivos.' },
-            { id: 'c16', icone: '🚀', titulo: 'Imparável', desc: '60 dias consecutivos.' },
-            { id: 'c17', icone: '💯', titulo: 'Centenário', desc: '100 dias consecutivos.' },
-            { id: 'c18', icone: '👑', titulo: 'Lenda', desc: '365 dias consecutivos.' },
-            { id: 'c19', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou um desafio de tempo.' },
-            { id: 'c20', icone: '⏱️', titulo: 'Reflexos Matemáticos', desc: 'Jogou o Desafio Hardcore.' },
-            { id: 'c21', icone: '⭐', titulo: 'Subindo na Vida', desc: 'Alcançou o Nível 5.' },
-            { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou o Nível 10.' },
-            { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou o Nível 20.' },
-            { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou o Nível 50.' },
-            { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.' }
+            { id: 'c1', icone: '👣', titulo: 'Primeiro Passo', desc: 'Jogou a primeira partida.', meta: 1, tipo: 'jogos' },
+            { id: 'c2', icone: '🧐', titulo: 'Mente Curiosa', desc: 'Respondeu 10 questões.', meta: 10, tipo: 'acertos' },
+            { id: 'c3', icone: '🌱', titulo: 'Iniciante', desc: 'Respondeu 50 questões.', meta: 50, tipo: 'acertos' },
+            { id: 'c4', icone: '📚', titulo: 'Aprendiz', desc: 'Respondeu 100 questões.', meta: 100, tipo: 'acertos' },
+            { id: 'c5', icone: '🎓', titulo: 'Dedicado', desc: 'Respondeu 500 questões.', meta: 500, tipo: 'acertos' },
+            { id: 'c6', icone: '🏛️', titulo: 'Veterano', desc: 'Respondeu 1000 questões.', meta: 1000, tipo: 'acertos' },
+            { id: 'c7', icone: '🎯', titulo: 'Atirador de Elite', desc: 'Acertou 10 seguidas.', meta: 10, tipo: 'sequencia' },
+            { id: 'c8', icone: '🔪', titulo: 'Precisão Absoluta', desc: 'Acertou 25 seguidas.', meta: 25, tipo: 'sequencia' },
+            { id: 'c9', icone: '🧠', titulo: 'Mente Brilhante', desc: 'Atingiu 80+ pontos numa partida.', meta: 80, tipo: 'pontos_partida' },
+            { id: 'c10', icone: '💎', titulo: 'Perfeição', desc: 'Completou 10 questões sem errar.', meta: 10, tipo: 'perfeicao' },
+            { id: 'c11', icone: '🧮', titulo: 'Calculadora Humana', desc: 'Atingiu 95% de aproveitamento.', meta: 95, tipo: 'taxa' },
+            { id: 'c12', icone: '🔥', titulo: 'Chama Inicial', desc: '3 dias consecutivos.', meta: 3, tipo: 'streak' },
+            { id: 'c13', icone: '☄️', titulo: 'Uma Semana de Fogo', desc: '7 dias consecutivos.', meta: 7, tipo: 'streak' },
+            { id: 'c14', icone: '🌋', titulo: 'Duas Semanas', desc: '14 dias consecutivos.', meta: 14, tipo: 'streak' },
+            { id: 'c15', icone: '🛡️', titulo: 'Disciplina de Ferro', desc: '30 dias consecutivos.', meta: 30, tipo: 'streak' },
+            { id: 'c16', icone: '🚀', titulo: 'Imparável', desc: '60 dias consecutivos.', meta: 60, tipo: 'streak' },
+            { id: 'c17', icone: '💯', titulo: 'Centenário', desc: '100 dias consecutivos.', meta: 100, tipo: 'streak' },
+            { id: 'c18', icone: '👑', titulo: 'Lenda', desc: '365 dias consecutivos.', meta: 365, tipo: 'streak' },
+            { id: 'c19', icone: '⚡', titulo: 'Modo Turbo', desc: 'Completou um desafio de tempo.', meta: 1, tipo: 'desafio' },
+            { id: 'c20', icone: '⏱️', titulo: 'Reflexos Matemáticos', desc: 'Jogou o Desafio Hardcore.', meta: 1, tipo: 'hardcore' },
+            { id: 'c21', icone: '⭐', titulo: 'Subindo na Vida', desc: 'Alcançou o Nível 5.', meta: 5, tipo: 'nivel' },
+            { id: 'c22', icone: '🌟', titulo: 'Especialista', desc: 'Alcançou o Nível 10.', meta: 10, tipo: 'nivel' },
+            { id: 'c23', icone: '🌠', titulo: 'Gênio', desc: 'Alcançou o Nível 20.', meta: 20, tipo: 'nivel' },
+            { id: 'c24', icone: '🌌', titulo: 'Divindade Matemática', desc: 'Alcançou o Nível 50.', meta: 50, tipo: 'nivel' },
+            { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.', meta: 5, tipo: 'materias' }
         ];
 
+        // LOJA COM NOVAS MOLDURAS
         const LOJA_DB = [ 
             { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
             { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
             
+            // MOLDURAS
             { id: 'frame-ouro', icone: '👑', nome: 'Moldura de Ouro', desc: 'Brilho dourado VIP', preco: 800, tipo: 'frame' },
             { id: 'frame-fogo', icone: '🔥', nome: 'Moldura de Fogo', desc: 'Chamas ardentes', preco: 1500, tipo: 'frame' },
             { id: 'frame-gelo', icone: '❄️', nome: 'Moldura de Gelo', desc: 'Congelante e brilhante', preco: 1500, tipo: 'frame' },
             { id: 'frame-neon', icone: '🔮', nome: 'Moldura Neon', desc: 'Energia roxa infinita', preco: 2000, tipo: 'frame' },
+            { id: 'frame-galaxy', icone: '🌌', nome: 'Moldura Galáxia', desc: 'Estrelas giratórias', preco: 2500, tipo: 'frame' },
+            { id: 'frame-matrix', icone: '💻', nome: 'Moldura Matrix', desc: 'Código verde piscante', preco: 3000, tipo: 'frame' },
+            { id: 'frame-diamante', icone: '💎', nome: 'Moldura Diamante', desc: 'Brilho raro e ofuscante', preco: 4000, tipo: 'frame' },
 
+            // AVATARES DA LOJA
             { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' },
             { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
             { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
             { id: 'av_cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar VIP', preco: 2000, tipo: 'avatar' },
             { id: 'av_ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar VIP', preco: 2500, tipo: 'avatar' },
-            { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar VIP', preco: 5000, tipo: 'avatar' },
-            { id: 'av_raposa', icone: '🦊', nome: 'Raposa Astuta', desc: 'Avatar VIP', preco: 800, tipo: 'avatar' },
-            { id: 'av_lobo', icone: '🐺', nome: 'Lobo Solitário', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
-            { id: 'av_leao', icone: '🦁', nome: 'Rei da Selva', desc: 'Avatar VIP', preco: 3000, tipo: 'avatar' },
-            { id: 'av_panda', icone: '🐼', nome: 'Panda Zen', desc: 'Avatar VIP', preco: 4000, tipo: 'avatar' },
-            { id: 'av_alien2', icone: '👾', nome: 'Invasor', desc: 'Avatar VIP', preco: 6000, tipo: 'avatar' }
+            { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar VIP', preco: 5000, tipo: 'avatar' }
         ];
 
         const DESAFIOS_DB = [ 
@@ -581,10 +616,14 @@
                 jogador.xp = data.xp || 0; jogador.pontos = data.pontuacao || 0;
                 jogador.streak = data.streak || 0; jogador.moedas = data.moedas || 0; 
                 jogador.avatar = data.avatar || '🧑‍🚀';
-                jogador.moldura = data.moldura || 'frame-padrao'; // Carrega a moldura
+                jogador.moldura = data.moldura || 'frame-padrao'; 
                 
                 jogador.conquistas = data.conquistas || []; jogador.stats = data.stats_materias || {};
-                jogador.missoes = data.missoes || { acertos: 0, jogos: 0, desafios: 0 };
+                // Adiciona a nova missão 'pontos_dia' se o banco antigo não tiver
+                let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0 };
+                if(missoesDB.pontos_dia === undefined) missoesDB.pontos_dia = 0;
+                jogador.missoes = missoesDB;
+
                 jogador.multiplicador_expira = data.multiplicador_expira;
                 jogador.nivel = Math.floor(jogador.xp / 100) + 1;
                 jogador.totalAcertos = data.acertos || 0;
@@ -593,7 +632,7 @@
             } else {
                 const { error: erroInsert } = await banco.from('ranking').insert([{ 
                     user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
-                    conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
+                    conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
                 }]);
                 if(erroInsert) console.error("Erro ao criar perfil:", erroInsert.message);
             }
@@ -610,6 +649,28 @@
             
             document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
             document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
+
+            renderizarSeletorAvatar();
+        }
+
+        function renderizarSeletorAvatar() {
+            const container = document.getElementById('avatar-selector');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            AVATARES_GRATIS.forEach(av => {
+                const btn = document.createElement('button');
+                btn.className = `avatar-option ${jogador.avatar === av ? 'selected' : ''}`;
+                btn.innerText = av;
+                btn.onclick = () => selecionarAvatar(av);
+                container.appendChild(btn);
+            });
+        }
+
+        async function selecionarAvatar(emoji) {
+            jogador.avatar = emoji;
+            await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+            aplicarMolduras();
         }
 
         async function atualizarDashboard() {
@@ -675,12 +736,6 @@
 
             if (jogador.id) {
                 const { error } = await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
-                if(error) {
-                    await banco.from('ranking').insert([{ 
-                        user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0,
-                        conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
-                    }]); 
-                }
             }
         }
 
@@ -949,8 +1004,11 @@
             try {
                 await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
                 const hoje = new Date().toISOString().split('T')[0];
+                
+                // Atualiza missões
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; 
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; 
+                jogador.missoes.pontos_dia = (jogador.missoes.pontos_dia || 0) + pontosFinais;
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
                 
                 const { data } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).maybeSingle();
@@ -1020,16 +1078,37 @@
                 document.getElementById('duel-result-box').classList.add('hidden');
             }
             
+            // Lógica de Conquistas Melhorada
             let novasConquistas = [];
             const totalRespondidas = (jogador.totalAcertos || 0) + (jogador.totalErros || 0) + estado.acertos + estado.erros;
+            const taxaAcerto = (totalAcertos / (totalRespondidas || 1)) * 100;
+            
             function desbloquear(id) { if(!jogador.conquistas.includes(id) && !novasConquistas.includes(id)) novasConquistas.push(id); }
 
-            if(estado.acertos > 0) desbloquear('c1'); if(totalRespondidas >= 10) desbloquear('c2'); if(totalRespondidas >= 50) desbloquear('c3'); if(totalRespondidas >= 100) desbloquear('c4'); if(totalRespondidas >= 500) desbloquear('c5'); if(totalRespondidas >= 1000) desbloquear('c6');
-            if(estado.melhorSequencia >= 10) desbloquear('c7'); if(estado.melhorSequencia >= 25) desbloquear('c8'); if(pontosFinais >= 80) desbloquear('c9'); if(estado.erros === 0 && estado.acertos >= 10) desbloquear('c10');
-            const acertosTotais = (jogador.totalAcertos || 0) + estado.acertos; const taxaAcerto = (acertosTotais / (totalRespondidas || 1)) * 100; if(totalRespondidas >= 50 && taxaAcerto >= 95) desbloquear('c11');
-            if(jogador.streak >= 3) desbloquear('c12'); if(jogador.streak >= 7) desbloquear('c13'); if(jogador.streak >= 14) desbloquear('c14'); if(jogador.streak >= 30) desbloquear('c15'); if(jogador.streak >= 60) desbloquear('c16'); if(jogador.streak >= 100) desbloquear('c17'); if(jogador.streak >= 365) desbloquear('c18');
-            if(estado.modo === 'tempo') desbloquear('c19'); if(estado.modo === 'tempo' && tempoRestante <= 30) desbloquear('c20'); 
-            if(jogador.nivel >= 5) desbloquear('c21'); if(jogador.nivel >= 10) desbloquear('c22'); if(jogador.nivel >= 20) desbloquear('c23'); if(jogador.nivel >= 50) desbloquear('c24');
+            if(totalRespondidas >= 1) desbloquear('c1'); 
+            if(totalRespondidas >= 10) desbloquear('c2'); 
+            if(totalRespondidas >= 50) desbloquear('c3'); 
+            if(totalRespondidas >= 100) desbloquear('c4'); 
+            if(totalRespondidas >= 500) desbloquear('c5'); 
+            if(totalRespondidas >= 1000) desbloquear('c6');
+            if(melhorSeq >= 10) desbloquear('c7'); 
+            if(melhorSeq >= 25) desbloquear('c8'); 
+            if(pontosFinais >= 80) desbloquear('c9'); 
+            if(estado.erros === 0 && estado.acertos >= 10) desbloquear('c10');
+            if(totalRespondidas >= 50 && taxaAcerto >= 95) desbloquear('c11');
+            if(novoStreak >= 3) desbloquear('c12'); 
+            if(novoStreak >= 7) desbloquear('c13'); 
+            if(novoStreak >= 14) desbloquear('c14'); 
+            if(novoStreak >= 30) desbloquear('c15'); 
+            if(novoStreak >= 60) desbloquear('c16'); 
+            if(novoStreak >= 100) desbloquear('c17'); 
+            if(novoStreak >= 365) desbloquear('c18');
+            if(estado.modo === 'tempo') desbloquear('c19'); 
+            if(estado.modo === 'tempo' && tempoRestante <= 30) desbloquear('c20'); 
+            if(novoNivel >= 5) desbloquear('c21'); 
+            if(novoNivel >= 10) desbloquear('c22'); 
+            if(novoNivel >= 20) desbloquear('c23'); 
+            if(novoNivel >= 50) desbloquear('c24');
             if(Object.keys(jogador.stats).length >= 5) desbloquear('c25');
 
             if(novasConquistas.length > 0) { jogador.conquistas = jogador.conquistas.concat(novasConquistas); setTimeout(() => alert(`🏅 NOVAS CONQUISTAS DESBLOQUEADAS! \nVeja na aba Medalhas.`), 500); }
@@ -1177,8 +1256,18 @@
 
         function renderizarMissoes() {
             const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
-            const missoes = [ { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } ];
-            missoes.forEach(m => { const pct = Math.min(100, (m.prog / m.meta) * 100); const isConcluida = pct === 100; container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; });
+            const missoes = [ 
+                { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, 
+                { nome: 'Jogar 3 Partidas', prog: ms.jogos, meta: 3, recompensa: 100 },
+                { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, 
+                { nome: 'Ganhe 100 Pontos', prog: ms.pontos_dia, meta: 100, recompensa: 150 },
+                { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } 
+            ];
+            missoes.forEach(m => { 
+                const pct = Math.min(100, (m.prog / m.meta) * 100); 
+                const isConcluida = pct >= 100; 
+                container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; 
+            });
         }
 
         function renderizarLoja() {
@@ -1220,10 +1309,41 @@
         }
 
         async function renderizarConquistas() {
-            await carregarPerfil(); const container = document.getElementById('lista-conquistas'); container.innerHTML = '';
+            await carregarPerfil(); 
+            const container = document.getElementById('lista-conquistas'); 
+            container.innerHTML = '';
+            
             CONQUISTAS_DB.forEach(c => { 
                 const unlocked = jogador.conquistas.includes(c.id); 
-                container.innerHTML += `<div class="achievement-card ${unlocked ? 'unlocked' : ''}"><div class="ach-icon">${unlocked ? c.icone : '🔒'}</div><div class="ach-info"><h4>${c.titulo}</h4><p>${c.desc}</p></div></div>`; 
+                
+                // Lógica para calcular o progresso da conquista
+                let progressoAtual = 0;
+                if(c.tipo === 'jogos') progressoAtual = jogador.missoes.jogos || 0;
+                if(c.tipo === 'acertos') progressoAtual = jogador.totalAcertos || 0;
+                if(c.tipo === 'sequencia') progressoAtual = jogador.melhorSequencia || 0;
+                if(c.tipo === 'streak') progressoAtual = jogador.streak || 0;
+                if(c.tipo === 'nivel') progressoAtual = jogador.nivel || 1;
+                if(c.tipo === 'materias') progressoAtual = Object.keys(jogador.stats).length;
+                if(c.tipo === 'desafio' || c.tipo === 'hardcore') progressoAtual = jogador.missoes.desafios || 0;
+                
+                let pct = Math.min(100, (progressoAtual / c.meta) * 100);
+                if(unlocked) pct = 100;
+
+                container.innerHTML += `
+                    <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
+                        <div class="ach-icon">${unlocked ? c.icone : '🔒'}</div>
+                        <div class="ach-info">
+                            <h4>${c.titulo}</h4>
+                            <p>${c.desc}</p>
+                            <div class="ach-progress-bar">
+                                <div class="ach-progress-fill" style="width:${pct}%"></div>
+                            </div>
+                            <div style="font-size:10px; color:var(--text-muted); text-align:right; margin-top:3px;">
+                                ${unlocked ? 'Concluído' : `${progressoAtual} / ${c.meta}`}
+                            </div>
+                        </div>
+                    </div>
+                `; 
             });
         }
 
