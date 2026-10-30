@@ -266,6 +266,7 @@ function mudarAba(idTela, element) {
     if (idTela === 'tela-academia') renderizarAcademia();
     if (idTela === 'tela-ranking') carregarRanking('geral', document.querySelector('.rank-tab'));
     if (idTela === 'tela-conquistas') renderizarConquistas();
+    if (idTela === 'tela-temporada') renderizarTemporada();
     if (idTela === 'tela-estatisticas') renderizarEstatisticas();
     if (idTela === 'tela-perfil') { 
         carregarPerfil().then(() => {
