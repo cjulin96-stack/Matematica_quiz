@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 12</title>
+    <title>MATH ARENA - Módulo 12.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -364,9 +364,8 @@
         let jogador = { id: null, email: '', nome: localStorage.getItem('mathArenaNome') || 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, multiplicador_expira: null };
         let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
         
-        // Variáveis do Duelo
         let isDuelo = false;
-        let dueloAtual = null; // Guarda os dados do duelo (id, codigo, questoes, etc)
+        let dueloAtual = null; 
         
         let filaPerguntas = [];
         let perguntaAtual = null;
@@ -402,7 +401,6 @@
             { id: 'c25', icone: '🗺️', titulo: 'Explorador', desc: 'Jogou 5 matérias diferentes.' }
         ];
 
-        // NOVOS ITENS NA LOJA
         const LOJA_DB = [ 
             { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
             { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
@@ -488,7 +486,7 @@
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
 
             if (jogador.multiplicador_expira) {
-                let expira = new Date(jogador.multiplicador_expira);
+                let expira = new Date(jogador.multiplicador_expira.split('|').pop());
                 if (expira > new Date()) { document.getElementById('box-multiplier').classList.remove('hidden'); } 
                 else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
             } else { document.getElementById('box-multiplier').classList.add('hidden'); usarMultiplicador = false; }
@@ -665,16 +663,16 @@
             }
         }
 
-        // ==========================================
-        // LÓGICA DE DUELO 1v1
-        // ==========================================
+        // --- CRIAR E ENTRAR NO DUELO (CORRIGIDO) ---
         async function criarDuelo() {
-            if(!jogador.id) return;
-            const serie = document.getElementById('select-serie').value;
+            if(!jogador.id) { alert("Erro: Você não está logado. Saia e entre novamente."); return; }
+            const serie = document.getElementById('select-serie') ? document.getElementById('select-serie').value : '5';
             const questoes = [];
             for(let i=0; i<10; i++) questoes.push(gerarQuestao(serie));
 
             const codigo = 'DUELO-' + Math.floor(1000 + Math.random() * 9000);
+            const btn = event.target;
+            btn.innerText = "CRIANDO...";
 
             const { data, error } = await banco.from('duelos').insert([{
                 codigo: codigo,
@@ -683,22 +681,47 @@
                 status: 'waiting'
             }]).select();
 
-            if(error) { alert("Erro ao criar duelo."); console.error(error); return; }
+            if(error) { 
+                alert("Erro ao criar duelo: " + error.message); 
+                console.error(error); 
+                btn.innerText = "➕ CRIAR DUELO";
+                return; 
+            }
 
-            dueloAtual = data[0];
-            document.getElementById('codigo-gerado').innerText = codigo;
-            mudarAba('tela-duelo-espera');
+            if (data && data.length > 0) {
+                dueloAtual = data[0];
+                document.getElementById('codigo-gerado').innerText = codigo;
+                mudarAba('tela-duelo-espera');
+            } else {
+                alert("Erro desconhecido ao criar duelo.");
+            }
+            btn.innerText = "➕ CRIAR DUELO";
         }
 
         async function entrarDuelo() {
             const codigo = document.getElementById('input-codigo-duelo').value.trim().toUpperCase();
             if(!codigo) { alert("Digite o código!"); return; }
 
+            const btn = event.target;
+            btn.innerText = "ENTRANDO...";
+
             const { data, error } = await banco.from('duelos').select('*').eq('codigo', codigo).limit(1);
 
-            if(error || !data || data.length === 0) { alert("Duelo não encontrado!"); return; }
-            if(data[0].status === 'finished') { alert("Este duelo já foi finalizado!"); return; }
-            if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { alert("Você já jogou sua parte deste duelo!"); return; }
+            if(error || !data || data.length === 0) { 
+                alert("Duelo não encontrado!"); 
+                btn.innerText = "▶ ENTRAR NO DUELO";
+                return; 
+            }
+            if(data[0].status === 'finished') { 
+                alert("Este duelo já foi finalizado!"); 
+                btn.innerText = "▶ ENTRAR NO DUELO";
+                return; 
+            }
+            if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { 
+                alert("Você já jogou sua parte deste duelo!"); 
+                btn.innerText = "▶ ENTRAR NO DUELO";
+                return; 
+            }
 
             dueloAtual = data[0];
             isDuelo = true;
@@ -711,6 +734,7 @@
             document.getElementById('timer-box').classList.add('hidden'); 
             document.getElementById('duel-result-box').classList.add('hidden');
             carregarQuestao();
+            btn.innerText = "▶ ENTRAR NO DUELO";
         }
 
         function iniciarDueloHost() {
@@ -724,9 +748,6 @@
             carregarQuestao();
         }
 
-        // ==========================================
-        // LÓGICA DO JOGO NORMAL E DUELO
-        // ==========================================
         async function salvarPartida(pontosFinais) {
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
@@ -773,7 +794,6 @@
             document.getElementById('result-acertos').innerText = estado.acertos; 
             document.getElementById('result-erros').innerText = estado.erros;
             
-            // Lógica de Duelo
             if (isDuelo && dueloAtual) {
                 document.getElementById('duel-result-box').classList.remove('hidden');
                 const duelText = document.getElementById('duel-result-text');
@@ -785,7 +805,6 @@
                 } else {
                     await banco.from('duelos').update({ pontos_oponente: pontosFinais, oponente_id: jogador.id, status: 'finished' }).eq('id', dueloAtual.id);
                     
-                    // Verifica quem ganhou
                     const { data } = await banco.from('duelos').select('*').eq('id', dueloAtual.id).single();
                     if (data.pontos_criador > pontosFinais) {
                         duelText.innerText = "VOCÊ PERDEU 😢 O criador fez " + data.pontos_criador + " pts.";
@@ -802,7 +821,6 @@
                 document.getElementById('duel-result-box').classList.add('hidden');
             }
             
-            // Medalhas e XP normal
             let novasConquistas = [];
             const totalRespondidas = (jogador.totalAcertos || 0) + (jogador.totalErros || 0) + estado.acertos + estado.erros;
             function desbloquear(id) { if(!jogador.conquistas.includes(id) && !novasConquistas.includes(id)) novasConquistas.push(id); }
@@ -818,13 +836,9 @@
             if(novasConquistas.length > 0) { jogador.conquistas = jogador.conquistas.concat(novasConquistas); setTimeout(() => alert(`🏅 NOVAS CONQUISTAS DESBLOQUEADAS! \nVeja na aba Medalhas.`), 500); }
             await salvarPartida(pontosFinais);
             
-            // Reset flag
             isDuelo = false;
             dueloAtual = null;
         }
-
-        // ... [Restante das funções inalteradas: prepararJogo, carregarQuestao, responder, etc] ...
-        // Como o código já está muito grande, mantive as mesmas funções de jogo do módulo anterior (gerar questao, loja, etc).
 
         function prepararJogo(modo) {
             if (!jogador.nome) jogador.nome = 'Jogador'; 
@@ -900,7 +914,7 @@
 
         function renderizarLoja() {
             document.getElementById('loja-moedas').innerText = jogador.moedas || 0; const container = document.getElementById('lista-loja'); container.innerHTML = '';
-            let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira) > new Date()) multAtivo = true; }
+            let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira.split('|').pop()) > new Date()) multAtivo = true; }
             LOJA_DB.forEach(item => {
                 let isEquipado = false; if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true; if(item.tipo.includes('power') && multAtivo) isEquipado = true;
                 let podeComprar = jogador.moedas >= item.preco && !isEquipado; let btnTexto = 'COMPRAR';
@@ -918,7 +932,7 @@
                     let umDia = new Date(); 
                     umDia.setDate(umDia.getDate() + 1); 
                     jogador.multiplicador_expira = umDia.toISOString(); 
-                    if(item.tipo === 'power3') jogador.multiplicador_expira = '3x|' + umDia.toISOString(); // Marca o 3x
+                    if(item.tipo === 'power3') jogador.multiplicador_expira = '3x|' + umDia.toISOString();
                 }
                 await banco.from('ranking').update({ avatar: jogador.avatar, moedas: jogador.moedas, multiplicador_expira: jogador.multiplicador_expira }).eq('user_id', jogador.id);
                 alert(`Você comprou: ${item.nome}!`); renderizarLoja(); atualizarDashboard();
