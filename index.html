@@ -221,7 +221,20 @@
         <div id="tela-duelo-menu" class="screen">
             <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">DESAFIE UM AMIGO</h3>
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">CRIAR UM DESAFIO</h3>
+                
+                <!-- NOVO: Escolha do nível no duelo -->
+                <select id="select-serie-duelo">
+                    <option value="5">5º Ano Fundamental</option>
+                    <option value="6">6º Ano Fundamental</option>
+                    <option value="7">7º Ano Fundamental</option>
+                    <option value="8">8º Ano Fundamental</option>
+                    <option value="9">9º Ano Fundamental</option>
+                    <option value="1em">1º Ano EM</option>
+                    <option value="2em">2º Ano EM</option>
+                    <option value="3em">3º Ano EM</option>
+                </select>
+
                 <button class="btn-duel" id="btn-criar-duelo" onclick="criarDuelo()">➕ CRIAR DUELO</button>
                 <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">ENTRAR COM CÓDIGO</h3>
@@ -486,12 +499,10 @@
 
         async function carregarPerfil() {
             if (!jogador.id) return;
-            // Puxa o perfil. Como criamos a regra 'unique' no banco, não haverá duplicatas.
             const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
             
             if (error) {
                 console.error("Erro ao carregar perfil:", error);
-                alert("Erro no banco de dados: " + error.message);
                 return;
             }
 
@@ -507,12 +518,11 @@
                 jogador.totalErros = data.erros || 0;
                 jogador.melhorSequencia = data.melhor_sequencia || 0;
             } else {
-                // Se não achou o perfil, insere um novo.
                 const { error: erroInsert } = await banco.from('ranking').insert([{ 
                     user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0,
                     conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
                 }]);
-                if(erroInsert) alert("Erro ao criar perfil: " + erroInsert.message);
+                if(erroInsert) console.error("Erro ao criar perfil:", erroInsert.message);
             }
         }
 
@@ -576,7 +586,6 @@
             if (jogador.id) {
                 const { error } = await banco.from('ranking').update({ nome: jogador.nome }).eq('user_id', jogador.id); 
                 if(error) {
-                    // Se der erro no update, tenta inserir (caso o perfil não exista)
                     await banco.from('ranking').insert([{ 
                         user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moedas: 0, streak: 0,
                         conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0}, acertos: 0, erros: 0, melhor_sequencia: 0
@@ -655,7 +664,6 @@
                 });
             } catch(e) {
                 container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 12px;">Erro ao carregar histórico.</p>';
-                console.error(e);
             }
         }
 
@@ -738,13 +746,18 @@
             }
         }
 
+        // --- LÓGICA DO DUELO ATUALIZADA (MÓDULO 14) ---
         async function criarDuelo() {
             const btn = document.getElementById('btn-criar-duelo');
             try {
                 if(!jogador.id) { alert("Erro: Você não está logado."); return; }
-                const serie = document.getElementById('select-serie') ? document.getElementById('select-serie').value : '5';
+                
+                // Pega a série escolhida no menu do duelo
+                const serieDuelo = document.getElementById('select-serie-duelo').value;
                 const questoes = [];
-                for(let i=0; i<10; i++) questoes.push(gerarQuestao(serie));
+                
+                // Agora gera 15 questões!
+                for(let i=0; i<15; i++) questoes.push(gerarQuestao(serieDuelo));
 
                 const codigo = 'DUELO-' + Math.floor(1000 + Math.random() * 9000);
                 btn.innerText = "CRIANDO...";
@@ -832,46 +845,40 @@
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
                 const { error: erroPartida } = await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
-                if (erroPartida) console.error("Erro ao salvar partida:", erroPartida);
-
+                
                 const hoje = new Date().toISOString().split('T')[0];
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; 
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; 
                 if(estado.modo === 'tempo') jogador.missoes.desafios = (jogador.missoes.desafios || 0) + 1;
                 
-                const { data, error: erroBusca } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).maybeSingle();
+                const { data } = await banco.from('ranking').select('id, last_played, streak, acertos, erros, melhor_sequencia, xp, pontuacao, moedas').eq('user_id', jogador.id).maybeSingle();
                 
-                if (data) {
-                    let novoStreak = data.streak || 0;
-                    let totalAcertos = (data.acertos || 0) + estado.acertos;
-                    let totalErros = (data.erros || 0) + estado.erros;
-                    let melhorSeq = Math.max(data.melhor_sequencia || 0, estado.melhorSequencia);
-                    let novoXP = (data.xp || 0) + pontosFinais;
-                    let novaPontuacao = (data.pontuacao || 0) + pontosFinais;
-                    let novasMoedas = (data.moedas || 0) + pontosFinais;
+                let novoStreak = data ? data.streak || 0 : 0;
+                let totalAcertos = (data ? data.acertos || 0 : 0) + estado.acertos;
+                let totalErros = (data ? data.erros || 0 : 0) + estado.erros;
+                let melhorSeq = Math.max(data ? data.melhor_sequencia || 0 : 0, estado.melhorSequencia);
+                let novoXP = (data ? data.xp || 0 : 0) + pontosFinais;
+                let novaPontuacao = (data ? data.pontuacao || 0 : 0) + pontosFinais;
+                let novasMoedas = (data ? data.moedas || 0 : 0) + pontosFinais;
 
+                if (data) {
                     if (data.last_played !== hoje) { const ontem = new Date(); ontem.setDate(ontem.getDate() - 1); novoStreak = (data.last_played === ontem.toISOString().split('T')[0]) ? novoStreak + 1 : 1; }
-                    
-                    const { error: erroUpdate } = await banco.from('ranking').update({ 
+                    await banco.from('ranking').update({ 
                         pontuacao: novaPontuacao, xp: novoXP, streak: novoStreak, moedas: novasMoedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats,
                         acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }).eq('user_id', jogador.id);
-
-                    if(erroUpdate) alert("Erro ao atualizar o perfil: " + erroUpdate.message);
                 } else {
-                    const { error: erroInsert } = await banco.from('ranking').insert([{ 
+                    await banco.from('ranking').insert([{ 
                         user_id: jogador.id, nome: jogador.nome || 'Jogador', pontuacao: pontosFinais, xp: pontosFinais, streak: 1, moedas: jogador.moedas, missoes: jogador.missoes, last_played: hoje, conquistas: jogador.conquistas, stats_materias: jogador.stats, nivel: 'Geral',
-                        acertos: estado.acertos, erros: estado.erros, melhor_sequencia: estado.melhorSequencia
+                        acertos: totalAcertos, erros: totalErros, melhor_sequencia: melhorSeq
                     }]);
-                    
-                    if(erroInsert) alert("Erro ao criar o perfil: " + erroInsert.message);
                 }
                 
-                jogador.xp = novoXP || pontosFinais;
-                jogador.pontos = novaPontuacao || pontosFinais;
-                jogador.moedas = novasMoedas || pontosFinais;
-                jogador.nivel = Math.floor(jogador.xp / 100) + 1;
-                jogador.streak = novoStreak || 1;
+                jogador.xp = novoXP;
+                jogador.pontos = novaPontuacao;
+                jogador.moedas = novasMoedas;
+                jogador.nivel = Math.floor(novoXP / 100) + 1;
+                jogador.streak = novoStreak;
             } catch (e) { console.error(e); }
         }
 
@@ -1031,8 +1038,11 @@
             }
             estado.respondidas = false; perguntaAtual = filaPerguntas[estado.questaoAtual];
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
-            document.getElementById('hud-questao').innerText = isDuelo ? `${estado.questaoAtual + 1}/10` : `∞`; 
-            document.getElementById('progress-fill').style.width = isDuelo ? `${(estado.questaoAtual / 10) * 100}%` : `${((estado.questaoAtual % 10) / 10) * 100}%`;
+            
+            // Lógica do contador de questões do duelo atualizada para 15
+            document.getElementById('hud-questao').innerText = isDuelo ? `${estado.questaoAtual + 1}/15` : `∞`; 
+            document.getElementById('progress-fill').style.width = isDuelo ? `${(estado.questaoAtual / 15) * 100}%` : `${((estado.questaoAtual % 10) / 10) * 100}%`;
+            
             document.getElementById('question-text').innerText = perguntaAtual.q; document.getElementById('feedback-box').classList.remove('active'); document.getElementById('btn-next').style.display = 'none';
             const container = document.getElementById('options-container'); container.innerHTML = ''; const letras = ['A', 'B', 'C', 'D'];
             perguntaAtual.o.forEach((opcao, index) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = `<span class="option-letter">${letras[index]}</span> ${opcao}`; btn.onclick = () => responder(index, btn); container.appendChild(btn); });
@@ -1058,12 +1068,15 @@
                 fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
                 fbTitle.innerText = index === perguntaAtual.c ? `🎉 ACERTOU! +${ptsGanhos} PTS` : `❌ ERROU! ${ptsPerdidos} PTS`; fbExp.innerText = perguntaAtual.exp;
                 document.getElementById('btn-next').style.display = 'block'; 
-                document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 9) ? "FINALIZAR 🏁" : "PRÓXIMA ➡";
+                
+                // Lógica do botão de finalizar atualizada para 15 questões
+                document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 14) ? "FINALIZAR 🏁" : "PRÓXIMA ➡";
             }
         }
 
         function proximaQuestao() { 
-            if (isDuelo && estado.questaoAtual >= 9) return finalizarJogo();
+            // Verifica se chegou na questão 15 do duelo
+            if (isDuelo && estado.questaoAtual >= 14) return finalizarJogo();
             estado.questaoAtual++; carregarQuestao(); 
         }
         
@@ -1143,9 +1156,7 @@
             });
         }
 
-        // --- SESSÃO BLINDADA: Executa ao abrir o site E quando o login mudar ---
         window.onload = async () => {
-            // Busca a sessão ativa no navegador
             const { data: { session } } = await banco.auth.getSession();
             if (session) {
                 jogador.id = session.user.id;
