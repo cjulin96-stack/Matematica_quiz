@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 13.2</title>
+    <title>MATH ARENA - Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -901,6 +901,67 @@
             
             isDuelo = false;
             dueloAtual = null;
+        }
+
+        // O SEGREDO ESTAVA AQUI: A FUNÇÃO DE GERAR QUESTÃO ESTAVA FALTANDO
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+        function gerarQuestao(serie) {
+            let pergunta = "", resp = 0, exp = "", mat = "";
+            if (serie === "5") {
+                const op = rand(1, 4);
+                if(op === 1) { let a = rand(1, 50), b = rand(1, 50); pergunta = `Quanto é ${a} + ${b}?`; resp = a + b; exp = `Somando: ${a} + ${b} = ${resp}.`; mat = "Soma"; }
+                else if(op === 2) { let a = rand(10, 50), b = rand(1, 10); pergunta = `Quanto é ${a} - ${b}?`; resp = a - b; exp = `Subtraindo: ${a} - ${b} = ${resp}.`; mat = "Subtração"; }
+                else if(op === 3) { let a = rand(1, 10), b = rand(1, 10); pergunta = `Quanto é ${a} x ${b}?`; resp = a * b; exp = `Multiplicando: ${a} x ${b} = ${resp}.`; mat = "Multiplicação"; }
+                else { let b = rand(1, 10), resp_div = rand(1, 10); let a = b * resp_div; pergunta = `Quanto é ${a} ÷ ${b}?`; resp = resp_div; exp = `${b} x ${resp} = ${a}, então ${a} ÷ ${b} = ${resp}.`; mat = "Divisão"; }
+            } else if (serie === "6") {
+                const op = rand(1, 3);
+                if(op === 1) { let a = rand(5, 20), b = rand(5, 20); pergunta = `Quanto é (-${a}) + ${b}?`; resp = -a + b; exp = `Devendo ${a} e pagando ${b}, sobram ${resp}.`; mat = "Números Inteiros"; }
+                else if(op === 2) { let a = rand(1, 5) * 10; let total = rand(2,10)*100; pergunta = `Quanto é ${a}% de ${total}?`; resp = (a/100) * total; exp = `${a}/100 x ${total} = ${resp}.`; mat = "Porcentagem"; }
+                else { let a = rand(10, 50) / 10, b = rand(10, 50) / 10; pergunta = `Quanto é ${a.toFixed(1).replace('.',',')} + ${b.toFixed(1).replace('.',',')}?`; resp = (a + b).toFixed(1).replace('.',','); exp = `Some os inteiros e depois os decimais: ${resp}.`; mat = "Decimais"; }
+            } else if (serie === "7") {
+                const op = rand(1, 2);
+                if(op === 1) { let x = rand(2, 10), b = rand(1, 10), c = (2*x) + b; pergunta = `Se 2x + ${b} = ${c}, qual o valor de x?`; resp = x; exp = `2x = ${c} - ${b} = ${c-b}. Então x = ${x}.`; mat = "Equações"; }
+                else { let a = rand(2, 10); pergunta = `Qual é a área de um quadrado de lado ${a}cm?`; resp = a*a; exp = `Área = lado x lado = ${a} x ${a} = ${resp} cm².`; mat = "Geometria"; }
+            } else if (serie === "8") {
+                const op = rand(1, 2);
+                if(op === 1) { let a = rand(2, 10); pergunta = `Quanto é ${a}²?`; resp = a*a; exp = `${a} x ${a} = ${resp}.`; mat = "Potenciação"; }
+                else { let a = rand(2, 12); pergunta = `Qual é a raiz quadrada de ${a*a}?`; resp = a; exp = `Pois ${a} x ${a} = ${a*a}.`; mat = "Radiciação"; }
+            } else if (serie === "9") {
+                const op = rand(1, 2);
+                if(op === 1) { const triples = [[3,4,5], [6,8,10], [5,12,13], [8,15,17], [9,12,15]]; let t = triples[rand(0, triples.length-1)]; pergunta = `Num triângulo retângulo, os catetos são ${t[0]} e ${t[1]}. Qual a hipotenusa?`; resp = t[2]; exp = `a² = ${t[0]}² + ${t[1]}² = ${t[0]*t[0] + t[1]*t[1]}. A raiz é ${resp}.`; mat = "Geometria"; }
+                else { let x = rand(2, 5); pergunta = `Se x² = ${x*x}, qual o valor positivo de x?`; resp = x; exp = `A raiz quadrada de ${x*x} é ${x}.`; mat = "Equações"; }
+            } else if (serie === "1em") {
+                let a = rand(2, 5), b = rand(1, 10), x = rand(1, 5); pergunta = `Na função f(x) = ${a}x + ${b}, qual o valor de f(${x})?`; resp = a*x + b; exp = `Substituindo x por ${x}: f(${x}) = ${a}(${x}) + ${b} = ${resp}.`; mat = "Funções";
+            } else if (serie === "2em") {
+                const trig = [ {q: "Quanto é sen(30º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O seno de 30º é 1/2."}, {q: "Quanto é cos(60º)?", o: ["1/2", "√2/2", "√3/2", "1"], c: 0, exp: "O cosseno de 60º é 1/2."}, {q: "Quanto é sen(90º)?", o: ["0", "1/2", "√2/2", "1"], c: 3, exp: "O seno de 90º é 1."}, {q: "Quanto é cos(0º)?", o: ["0", "1/2", "1", "√3/2"], c: 2, exp: "O cosseno de 0º é 1."}, {q: "Quanto é tg(45º)?", o: ["0", "1", "√3", "1/2"], c: 1, exp: "A tangente de 45º é 1."} ];
+                let escolhida = trig[rand(0, trig.length-1)]; return { q: escolhida.q, o: escolhida.o, c: escolhida.c, exp: escolhida.exp, serie: "2em", mat: "Trigonometria" };
+            } else if (serie === "3em") {
+                const op = rand(1, 2);
+                if(op === 1) { let a = rand(2, 5); pergunta = `Quanto é log₁₀(10^${a})?`; resp = a; exp = `O log de base 10 de 10 elevado a ${a} é ${a}.`; mat = "Logaritmos"; }
+                else { let a = rand(2, 6), r = rand(2, 4); pergunta = `Numa PG onde a1=${a} e a razão é ${r}, qual é o 2º termo?`; resp = a * r; exp = `O 2º termo é a1 x razão = ${a} x ${r} = ${resp}.`; mat = "Progressões"; }
+            } else { return gerarQuestao(shuffleArray(["5","6","7","8","9","1em","2em","3em"])[0]); }
+
+            if (typeof resp === 'string') {
+                let opcoesSet = new Set([resp]); let attempts = 0;
+                while(opcoesSet.size < 4 && attempts < 50) { let val = (parseFloat(resp.replace(',', '.')) + rand(-30, 30)/10).toFixed(1).replace('.', ','); if(val !== resp && parseFloat(val.replace(',', '.')) >= 0) opcoesSet.add(val); attempts++; }
+                let opcoes = Array.from(opcoesSet).sort(); let indexCorreta = opcoes.indexOf(resp); return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
+            } else {
+                let opcoesSet = new Set([resp]); let attempts = 0;
+                while(opcoesSet.size < 4 && attempts < 50) { let offset = rand(1, 10) * (Math.random() > 0.5 ? 1 : -1); let erro = resp + offset; if(erro !== resp && erro >= 0) opcoesSet.add(erro); attempts++; }
+                let fallback = 1; while(opcoesSet.size < 4) { opcoesSet.add(resp + fallback); fallback++; }
+                let opcoes = Array.from(opcoesSet).sort((a,b) => a-b).map(String); let indexCorreta = opcoes.indexOf(String(resp)); return { q: pergunta, o: opcoes, c: indexCorreta, exp: exp, serie: serie, mat: mat };
+            }
+        }
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function tocarSom(tipo) {
+            if (!audioCtx) audioCtx = new AudioContext();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
+            if (tipo === 'acerto') { osc.frequency.setValueAtTime(400, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1); } 
+            else { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2); }
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
 
         function prepararJogo(modo) {
