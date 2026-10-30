@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Final</title>
+    <title>MATH ARENA - VIP</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -19,125 +19,184 @@
         .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease-out; }
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass { background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 15px; }
+        
+        /* Efeito de vidro premium */
+        .glass { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); margin-bottom: 15px; transition: transform 0.3s ease; }
+        .glass:hover { transform: translateY(-2px); }
+        
         h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
         .text-gradient { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
+        /* Header */
         .user-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .user-info { display: flex; align-items: center; gap: 15px; }
-        .avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--secondary), var(--accent)); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+        
+        /* Avatar VIP com Anel Giratório */
+        .avatar-container { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
+        .avatar-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--gold), var(--primary)); animation: spin 4s linear infinite; z-index: 1; filter: blur(2px); opacity: 0.8; }
+        .avatar { position: relative; width: 52px; height: 52px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; z-index: 2; border: 3px solid var(--bg-dark); box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
         .user-name { font-weight: 800; font-size: 18px; }
-        .user-level { font-size: 12px; color: var(--primary); font-weight: 700; }
+        .user-level { font-size: 12px; color: var(--primary); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        
         .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        .badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-weight: 800; font-size: 12px; }
-        .badge-fire { background: rgba(255, 69, 0, 0.2); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.3); }
-        .badge-coin { background: rgba(255, 215, 0, 0.2); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-        .bell-icon { font-size: 20px; cursor: pointer; margin-right: 10px; filter: drop-shadow(0 0 5px var(--primary)); }
+        .badge { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .badge-fire { background: rgba(255, 69, 0, 0.15); border: 1px solid rgba(255, 69, 0, 0.5); color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
+        .badge-coin { background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.5); color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+        .bell-icon { font-size: 22px; cursor: pointer; margin-right: 10px; filter: drop-shadow(0 0 8px var(--primary)); animation: ring 3s infinite; }
+        @keyframes ring { 0%, 100% { transform: rotate(0); } 5%, 15% { transform: rotate(15deg); } 10%, 20% { transform: rotate(-15deg); } 25% { transform: rotate(0); } }
 
-        .xp-container { margin-top: 10px; }
-        .xp-text { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; font-weight: 700; }
-        .xp-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.5s; border-radius: 4px; box-shadow: 0 0 10px var(--primary); }
-
-        button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px;}
+        /* Botões */
+        button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; letter-spacing: 0.5px;}
         .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 6px 0 #00a8b5, 0 10px 20px rgba(0, 242, 254, 0.2); }
-        .btn-primary:active { transform: translateY(6px); box-shadow: 0 0 0 #00a8b5; }
+        .btn-primary:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #00a8b5; }
         .btn-duel { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff007f, #ff1744); color: #fff; box-shadow: 0 6px 0 #b2102f; margin-bottom: 10px;}
-        .btn-duel:active { transform: translateY(6px); box-shadow: 0 0 0 #b2102f; }
+        .btn-duel:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #b2102f; }
         .btn-rankeado { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 6px 0 #b8860b, 0 10px 20px rgba(255, 215, 0, 0.2); margin-bottom: 10px;}
-        .btn-rankeado:active { transform: translateY(6px); box-shadow: 0 0 0 #b8860b; }
+        .btn-rankeado:active { transform: translateY(6px) scale(0.98); box-shadow: 0 0 0 #b8860b; }
         .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.5); margin-bottom: 10px;}
         .btn-secondary:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
         .btn-danger { width: 100%; padding: 12px; background: rgba(255, 23, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 4px 0 rgba(178, 16, 47, 0.5); margin-top: 10px; font-size: 14px;}
         .btn-danger:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(178, 16, 47, 0.5); }
 
-        input, select { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 16px; margin-bottom: 15px; outline: none; }
+        input, select { width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 16px; margin-bottom: 15px; outline: none; transition: 0.3s;}
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
         select option { background: var(--bg-dark); color: #fff; }
 
-        .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; }
-        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        /* HUD do Jogo */
+        .hud { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; color: var(--primary); margin-bottom: 15px; text-shadow: 0 0 10px rgba(0,242,254,0.3); }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: 0.3s; border-radius: 10px; box-shadow: 0 0 10px var(--primary); }
-        .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; text-align: center; }
-        .options-grid { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn { padding: 16px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; text-align: left; font-size: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.5);}
-        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
-        .option-letter { background: rgba(255,255,255,0.1); width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; border-radius: 6px; font-weight: 800; font-size: 13px; }
-        .option-btn.correct { background: rgba(0, 230, 118, 0.2) !important; border-color: var(--success) !important; box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important; }
-        .option-btn.wrong { background: rgba(255, 23, 68, 0.2) !important; border-color: var(--danger) !important; animation: shake 0.3s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .question-text { font-size: 22px; font-weight: 800; margin-bottom: 25px; text-align: center; line-height: 1.3;}
+        
+        /* Opções */
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { padding: 16px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 14px; color: #fff; text-align: left; font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.4); transition: 0.2s;}
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.4); }
+        .option-letter { background: rgba(255,255,255,0.1); width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-weight: 800; font-size: 14px; color: var(--primary); }
+        .option-btn.correct { background: rgba(0, 230, 118, 0.15) !important; border-color: var(--success) !important; box-shadow: 0 0 20px rgba(0, 230, 118, 0.3) !important; }
+        .option-btn.wrong { background: rgba(255, 23, 68, 0.15) !important; border-color: var(--danger) !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 12px; font-size: 14px; display: none; }
-        .feedback.active { display: block; }
-        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
-        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
+        /* Feedback */
+        .feedback { margin-top: 20px; padding: 16px; border-radius: 14px; font-size: 14px; display: none; font-weight: 600; line-height: 1.4;}
+        .feedback.active { display: block; animation: slideUp 0.3s; }
+        .feedback.success { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); color: #fff; }
+        .feedback.error { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); color: #fff; }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 4px; cursor: pointer; transition: 0.2s; width: 20%; height: 100%; }
+        /* Menu Inferior */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px; font-weight: 800; gap: 5px; cursor: pointer; transition: 0.2s; width: 20%; height: 100%; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(0,242,254,0.5); }
-        .nav-item.active .nav-icon { transform: translateY(-2px); filter: drop-shadow(0 0 5px var(--primary)); }
-        .nav-icon { font-size: 20px; transition: 0.2s; }
+        .nav-item.active .nav-icon { transform: translateY(-3px) scale(1.1); filter: drop-shadow(0 0 8px var(--primary)); }
+        .nav-icon { font-size: 22px; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .timer-display { font-family: 'Orbitron'; font-size: 26px; color: var(--danger); text-align: center; margin-bottom: 10px; font-weight: 900; text-shadow: 0 0 10px rgba(255,23,68,0.5);}
-        .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--text-muted); opacity: 0.6; }
-        .achievement-card.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); }
-        .ach-icon { font-size: 30px; }
-        .ach-info h4 { font-size: 14px; margin-bottom: 2px; }
-        .ach-info p { font-size: 11px; color: var(--text-muted); }
+        /* Timer */
+        .timer-display { font-family: 'Orbitron'; font-size: 32px; color: var(--danger); text-align: center; margin-bottom: 15px; font-weight: 900; text-shadow: 0 0 15px rgba(255,23,68,0.6); animation: pulseRed 1s infinite;}
+        @keyframes pulseRed { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        .challenge-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        /* Conquistas */
+        .achievement-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); opacity: 0.5; transition: 0.3s;}
+        .achievement-card.unlocked { opacity: 1; border-color: var(--gold); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); box-shadow: 0 0 15px rgba(255,215,0,0.1);}
+        .ach-icon { font-size: 32px; filter: grayscale(1); transition: 0.3s;}
+        .achievement-card.unlocked .ach-icon { filter: grayscale(0) drop-shadow(0 0 8px rgba(255,215,0,0.5)); transform: scale(1.1);}
+        .ach-info h4 { font-size: 15px; margin-bottom: 2px; color: #fff;}
+        .ach-info p { font-size: 12px; color: var(--text-muted); }
+
+        /* Desafios */
+        .challenge-card { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); }
         .challenge-info h4 { font-size: 16px; margin-bottom: 2px; color: var(--primary); }
         .challenge-info p { font-size: 12px; color: var(--text-muted); }
-        .btn-play-challenge { background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #6b21a8; margin: 0; width: auto;}
+        .btn-play-challenge { background: linear-gradient(135deg, var(--accent), #7e22ce); color: white; padding: 10px 20px; border-radius: 10px; font-size: 14px; box-shadow: 0 4px 0 #4c1d95; margin: 0; width: auto;}
 
-        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 0 #92400e; padding: 15px; }
-        .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 0 #064e3b; padding: 15px; }
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .btn-store { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 5px 0 #92400e; padding: 16px; border-radius: 14px;}
+        .btn-missions { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 5px 0 #064e3b; padding: 16px; border-radius: 14px;}
         
-        .mission-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        .mission-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; font-size: 14px; }
-        .mission-reward { color: var(--gold); font-size: 12px; }
+        /* Missões e Loja */
+        .mission-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);}
+        .mission-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 800; font-size: 14px; }
+        .mission-reward { color: var(--gold); font-size: 13px; text-shadow: 0 0 5px rgba(255,215,0,0.3);}
         .mission-progress-bar { height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
-        .mission-progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.3s; }
+        .mission-progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.3s; box-shadow: 0 0 8px var(--success);}
 
-        .store-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .store-icon { font-size: 30px; background: rgba(0,0,0,0.3); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 12px; }
-        .store-info h4 { font-size: 14px; }
+        .store-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); }
+        .store-icon { font-size: 32px; background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);}
+        .store-info h4 { font-size: 15px; font-weight: 800; }
         .store-price { color: var(--gold); font-weight: 800; font-size: 14px; }
-        .btn-buy { background: var(--primary); color: #000; padding: 8px 15px; border-radius: 8px; font-size: 12px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto;}
+        .btn-buy { background: var(--primary); color: #000; padding: 10px 18px; border-radius: 10px; font-size: 13px; box-shadow: 0 3px 0 #00a8b5; margin: 0; width: auto;}
         .btn-buy:disabled { background: var(--text-muted); box-shadow: none; color: #333; cursor: not-allowed; opacity: 0.5; }
 
-        .multiplier-box { display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--accent); padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; }
-        .multiplier-text { font-size: 13px; font-weight: 700; color: var(--accent); }
-        .multiplier-toggle { width: 40px; height: 22px; background: rgba(255,255,255,0.2); border-radius: 20px; position: relative; cursor: pointer; }
-        .multiplier-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: 0.3s; }
-        .multiplier-toggle.on { background: var(--accent); }
-        .multiplier-toggle.on::after { transform: translateX(18px); }
+        /* Multiplicador */
+        .multiplier-box { display: flex; justify-content: space-between; align-items: center; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 0 15px rgba(168,85,247,0.2);}
+        .multiplier-text { font-size: 14px; font-weight: 800; color: var(--accent); }
+        .multiplier-toggle { width: 44px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
+        .multiplier-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        .multiplier-toggle.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .multiplier-toggle.on::after { transform: translateX(20px); }
 
-        .calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 15px; }
-        .dia-semana { font-size: 10px; color: var(--text-muted); text-align: center; font-weight: bold; }
-        .dia-calendario { width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
-        .dia-calendario.jogou { background: rgba(255, 69, 0, 0.2); color: #ff4500; border: 1px solid #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.4); }
-        .dia-calendario.hoje { border: 2px solid var(--primary); color: var(--primary); }
-        .rank-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .rank-tab { flex: 1; padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
-        .rank-tab.active { background: rgba(0, 242, 254, 0.2); color: var(--primary); border: 1px solid var(--primary); }
+        /* Calendário e Ranking */
+        .calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
+        .dia-semana { font-size: 10px; color: var(--text-muted); text-align: center; font-weight: 800; }
+        .dia-calendario { width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.03); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .dia-calendario.jogou { background: rgba(255, 69, 0, 0.15); color: #ff4500; border: 1px solid rgba(255,69,0,0.5); box-shadow: 0 0 10px rgba(255, 69, 0, 0.2); }
+        .dia-calendario.hoje { border: 2px solid var(--primary); color: var(--primary); box-shadow: 0 0 10px rgba(0,242,254,0.3); }
+        
+        .rank-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .rank-tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.03); border-radius: 12px; font-size: 13px; font-weight: 800; color: var(--text-muted); cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05);}
+        .rank-tab.active { background: rgba(0, 242, 254, 0.1); color: var(--primary); border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(0,242,254,0.2); }
 
-        .historico-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        /* NOVO: PÓDIO DO RANKING SEMANAL */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 30px 0 20px 0; height: 220px;}
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; position: relative; animation: slideUp 0.5s ease-out;}
+        .podium-avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; margin-bottom: -10px; z-index: 2; border: 3px solid #fff; }
+        .podium-block { width: 100%; border-radius: 12px 12px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
+        .podium-name { font-size: 13px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;}
+        .podium-score { font-size: 12px; font-weight: 900; color: rgba(0,0,0,0.7); background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
+        
+        /* Pódio 1º Lugar (Centro) */
+        .podium-1 .podium-block { height: 130px; background: linear-gradient(180deg, #ffd700, #b8860b); }
+        .podium-1 .podium-avatar { border-color: #ffd700; box-shadow: 0 0 20px #ffd700; font-size: 36px; width: 75px; height: 75px; z-index: 3; }
+        .podium-1 .podium-name { color: #000; font-size: 15px;}
+        .podium-crown { position: absolute; top: -35px; font-size: 28px; animation: float 2s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        
+        /* Pódio 2º Lugar (Esquerda) */
+        .podium-2 .podium-block { height: 95px; background: linear-gradient(180deg, #e0e0e0, #9e9e9e); }
+        .podium-2 .podium-avatar { border-color: #e0e0e0; box-shadow: 0 0 15px #e0e0e0; }
+        
+        /* Pódio 3º Lugar (Direita) */
+        .podium-3 .podium-block { height: 75px; background: linear-gradient(180deg, #cd7f32, #8b4513); }
+        .podium-3 .podium-avatar { border-color: #cd7f32; box-shadow: 0 0 15px #cd7f32; }
+        
+        /* Lista do Ranking (Geral e Mensal) */
+        .ranking-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px;}
+        .ranking-list-item:nth-child(1) { background: linear-gradient(90deg, rgba(255,215,0,0.15), transparent); border-left: 4px solid #ffd700; }
+        .ranking-list-item:nth-child(2) { background: linear-gradient(90deg, rgba(192,192,192,0.15), transparent); border-left: 4px solid #c0c0c0; }
+        .ranking-list-item:nth-child(3) { background: linear-gradient(90deg, rgba(205,127,50,0.15), transparent); border-left: 4px solid #cd7f32; }
+
+        /* Histórico */
+        .historico-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+
+        /* Perfil VIP Cards */
+        .stat-row { margin-bottom: 20px; }
+        .stat-label-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; font-weight: 800; color: #fff; }
+        .stat-bar-bg { height: 12px; background: rgba(0,0,0,0.5); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
+        .stat-bar-fill { height: 100%; border-radius: 6px; transition: 1s ease-out; position: relative;}
+        .stat-bar-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shine 2s infinite; }
+        @keyframes shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .hidden { display: none !important; }
         .text-center { text-align: center; }
         .mb-20 { margin-bottom: 20px; }
-        .codigo-duelo { font-family: 'Orbitron'; font-size: 32px; color: var(--accent); text-align: center; letter-spacing: 5px; margin: 20px 0; font-weight: 900; text-shadow: 0 0 15px var(--accent); }
+        .codigo-duelo { font-family: 'Orbitron'; font-size: 34px; color: var(--accent); text-align: center; letter-spacing: 6px; margin: 25px 0; font-weight: 900; text-shadow: 0 0 20px var(--accent); animation: pulse 2s infinite;}
         
-        .aula-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .aula-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         .aula-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .aula-conteudo { display: none; margin-top: 15px; font-size: 14px; color: #ddd; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-        .aula-conteudo.active { display: block; }
-        
-        .stat-row { margin-bottom: 15px; }
-        .stat-label-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; font-weight: 700; color: #fff; }
-        .stat-bar-bg { height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; }
-        .stat-bar-fill { height: 100%; border-radius: 5px; transition: 0.5s; }
+        .aula-conteudo { display: none; margin-top: 15px; font-size: 15px; color: #ddd; line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        .aula-conteudo.active { display: block; animation: slideUp 0.3s;}
     </style>
 </head>
 <body>
@@ -147,12 +206,12 @@
         <div id="tela-auth" class="screen active">
             <div class="glass">
                 <h1 class="text-gradient text-center mb-20">MATH ARENA</h1>
-                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Faça login ou crie sua conta.</p>
+                <p class="text-center" style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Faça login ou crie sua conta VIP.</p>
                 <input type="email" id="auth-email" placeholder="Seu E-mail">
                 <input type="password" id="auth-password" placeholder="Sua Senha">
                 <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
                 <button class="btn-secondary" style="margin-top: 10px;" onclick="fazerCadastro()">CRIAR CONTA</button>
-                <p id="auth-mensagem" class="text-center" style="font-size: 12px; margin-top: 15px;"></p>
+                <p id="auth-mensagem" class="text-center" style="font-size: 13px; margin-top: 20px; font-weight: bold;"></p>
             </div>
         </div>
 
@@ -160,7 +219,10 @@
         <div id="tela-home" class="screen">
             <div class="user-header">
                 <div class="user-info">
-                    <div class="avatar" id="home-avatar">🧑‍🚀</div>
+                    <div class="avatar-container">
+                        <div class="avatar-ring"></div>
+                        <div class="avatar" id="home-avatar">🧑‍🚀</div>
+                    </div>
                     <div>
                         <div class="user-name" id="home-nome">Jogador</div>
                         <div class="user-level" id="home-nivel">NÍVEL 1</div>
@@ -176,7 +238,7 @@
             </div>
             <div class="glass">
                 <div class="xp-container">
-                    <div class="xp-text"><span>PROGRESSO</span><span id="home-xp-txt">0 / 100 XP</span></div>
+                    <div class="xp-text"><span>PROGRESSO VIP</span><span id="home-xp-txt">0 / 100 XP</span></div>
                     <div class="xp-bar"><div class="xp-fill" id="home-xp-bar"></div></div>
                 </div>
             </div>
@@ -192,10 +254,10 @@
             </div>
 
             <button class="btn-duel" onclick="mudarAba('tela-duelo-menu')">⚔️ DUELO 1v1</button>
-            <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO (MIX)</button>
+            <button class="btn-rankeado" onclick="prepararJogo('rankeado')">👑 JOGAR RANQUEADO</button>
 
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted);">JOGO CLÁSSICO</h3>
+                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); letter-spacing: 1px;">MODO CLÁSSICO</h3>
                 <select id="select-serie">
                     <option value="5">5º Ano Fundamental</option>
                     <option value="6">6º Ano Fundamental</option>
@@ -212,8 +274,8 @@
 
         <!-- TELA: ACADEMIA -->
         <div id="tela-academia" class="screen">
-            <h2 class="text-gradient text-center mb-20">ACADEMIA MATEMÁTICA</h2>
-            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Aprenda a teoria antes de praticar!</p>
+            <h2 class="text-gradient text-center mb-20">ACADEMIA VIP</h2>
+            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Domine a teoria para esmagar no jogo!</p>
             <div id="lista-academia"></div>
         </div>
 
@@ -222,8 +284,6 @@
             <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
             <div class="glass">
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">CRIAR UM DESAFIO</h3>
-                
-                <!-- NOVO: Escolha do nível no duelo -->
                 <select id="select-serie-duelo">
                     <option value="5">5º Ano Fundamental</option>
                     <option value="6">6º Ano Fundamental</option>
@@ -234,7 +294,6 @@
                     <option value="2em">2º Ano EM</option>
                     <option value="3em">3º Ano EM</option>
                 </select>
-
                 <button class="btn-duel" id="btn-criar-duelo" onclick="criarDuelo()">➕ CRIAR DUELO</button>
                 <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">ENTRAR COM CÓDIGO</h3>
@@ -264,8 +323,8 @@
 
         <!-- TELA: LOJA -->
         <div id="tela-loja" class="screen">
-            <h2 class="text-gradient text-center mb-20">LOJA</h2>
-            <p class="text-center" style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Suas moedas: 🪙 <span id="loja-moedas" style="color:var(--gold); font-weight:800;">0</span></p>
+            <h2 class="text-gradient text-center mb-20">LOJA VIP</h2>
+            <p class="text-center" style="font-size: 14px; color: var(--gold); font-weight: 800; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3);">Suas moedas: 🪙 <span id="loja-moedas">0</span></p>
             <div id="lista-loja"></div>
             <button class="btn-secondary" style="margin-top: 20px;" onclick="mudarAba('tela-home')">VOLTAR</button>
         </div>
@@ -286,7 +345,7 @@
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
             
-            <div class="glass">
+            <div class="glass" style="border-radius: 20px; padding: 25px;">
                 <div class="question-text" id="question-text">Carregando...</div>
                 <div class="options-grid" id="options-container"></div>
             </div>
@@ -303,19 +362,19 @@
         <!-- TELA: RESULTADO -->
         <div id="tela-resultado" class="screen">
             <div class="glass text-center">
-                <h2 id="result-title">FIM DE JOGO</h2>
-                <div style="font-size: 60px; margin: 15px 0;" id="result-emoji">🎉</div>
-                <div style="font-size: 48px; font-weight: 900; color: var(--primary);" id="result-score">0</div>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">PONTOS</p>
+                <h2 id="result-title" style="font-size: 28px; color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.5);">FIM DE JOGO</h2>
+                <div style="font-size: 70px; margin: 20px 0;" id="result-emoji">🎉</div>
+                <div style="font-size: 56px; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(0,242,254,0.4);" id="result-score">0</div>
+                <p style="color: var(--text-muted); margin-bottom: 25px; letter-spacing: 2px;">PONTOS</p>
                 
-                <div id="duel-result-box" class="hidden glass" style="background: rgba(0,0,0,0.5);">
-                    <h3 style="margin-bottom: 10px;">RESULTADO DO DUELO</h3>
+                <div id="duel-result-box" class="hidden glass" style="background: rgba(0,0,0,0.6); border-color: var(--accent);">
+                    <h3 style="margin-bottom: 10px; color: var(--accent);">RESULTADO DO DUELO</h3>
                     <p id="duel-result-text" style="font-size: 16px; font-weight: bold;"></p>
                 </div>
 
-                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                    <div><span style="color: var(--success); font-size: 24px; font-weight: bold;" id="result-acertos">0</span><br><small>Acertos</small></div>
-                    <div><span style="color: var(--danger); font-size: 24px; font-weight: bold;" id="result-erros">0</span><br><small>Erros</small></div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 30px;">
+                    <div><span style="color: var(--success); font-size: 28px; font-weight: 900; text-shadow: 0 0 10px rgba(0,230,118,0.4);" id="result-acertos">0</span><br><small style="font-weight: bold; letter-spacing: 1px;">ACERTOS</small></div>
+                    <div><span style="color: var(--danger); font-size: 28px; font-weight: 900; text-shadow: 0 0 10px rgba(255,23,68,0.4);" id="result-erros">0</span><br><small style="font-weight: bold; letter-spacing: 1px;">ERROS</small></div>
                 </div>
                 <button class="btn-primary" onclick="mudarAba('tela-home')">VOLTAR AO INÍCIO</button>
             </div>
@@ -323,22 +382,22 @@
 
         <!-- TELA: MEDALHAS -->
         <div id="tela-conquistas" class="screen">
-            <h2 class="text-gradient text-center mb-20">MEDALHAS</h2>
+            <h2 class="text-gradient text-center mb-20">GALERIA DE MEDALHAS</h2>
             <div id="lista-conquistas"></div>
             <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
         </div>
 
         <!-- TELA: ESTATÍSTICAS -->
         <div id="tela-estatisticas" class="screen">
-            <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS</h2>
+            <h2 class="text-gradient text-center mb-20">ESTATÍSTICAS VIP</h2>
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">APROVEITAMENTO POR MATÉRIA</h3>
+                <h3 style="font-size: 15px; margin-bottom: 20px; color: var(--text-muted); text-align: center; letter-spacing: 1px;">APROVEITAMENTO POR MATÉRIA</h3>
                 <div id="container-stats"></div>
             </div>
             <button class="btn-secondary" onclick="mudarAba('tela-perfil')">VOLTAR</button>
         </div>
 
-        <!-- TELA: RANKING COM ABAS -->
+        <!-- TELA: RANKING COM PÓDIO -->
         <div id="tela-ranking" class="screen">
             <h2 class="text-gradient text-center mb-20">HALL DA FAMA</h2>
             <div class="rank-tabs">
@@ -346,35 +405,47 @@
                 <div class="rank-tab" onclick="carregarRanking('semanal', this)">SEMANAL</div>
                 <div class="rank-tab" onclick="carregarRanking('mensal', this)">MENSAL</div>
             </div>
-            <div id="rank-list-container" class="glass" style="max-height: 400px; overflow-y: auto;"></div>
+            <div id="rank-list-container" class="glass" style="max-height: 450px; overflow-y: auto;"></div>
         </div>
 
-        <!-- TELA: PERFIL COM CALENDÁRIO E HISTÓRICO -->
+        <!-- TELA: PERFIL VIP -->
         <div id="tela-perfil" class="screen">
-            <h2 class="text-gradient text-center mb-20">PERFIL</h2>
-            <div class="glass text-center">
-                <div class="avatar" id="perfil-avatar" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 40px;">🧑‍🚀</div>
-                <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 18px; font-weight: bold;">
-                <p style="color: var(--accent); font-weight: 800;" id="perfil-nivel-txt">NÍVEL 1</p>
+            <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL VIP</h2>
+            
+            <div class="glass text-center" style="border-color: var(--accent); box-shadow: 0 0 30px rgba(168,85,247,0.15);">
+                <div class="avatar-container" style="width: 100px; height: 100px; margin: 0 auto 15px auto;">
+                    <div class="avatar-ring"></div>
+                    <div class="avatar" id="perfil-avatar" style="width: 86px; height: 86px; font-size: 48px;">🧑‍🚀</div>
+                </div>
+                
+                <div style="position: relative; display: inline-block;">
+                    <input type="text" id="perfil-nome-input" placeholder="Seu Nickname" oninput="salvarNomeDelay()" style="text-align: center; font-size: 20px; font-weight: 900; border: none; background: transparent; color: #fff; margin-bottom: 5px; width: 250px; border-bottom: 2px dashed rgba(255,255,255,0.2); border-radius: 0; outline: none; padding: 5px;">
+                </div>
+                
+                <p style="color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,215,0,0.4);" id="perfil-nivel-txt">NÍVEL 1</p>
+                
+                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                    <div class="badge" style="background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid var(--success);">XP: <span id="profile-xp-display" style="font-weight: 900;">0</span></div>
+                </div>
             </div>
 
             <!-- CALENDÁRIO -->
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">🔥 CALENDÁRIO DE ESTUDOS</h3>
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">🔥 OFENSIVA DE ESTUDOS</h3>
                 <div class="calendario-grid" id="calendario-streak"></div>
             </div>
 
             <!-- HISTÓRICO DE PARTIDAS -->
             <div class="glass">
-                <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">📜 ÚLTIMAS PARTIDAS</h3>
+                <h3 style="font-size: 15px; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">📜 HISTÓRICO RECENTE</h3>
                 <div id="lista-historico">
-                    <p style="text-align: center; color: var(--text-muted); font-size: 12px;">Carregando...</p>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p>
                 </div>
             </div>
 
-            <button class="btn-secondary" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
-            <button class="btn-secondary" onclick="mudarAba('tela-conquistas')">🏅 VER MEDALHAS</button>
-            <button class="btn-secondary" style="margin-top: 20px; border-color: var(--danger); color: var(--danger);" onclick="sair()">SAIR DA CONTA</button>
+            <button class="btn-secondary" style="border-color: var(--primary); color: var(--primary);" onclick="mudarAba('tela-estatisticas')">📊 VER ESTATÍSTICAS</button>
+            <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER MEDALHAS</button>
+            <button class="btn-danger" style="margin-top: 20px;" onclick="sair()">SAIR DA CONTA</button>
         </div>
     </div>
 
@@ -435,17 +506,17 @@
         const LOJA_DB = [ 
             { id: 'mult', icone: '🚀', nome: 'Multiplicador 2X', desc: 'Dobra pontos por 24h', preco: 500, tipo: 'power' },
             { id: 'mult3', icone: '🔥', nome: 'Multiplicador 3X', desc: 'Triplica pontos por 24h', preco: 1200, tipo: 'power3' },
-            { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar', preco: 500, tipo: 'avatar' },
-            { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar', preco: 1000, tipo: 'avatar' },
-            { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar', preco: 1500, tipo: 'avatar' },
-            { id: 'av_cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar', preco: 2000, tipo: 'avatar' },
-            { id: 'av_ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar', preco: 2500, tipo: 'avatar' },
-            { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar', preco: 5000, tipo: 'avatar' },
-            { id: 'av_raposa', icone: '🦊', nome: 'Raposa Astuta', desc: 'Avatar', preco: 800, tipo: 'avatar' },
-            { id: 'av_lobo', icone: '🐺', nome: 'Lobo Solitário', desc: 'Avatar', preco: 1500, tipo: 'avatar' },
-            { id: 'av_leao', icone: '🦁', nome: 'Rei da Selva', desc: 'Avatar', preco: 3000, tipo: 'avatar' },
-            { id: 'av_panda', icone: '🐼', nome: 'Panda Zen', desc: 'Avatar', preco: 4000, tipo: 'avatar' },
-            { id: 'av_alien2', icone: '👾', nome: 'Invasor', desc: 'Avatar', preco: 6000, tipo: 'avatar' }
+            { id: 'av_mestre', icone: '🧙‍♂️', nome: 'Mestre', desc: 'Avatar VIP', preco: 500, tipo: 'avatar' },
+            { id: 'av_robo', icone: '🤖', nome: 'Calculadora', desc: 'Avatar VIP', preco: 1000, tipo: 'avatar' },
+            { id: 'av_alien', icone: '👽', nome: 'Gênio', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
+            { id: 'av_cerebro', icone: '🧠', nome: 'Super Cérebro', desc: 'Avatar VIP', preco: 2000, tipo: 'avatar' },
+            { id: 'av_ninja', icone: '🥷', nome: 'Ninja', desc: 'Avatar VIP', preco: 2500, tipo: 'avatar' },
+            { id: 'av_dragao', icone: '🐉', nome: 'Dragão', desc: 'Avatar VIP', preco: 5000, tipo: 'avatar' },
+            { id: 'av_raposa', icone: '🦊', nome: 'Raposa Astuta', desc: 'Avatar VIP', preco: 800, tipo: 'avatar' },
+            { id: 'av_lobo', icone: '🐺', nome: 'Lobo Solitário', desc: 'Avatar VIP', preco: 1500, tipo: 'avatar' },
+            { id: 'av_leao', icone: '🦁', nome: 'Rei da Selva', desc: 'Avatar VIP', preco: 3000, tipo: 'avatar' },
+            { id: 'av_panda', icone: '🐼', nome: 'Panda Zen', desc: 'Avatar VIP', preco: 4000, tipo: 'avatar' },
+            { id: 'av_alien2', icone: '👾', nome: 'Invasor', desc: 'Avatar VIP', preco: 6000, tipo: 'avatar' }
         ];
 
         const DESAFIOS_DB = [ 
@@ -453,7 +524,7 @@
             { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' }, 
             { id: 3, nome: 'Desafio 3', serie: '7', tempo: 60,  desc: '7º Ano • 1 Minuto' }, 
             { id: 4, nome: 'Desafio 4', serie: '8', tempo: 45,  desc: '8º Ano • 45 Segundos' }, 
-            { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos (Hardcore)' } 
+            { id: 5, nome: 'Desafio 5', serie: '9', tempo: 30,  desc: '9º Ano • 30 Segundos' } 
         ];
 
         const ACADEMIA_DB = [
@@ -501,10 +572,7 @@
             if (!jogador.id) return;
             const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
             
-            if (error) {
-                console.error("Erro ao carregar perfil:", error);
-                return;
-            }
+            if (error) { console.error("Erro ao carregar perfil:", error); return; }
 
             if (data) {
                 jogador.nome = data.nome || jogador.nome || 'Jogador';
@@ -533,6 +601,13 @@
             document.getElementById('home-nivel').innerText = `NÍVEL ${jogador.nivel || 1}`;
             document.getElementById('home-streak').innerText = jogador.streak || 0;
             document.getElementById('home-moedas').innerText = jogador.moedas || 0;
+            
+            // Atualiza o avatar no perfil e na home
+            document.getElementById('home-avatar').innerText = jogador.avatar;
+            document.getElementById('perfil-avatar').innerText = jogador.avatar;
+            document.getElementById('profile-xp-display').innerText = jogador.xp || 0;
+            document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
+
             const xpAtualNivel = jogador.xp % 100;
             document.getElementById('home-xp-txt').innerText = `${xpAtualNivel} / 100 XP`;
             document.getElementById('home-xp-bar').style.width = `${xpAtualNivel}%`;
@@ -561,6 +636,9 @@
             if (idTela === 'tela-perfil') { 
                 carregarPerfil().then(() => {
                     document.getElementById('perfil-nome-input').value = jogador.nome;
+                    document.getElementById('perfil-avatar').innerText = jogador.avatar;
+                    document.getElementById('profile-xp-display').innerText = jogador.xp;
+                    document.getElementById('perfil-nivel-txt').innerText = `NÍVEL ${jogador.nivel || 1}`;
                     renderizarCalendario();
                     renderizarHistorico();
                 });
@@ -602,7 +680,7 @@
 
         function mostrarNotificacoes() {
             let notificacoes = [];
-            if(jogador.missoes.jogos === 0) notificacoes.push("Bem-vindo ao MATH ARENA!");
+            if(jogador.missoes.jogos === 0) notificacoes.push("Bem-vindo ao MATH ARENA VIP!");
             if(jogador.missoes.acertos < 10) notificacoes.push("Missão pendente: Acerte 10 questões.");
             if(jogador.moedas >= 500) notificacoes.push("Você já pode comprar o Multiplicador na Loja!");
             
@@ -641,7 +719,7 @@
 
         async function renderizarHistorico() {
             const container = document.getElementById('lista-historico');
-            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Carregando...</p>';
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Carregando...</p>';
 
             try {
                 const { data: partidas, error } = await banco.from('partidas')
@@ -653,17 +731,17 @@
                 if (error) throw error;
 
                 if (!partidas || partidas.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 12px;">Nenhuma partida jogada ainda.</p>';
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">Nenhuma partida jogada ainda.</p>';
                     return;
                 }
 
                 container.innerHTML = '';
                 partidas.forEach(p => {
                     const dataFormatada = new Date(p.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: bold;">${p.pontos} pts</span></div>`;
+                    container.innerHTML += `<div class="historico-item"><span>${dataFormatada}</span> <span style="color: var(--primary); font-weight: 900;">${p.pontos} pts</span></div>`;
                 });
             } catch(e) {
-                container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 12px;">Erro ao carregar histórico.</p>';
+                container.innerHTML = '<p style="text-align: center; color: var(--danger); font-size: 13px;">Erro ao carregar histórico.</p>';
             }
         }
 
@@ -672,7 +750,7 @@
             if (element) element.classList.add('active');
 
             const lista = document.getElementById('rank-list-container');
-            lista.innerHTML = '<p class="text-center" style="color:var(--text-muted);">Buscando...</p>';
+            lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
 
             let dataInicio = new Date();
             if(tipo === 'semanal') dataInicio.setDate(dataInicio.getDate() - 7);
@@ -682,7 +760,7 @@
             if (tipo !== 'geral') {
                 const { data: partidas } = await banco.from('partidas').select('user_id, pontos').gte('data', dataInicio.toISOString());
                 
-                if(!partidas || partidas.length === 0) { lista.innerHTML = '<p class="text-center">Nenhum jogo recente.</p>'; return; }
+                if(!partidas || partidas.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogo recente.</p>'; return; }
 
                 const pontosPorJogador = {};
                 partidas.forEach(p => { pontosPorJogador[p.user_id] = (pontosPorJogador[p.user_id] || 0) + p.pontos; });
@@ -692,28 +770,72 @@
                 const { data: jogadores } = await banco.from('ranking').select('user_id, nome, avatar').in('user_id', topIds);
                 
                 lista.innerHTML = '';
-                topIds.forEach((id, index) => {
-                    const jog = jogadores.find(j => j.user_id === id);
-                    if(jog) {
-                        let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
-                        lista.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <div style="display:flex; gap: 10px; align-items:center;">
-                                <span style="font-size:18px; width:30px;">${medalha}</span>
-                                <div style="font-size: 24px;">${jog.avatar || '🧑‍🚀'}</div>
-                                <div style="font-weight:800; font-size:14px;">${jog.nome}</div>
-                            </div>
-                            <div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div>
-                        </div>`;
+                
+                // --- LÓGICA DO PÓDIO (SEMANAL) ---
+                if (tipo === 'semanal' && topIds.length >= 1) {
+                    let podiumHTML = '<div class="podium-container">';
+                    
+                    // 2º Lugar
+                    if (topIds.length >= 2) {
+                        const j2 = jogadores.find(j => j.user_id === topIds[1]);
+                        if(j2) podiumHTML += `<div class="podium-item podium-2"><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[1]]}</div></div></div>`;
                     }
-                });
+                    
+                    // 1º Lugar
+                    const j1 = jogadores.find(j => j.user_id === topIds[0]);
+                    if(j1) podiumHTML += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[0]]}</div></div></div>`;
+
+                    // 3º Lugar
+                    if (topIds.length >= 3) {
+                        const j3 = jogadores.find(j => j.user_id === topIds[2]);
+                        if(j3) podiumHTML += `<div class="podium-item podium-3"><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${pontosPorJogador[topIds[2]]}</div></div></div>`;
+                    }
+                    
+                    podiumHTML += '</div>';
+                    lista.innerHTML += podiumHTML;
+                    
+                    // Adiciona o resto do ranking (do 4º em diante) em formato de lista
+                    for(let i = 3; i < topIds.length; i++) {
+                        const id = topIds[i];
+                        const jog = jogadores.find(j => j.user_id === id);
+                        if(jog) {
+                            lista.innerHTML += `<div class="ranking-list-item">
+                                <div style="display:flex; gap: 10px; align-items:center;">
+                                    <span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i+1}º</span>
+                                    <div style="font-size: 22px;">${jog.avatar || '🧑‍🚀'}</div>
+                                    <div style="font-weight:800; font-size:14px;">${jog.nome}</div>
+                                </div>
+                                <div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div>
+                            </div>`;
+                        }
+                    }
+
+                } else {
+                    // Ranking Geral e Mensal (Lista Normal)
+                    topIds.forEach((id, index) => {
+                        const jog = jogadores.find(j => j.user_id === id);
+                        if(jog) {
+                            let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+                            lista.innerHTML += `<div class="ranking-list-item">
+                                <div style="display:flex; gap: 10px; align-items:center;">
+                                    <span style="font-size:18px; width:30px;">${medalha}</span>
+                                    <div style="font-size: 24px;">${jog.avatar || '🧑‍🚀'}</div>
+                                    <div style="font-weight:800; font-size:15px;">${jog.nome}</div>
+                                </div>
+                                <div style="font-weight:900; color:var(--primary);">${pontosPorJogador[id]} pts</div>
+                            </div>`;
+                        }
+                    });
+                }
+
             } else {
                 const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
-                if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center">Vazio.</p>'; return; }
+                if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold;">Vazio.</p>'; return; }
                 lista.innerHTML = '';
                 data.forEach((user, index) => { 
                     let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`; 
                     let avatar = user.avatar || '🧑‍🚀'; 
-                    lista.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div style="font-size: 24px;">${avatar}</div><div><div style="font-weight:800; font-size:14px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; 
+                    lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div style="font-size: 24px;">${avatar}</div><div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Lvl ${Math.floor((user.xp||0)/100)+1}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`; 
                 });
             }
         }
@@ -725,8 +847,8 @@
                 container.innerHTML += `
                     <div class="aula-card">
                         <div class="aula-header" onclick="toggleAula(${index})">
-                            <span style="font-weight: 800;">${aula.titulo}</span>
-                            <span style="color: var(--primary);">▼</span>
+                            <span style="font-weight: 800; font-size: 15px;">${aula.titulo}</span>
+                            <span style="color: var(--primary); font-size: 18px;">▼</span>
                         </div>
                         <div class="aula-conteudo" id="aula-${index}">
                             ${aula.conteudo}
@@ -746,17 +868,12 @@
             }
         }
 
-        // --- LÓGICA DO DUELO ATUALIZADA (MÓDULO 14) ---
         async function criarDuelo() {
             const btn = document.getElementById('btn-criar-duelo');
             try {
                 if(!jogador.id) { alert("Erro: Você não está logado."); return; }
-                
-                // Pega a série escolhida no menu do duelo
                 const serieDuelo = document.getElementById('select-serie-duelo').value;
                 const questoes = [];
-                
-                // Agora gera 15 questões!
                 for(let i=0; i<15; i++) questoes.push(gerarQuestao(serieDuelo));
 
                 const codigo = 'DUELO-' + Math.floor(1000 + Math.random() * 9000);
@@ -769,24 +886,14 @@
                     status: 'waiting'
                 }]).select();
 
-                if(error) { 
-                    alert("Erro ao criar duelo: " + error.message); 
-                    btn.innerText = "➕ CRIAR DUELO";
-                    return; 
-                }
+                if(error) { alert("Erro ao criar duelo: " + error.message); btn.innerText = "➕ CRIAR DUELO"; return; }
 
                 if (data && data.length > 0) {
                     dueloAtual = data[0];
                     document.getElementById('codigo-gerado').innerText = codigo;
                     mudarAba('tela-duelo-espera');
-                } else {
-                    alert("Erro desconhecido ao criar duelo.");
                 }
-            } catch(e) {
-                alert("Erro crítico: " + e.message);
-            } finally {
-                btn.innerText = "➕ CRIAR DUELO";
-            }
+            } catch(e) { alert("Erro crítico: " + e.message); } finally { btn.innerText = "➕ CRIAR DUELO"; }
         }
 
         async function entrarDuelo() {
@@ -794,28 +901,16 @@
             try {
                 const codigo = document.getElementById('input-codigo-duelo').value.trim().toUpperCase();
                 if(!codigo) { alert("Digite o código!"); return; }
-
                 btn.innerText = "ENTRANDO...";
-
                 const { data, error } = await banco.from('duelos').select('*').eq('codigo', codigo).limit(1);
 
-                if(error || !data || data.length === 0) { 
-                    alert("Duelo não encontrado!"); 
-                    return; 
-                }
-                if(data[0].status === 'finished') { 
-                    alert("Este duelo já foi finalizado!"); 
-                    return; 
-                }
-                if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { 
-                    alert("Você já jogou sua parte deste duelo!"); 
-                    return; 
-                }
+                if(error || !data || data.length === 0) { alert("Duelo não encontrado!"); return; }
+                if(data[0].status === 'finished') { alert("Este duelo já foi finalizado!"); return; }
+                if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { alert("Você já jogou sua parte!"); return; }
 
                 dueloAtual = data[0];
                 isDuelo = true;
                 filaPerguntas = dueloAtual.questoes;
-                
                 estado = { modo: 'duelo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
                 
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
@@ -823,11 +918,7 @@
                 document.getElementById('timer-box').classList.add('hidden'); 
                 document.getElementById('duel-result-box').classList.add('hidden');
                 carregarQuestao();
-            } catch(e) {
-                alert("Erro: " + e.message);
-            } finally {
-                btn.innerText = "▶ ENTRAR NO DUELO";
-            }
+            } catch(e) { alert("Erro: " + e.message); } finally { btn.innerText = "▶ ENTRAR NO DUELO"; }
         }
 
         function iniciarDueloHost() {
@@ -844,8 +935,7 @@
         async function salvarPartida(pontosFinais) {
             if (pontosFinais === 0 && estado.acertos === 0) return;
             try {
-                const { error: erroPartida } = await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
-                
+                await banco.from('partidas').insert([{ user_id: jogador.id, pontos: pontosFinais }]);
                 const hoje = new Date().toISOString().split('T')[0];
                 jogador.missoes.jogos = (jogador.missoes.jogos || 0) + 1; 
                 jogador.missoes.acertos = (jogador.missoes.acertos || 0) + estado.acertos; 
@@ -874,11 +964,8 @@
                     }]);
                 }
                 
-                jogador.xp = novoXP;
-                jogador.pontos = novaPontuacao;
-                jogador.moedas = novasMoedas;
-                jogador.nivel = Math.floor(novoXP / 100) + 1;
-                jogador.streak = novoStreak;
+                jogador.xp = novoXP; jogador.pontos = novaPontuacao; jogador.moedas = novasMoedas;
+                jogador.nivel = Math.floor(novoXP / 100) + 1; jogador.streak = novoStreak;
             } catch (e) { console.error(e); }
         }
 
@@ -936,8 +1023,7 @@
             if(novasConquistas.length > 0) { jogador.conquistas = jogador.conquistas.concat(novasConquistas); setTimeout(() => alert(`🏅 NOVAS CONQUISTAS DESBLOQUEADAS! \nVeja na aba Medalhas.`), 500); }
             await salvarPartida(pontosFinais);
             
-            isDuelo = false;
-            dueloAtual = null;
+            isDuelo = false; dueloAtual = null;
         }
 
         function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -1008,9 +1094,7 @@
                 estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
                 document.getElementById('timer-box').classList.add('hidden'); document.getElementById('duel-result-box').classList.add('hidden'); carregarQuestao();
-            } catch(e) {
-                alert("Erro ao iniciar o jogo: " + e.message);
-            }
+            } catch(e) { alert("Erro ao iniciar o jogo: " + e.message); }
         }
 
         function iniciarDesafio(idDesafio) {
@@ -1026,9 +1110,7 @@
                 clearInterval(timerInterval);
                 timerInterval = setInterval(() => { tempoRestante--; timerBox.innerText = `${tempoRestante}s`; if (tempoRestante <= 0) { clearInterval(timerInterval); finalizarJogo(); } }, 1000);
                 carregarQuestao();
-            } catch(e) {
-                alert("Erro no desafio: " + e.message);
-            }
+            } catch(e) { alert("Erro no desafio: " + e.message); }
         }
 
         function carregarQuestao() {
@@ -1038,11 +1120,8 @@
             }
             estado.respondidas = false; perguntaAtual = filaPerguntas[estado.questaoAtual];
             document.getElementById('hud-pontos').innerText = `🏆 ${estado.pontos} PTS`; document.getElementById('hud-sequencia').innerText = `🔥 ${estado.sequencia}`;
-            
-            // Lógica do contador de questões do duelo atualizada para 15
             document.getElementById('hud-questao').innerText = isDuelo ? `${estado.questaoAtual + 1}/15` : `∞`; 
             document.getElementById('progress-fill').style.width = isDuelo ? `${(estado.questaoAtual / 15) * 100}%` : `${((estado.questaoAtual % 10) / 10) * 100}%`;
-            
             document.getElementById('question-text').innerText = perguntaAtual.q; document.getElementById('feedback-box').classList.remove('active'); document.getElementById('btn-next').style.display = 'none';
             const container = document.getElementById('options-container'); container.innerHTML = ''; const letras = ['A', 'B', 'C', 'D'];
             perguntaAtual.o.forEach((opcao, index) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = `<span class="option-letter">${letras[index]}</span> ${opcao}`; btn.onclick = () => responder(index, btn); container.appendChild(btn); });
@@ -1068,14 +1147,11 @@
                 fbBox.className = index === perguntaAtual.c ? 'feedback active success' : 'feedback active error';
                 fbTitle.innerText = index === perguntaAtual.c ? `🎉 ACERTOU! +${ptsGanhos} PTS` : `❌ ERROU! ${ptsPerdidos} PTS`; fbExp.innerText = perguntaAtual.exp;
                 document.getElementById('btn-next').style.display = 'block'; 
-                
-                // Lógica do botão de finalizar atualizada para 15 questões
                 document.getElementById('btn-next').innerText = (isDuelo && estado.questaoAtual >= 14) ? "FINALIZAR 🏁" : "PRÓXIMA ➡";
             }
         }
 
         function proximaQuestao() { 
-            // Verifica se chegou na questão 15 do duelo
             if (isDuelo && estado.questaoAtual >= 14) return finalizarJogo();
             estado.questaoAtual++; carregarQuestao(); 
         }
@@ -1090,7 +1166,7 @@
         function renderizarMissoes() {
             const container = document.getElementById('lista-missoes'); container.innerHTML = ''; const ms = jogador.missoes;
             const missoes = [ { nome: 'Jogar 1 Partida', prog: ms.jogos, meta: 1, recompensa: 50 }, { nome: 'Acerte 10 Questões', prog: ms.acertos, meta: 10, recompensa: 100 }, { nome: 'Jogue 1 Desafio', prog: ms.desafios, meta: 1, recompensa: 50 } ];
-            missoes.forEach(m => { const pct = Math.min(100, (m.prog / m.meta) * 100); const isConcluida = pct === 100; container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; });
+            missoes.forEach(m => { const pct = Math.min(100, (m.prog / m.meta) * 100); const isConcluida = pct === 100; container.innerHTML += `<div class="mission-card"><div class="mission-header"><span>${m.nome}</span><span class="mission-reward">🪙 ${m.recompensa}</span></div><div class="mission-progress-bar"><div class="mission-progress-fill" style="width: ${pct}%; background: ${isConcluida ? 'var(--gold)' : 'var(--success)'}"></div></div><div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; text-align: right;">${m.prog} / ${m.meta} ${isConcluida ? '✅' : ''}</div></div>`; });
         }
 
         function renderizarLoja() {
@@ -1100,7 +1176,7 @@
                 let isEquipado = false; if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true; if(item.tipo.includes('power') && multAtivo) isEquipado = true;
                 let podeComprar = jogador.moedas >= item.preco && !isEquipado; let btnTexto = 'COMPRAR';
                 if(isEquipado) { btnTexto = item.tipo === 'avatar' ? 'EQUIPADO' : 'ATIVO'; } else if (!podeComprar) { btnTexto = 'FALTA 🪙'; }
-                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${item.icone}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 10px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
+                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${item.icone}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
             });
         }
 
@@ -1135,7 +1211,7 @@
             const keys = Object.keys(jogador.stats);
             
             if(keys.length === 0) { 
-                container.innerHTML = '<p style="text-align:center; font-size:12px;">Jogue partidas para gerar estatísticas.</p>'; 
+                container.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:bold;">Jogue partidas para gerar estatísticas.</p>'; 
                 return; 
             }
             
