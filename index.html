@@ -4,36 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matemática Quiz - Modo Infinito</title>
+    <!-- Fonte do Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; text-align: center; color: #333; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; font-size: 24px; }
-        .header-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .btn-login { background-color: #db4437; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; opacity: 0.6; }
-        .btn-ranking { background-color: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .quiz-card { background: #e8f4f8; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .pergunta { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .opcao { display: block; width: 100%; background: white; border: 2px solid #bdc3c7; padding: 12px; margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; box-sizing: border-box;}
-        .opcao:hover { background: #ecf0f1; border-color: #3498db; }
-        .correta { background: #2ecc71 !important; color: white; border-color: #27ae60 !important; }
-        .errada { background: #e74c3c !important; color: white; border-color: #c0392b !important; }
-        .controles { margin-top: 20px; display: flex; flex-direction: column; gap: 10px;}
-        .btn-principal { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: none; width: 100%; box-sizing: border-box;}
-        .btn-verde { background: #2ecc71; }
-        .btn-vermelho { background: #e74c3c; display: block; }
+        :root {
+            --azul: #4a90e2;
+            --azul-escuro: #357abd;
+            --verde: #2ecc71;
+            --verde-escuro: #27ae60;
+            --vermelho: #e74c3c;
+            --vermelho-escuro: #c0392b;
+            --cinza: #95a5a6;
+            --cinza-escuro: #7f8c8d;
+            --laranja: #f39c12;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0; 
+            padding: 20px; 
+            text-align: center; 
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 500px; 
+            margin: auto; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        }
+
+        h1 { color: #2c3e50; font-size: 28px; margin-bottom: 20px; font-weight: 900; }
+        h2 { color: #2c3e50; font-weight: 900; }
         
-        input[type="text"], select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: white; appearance: none; -webkit-appearance: none; }
+        .header-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
         
+        /* Botões estilo 3D */
+        button { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer; border: none; border-radius: 12px; transition: all 0.1s; }
+        
+        .btn-login { background-color: #db4437; color: white; padding: 10px 15px; box-shadow: 0 4px 0 #b73227; opacity: 0.8; }
+        .btn-ranking { background-color: var(--laranja); color: white; padding: 10px 15px; box-shadow: 0 4px 0 #c87f0a; }
+        .btn-ranking:active { transform: translateY(4px); box-shadow: 0 0 0 #c87f0a; }
+        
+        .btn-principal { 
+            color: white; 
+            padding: 15px 20px; 
+            width: 100%; 
+            margin-top: 10px; 
+            font-size: 18px; 
+            display: none;
+        }
+        .btn-verde { background-color: var(--verde); box-shadow: 0 5px 0 var(--verde-escuro); }
+        .btn-verde:active { transform: translateY(5px); box-shadow: 0 0 0 var(--verde-escuro); }
+        
+        .btn-azul { background-color: var(--azul); box-shadow: 0 5px 0 var(--azul-escuro); }
+        .btn-azul:active { transform: translateY(5px); box-shadow: 0 0 0 var(--azul-escuro); }
+
+        .btn-vermelho { background-color: var(--vermelho); box-shadow: 0 5px 0 var(--vermelho-escuro); display: block;}
+        .btn-vermelho:active { transform: translateY(5px); box-shadow: 0 0 0 var(--vermelho-escuro); }
+
+        .btn-cinza { background-color: var(--cinza); box-shadow: 0 5px 0 var(--cinza-escuro); }
+        .btn-cinza:active { transform: translateY(5px); box-shadow: 0 0 0 var(--cinza-escuro); }
+        
+        input[type="text"], select { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            border: 2px solid #dfe6e9; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa; 
+            transition: 0.3s;
+        }
+        input[type="text"]:focus, select:focus { border-color: var(--azul); outline: none; background-color: #fff;}
+        
+        .quiz-card { background: #f8f9fa; padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 2px solid #e9ecef; }
+        .pergunta { font-size: 22px; font-weight: 900; margin-bottom: 20px; color: #2c3e50; }
+        
+        .opcao { 
+            display: block; 
+            width: 100%; 
+            background: white; 
+            border: 2px solid #ced6e0; 
+            padding: 15px; 
+            margin-bottom: 12px; 
+            border-radius: 12px; 
+            font-size: 18px; 
+            font-weight: 700;
+            color: #57606f;
+            transition: all 0.2s; 
+        }
+        .opcao:hover { border-color: var(--azul); color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05);}
+        
+        .correta { background: var(--verde) !important; color: white !important; border-color: var(--verde-escuro) !important; animation: pop 0.3s ease; }
+        .errada { background: var(--vermelho) !important; color: white !important; border-color: var(--vermelho-escuro) !important; animation: shake 0.3s ease; }
+        
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+
         .resultado { display: none; text-align: center; }
-        .ranking-lista { text-align: left; margin-top: 20px; }
-        .ranking-item { background: #f8f9fa; padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 16px; }
-        .ranking-item:nth-child(1) { background: #ffeaa7; font-weight: bold; }
-        .ranking-item:nth-child(2) { background: #dfe6e9; font-weight: bold; }
-        .ranking-item:nth-child(3) { background: #fab1a0; font-weight: bold; }
-        .pontuacao-viva { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
-        .feedback { font-size: 18px; font-weight: bold; min-height: 30px; margin-top: 15px; transition: 0.3s; }
-        .btn-trocar { background: none; border: none; color: #7f8c8d; text-decoration: underline; cursor: pointer; margin-top: 15px; font-size: 14px; }
+        .ranking-lista { text-align: left; margin-top: 20px; background: #f8f9fa; border-radius: 16px; padding: 10px; }
+        .ranking-item { padding: 12px 15px; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #2f3542; }
+        .ranking-item:last-child { border-bottom: none; }
+        .ranking-item:nth-child(1) { background: #fff3cd; border-radius: 10px 10px 0 0; color: #856404; }
+        .ranking-item:nth-child(2) { background: #e2e3e5; color: #383d41;}
+        .ranking-item:nth-child(3) { background: #f8d7da; color: #721c24;}
+        
+        .pontuacao-viva { font-size: 20px; font-weight: 900; color: var(--azul); margin-bottom: 15px; background: #e3f2fd; padding: 10px; border-radius: 10px; }
+        .feedback { font-size: 18px; font-weight: 900; min-height: 30px; margin-top: 15px; transition: 0.3s; }
+        .btn-trocar { background: none; border: none; color: #a4b0be; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -46,9 +133,8 @@
         <button class="btn-ranking" onclick="abrirRanking()">🏆 Ranking</button>
     </div>
 
-    <!-- TELA DE INÍCIO -->
     <div id="tela-inicio">
-        <p>Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
+        <p style="color: #57606f; margin-bottom: 20px;">Escolha o nível e jogue o <strong>Modo Infinito</strong>!<br>As perguntas nunca acabam. Pare quando quiser!</p>
         <input type="text" id="nome-aluno" placeholder="Digite seu nome" oninput="salvarPerfilRapido()">
         
         <select id="nivel-aluno" onchange="salvarPerfilRapido()">
@@ -59,10 +145,9 @@
             <option value="9">9º Ano</option>
         </select>
 
-        <button class="btn-principal btn-verde" style="display:block; margin: 0 auto;" onclick="iniciarQuiz()">Começar Modo Infinito 🚀</button>
+        <button class="btn-principal btn-verde" onclick="iniciarQuiz()">Começar Modo Infinito 🚀</button>
     </div>
 
-    <!-- TELA DO QUIZ -->
     <div id="tela-quiz" style="display: none;">
         <div class="pontuacao-viva" id="placar-vivo">Pontos da Rodada: 0</div>
         <div class="quiz-card">
@@ -71,29 +156,27 @@
             <div id="feedback-text" class="feedback"></div>
         </div>
         <div class="controles">
-            <button class="btn-principal" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
+            <button class="btn-principal btn-azul" id="btn-proximo" onclick="proximaPergunta()">Próxima ➡️</button>
             <button class="btn-principal btn-vermelho" onclick="mostrarResultado()">Parar e Salvar 🏁</button>
         </div>
         <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
     </div>
 
-    <!-- TELA DE RESULTADO -->
     <div id="tela-resultado" class="resultado">
         <h2>Fim da Rodada! 🎉</h2>
-        <p>Você fez <strong id="pontuacao-final">0</strong> pontos nesta rodada.</p>
-        <p id="status-salvamento" style="font-size: 16px; font-weight: bold; color: #7f8c8d; margin-bottom: 15px;"></p>
-        <button class="btn-principal btn-verde" style="display:block; margin: 10px auto;" onclick="abrirRanking()">Ver Ranking</button>
-        <button class="btn-principal" style="display:block; margin: 0 auto; background:#95a5a6;" onclick="jogarNovamente()">Jogar de Novo</button>
+        <p style="font-size: 18px;">Você fez <strong id="pontuacao-final" style="color: var(--azul); font-size: 24px;">0</strong> pontos nesta rodada.</p>
+        <p id="status-salvamento" style="font-size: 16px; font-weight: bold; color: #7f8c8d; margin-bottom: 20px;"></p>
+        <button class="btn-principal btn-verde" onclick="abrirRanking()">Ver Ranking 🏆</button>
+        <button class="btn-principal btn-cinza" onclick="jogarNovamente()">Jogar de Novo 🔄</button>
         <button class="btn-trocar" onclick="trocarJogador()">Trocar de Jogador</button>
     </div>
 
-    <!-- TELA DE RANKING -->
     <div id="tela-ranking" style="display: none;">
-        <h2>🏆 Top 10 Ranking (XP Total)</h2>
+        <h2>🏆 Top 10 Ranking</h2>
         <div class="ranking-lista" id="lista-ranking">
-            <p>Carregando ranking...</p>
+            <p style="padding: 15px; text-align: center;">Carregando ranking...</p>
         </div>
-        <button class="btn-principal" style="display:block; margin: 20px auto 0; background:#3498db;" onclick="voltarAoJogo()">Voltar ao Quiz</button>
+        <button class="btn-principal btn-azul" style="margin-top: 20px;" onclick="voltarAoJogo()">Voltar ao Quiz</button>
     </div>
 </div>
 
@@ -259,7 +342,7 @@
             } else {
                 feedback.innerText = mensagensAcerto[Math.floor(Math.random() * 3)];
             }
-            feedback.style.color = "#2ecc71";
+            feedback.style.color = "var(--verde-escuro)";
 
         } else {
             botaoClicado.classList.add('errada');
@@ -267,7 +350,7 @@
             pontuacao = Math.max(0, pontuacao - 4);
             combo = 0;
             feedback.innerText = mensagensErro[Math.floor(Math.random() * mensagensErro.length)];
-            feedback.style.color = "#e74c3c";
+            feedback.style.color = "var(--vermelho-escuro)";
         }
 
         document.getElementById('placar-vivo').innerText = `Pontos da Rodada: ${pontuacao}`;
@@ -289,7 +372,7 @@
         
         const status = document.getElementById('status-salvamento');
         status.innerText = "Verificando pontuação...";
-        status.style.color = "#f39c12";
+        status.style.color = "var(--laranja)";
 
         const nivelTexto = nivelAluno + "º Ano";
 
@@ -316,7 +399,7 @@
                 if (erroUpdate) throw new Error("Erro no update: " + erroUpdate.message);
 
                 status.innerText = `Você somou ${pontuacao > 0 ? '+' : ''}${pontuacao} pts! Seu total agora é ${novaPontuacaoTotal} pts! 🚀`;
-                status.style.color = "#2ecc71";
+                status.style.color = "var(--verde-escuro)";
             } else {
                 const pontosIniciais = Math.max(0, pontuacao);
                 const { error: erroInsert } = await banco
@@ -326,12 +409,12 @@
                 if (erroInsert) throw new Error("Erro no insert: " + erroInsert.message);
 
                 status.innerText = "Pontuação inicial salva no ranking!";
-                status.style.color = "#2ecc71";
+                status.style.color = "var(--verde-escuro)";
             }
         } catch (erro) {
             console.error(erro);
             status.innerText = "Erro ao salvar no ranking. Verifique a conexão.";
-            status.style.color = "#e74c3c";
+            status.style.color = "var(--vermelho-escuro)";
         }
     }
 
@@ -342,7 +425,7 @@
         document.getElementById('tela-ranking').style.display = 'block';
 
         const lista = document.getElementById('lista-ranking');
-        lista.innerHTML = '<p>Carregando ranking...</p>';
+        lista.innerHTML = '<p style="padding: 15px; text-align: center;">Carregando ranking...</p>';
 
         const { data, error } = await banco
             .from('ranking')
@@ -352,12 +435,12 @@
             .limit(10);
 
         if (error) {
-            lista.innerHTML = '<p>Erro ao carregar o ranking.</p>';
+            lista.innerHTML = '<p style="padding: 15px; text-align: center;">Erro ao carregar o ranking.</p>';
             return;
         }
 
         if (data.length === 0) {
-            lista.innerHTML = '<p>Ninguém jogou ainda. Seja o primeiro!</p>';
+            lista.innerHTML = '<p style="padding: 15px; text-align: center;">Ninguém jogou ainda. Seja o primeiro!</p>';
             return;
         }
 
@@ -366,7 +449,15 @@
             const item = document.createElement('div');
             item.classList.add('ranking-item');
             const ano = aluno.nivel ? `(${aluno.nivel})` : '';
-            item.innerHTML = `<span>${index + 1}º ${aluno.nome} ${ano}</span> <span>${aluno.pontuacao} pts</span>`;
+            
+            // Adicionando as medalhas para o Top 3
+            let medalha = "";
+            if (index === 0) medalha = "🥇 ";
+            else if (index === 1) medalha = "🥈 ";
+            else if (index === 2) medalha = "🥉 ";
+            else medalha = `${index + 1}º `;
+
+            item.innerHTML = `<span>${medalha}${aluno.nome} ${ano}</span> <span>${aluno.pontuacao} pts</span>`;
             lista.appendChild(item);
         });
     }
@@ -374,7 +465,6 @@
     function voltarAoJogo() {
         document.getElementById('tela-ranking').style.display = 'none';
         
-        // Força o jogo a começar imediatamente se ele já tinha acabado
         if (!jogoEmAndamento) {
             iniciarQuiz();
         } else {
@@ -385,12 +475,10 @@
     }
 
     function jogarNovamente() {
-        // Começa um novo jogo direto, sem mostrar a tela inicial
         iniciarQuiz();
     }
 
     function trocarJogador() {
-        // Se o aluno quiser mudar de nome, ele volta pra tela inicial
         jogoEmAndamento = false;
         document.getElementById('tela-quiz').style.display = 'none';
         document.getElementById('tela-resultado').style.display = 'none';
