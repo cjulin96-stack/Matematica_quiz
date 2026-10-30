@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATH ARENA - Módulo 13.1</title>
+    <title>MATH ARENA - Módulo 13.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -129,7 +129,6 @@
         .mb-20 { margin-bottom: 20px; }
         .codigo-duelo { font-family: 'Orbitron'; font-size: 32px; color: var(--accent); text-align: center; letter-spacing: 5px; margin: 20px 0; font-weight: 900; text-shadow: 0 0 15px var(--accent); }
         
-        /* Estilos da Academia */
         .aula-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
         .aula-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .aula-conteudo { display: none; margin-top: 15px; font-size: 14px; color: #ddd; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
@@ -218,11 +217,11 @@
             <h2 class="text-gradient text-center mb-20">ARENA DE DUELOS</h2>
             <div class="glass">
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">DESAFIE UM AMIGO</h3>
-                <button class="btn-duel" onclick="criarDuelo(event)">➕ CRIAR DUELO</button>
+                <button class="btn-duel" id="btn-criar-duelo" onclick="criarDuelo()">➕ CRIAR DUELO</button>
                 <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
                 <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted); text-align: center;">ENTRAR COM CÓDIGO</h3>
                 <input type="text" id="input-codigo-duelo" placeholder="Ex: DUELO-1234" style="text-transform: uppercase;">
-                <button class="btn-primary" onclick="entrarDuelo(event)">▶ ENTRAR NO DUELO</button>
+                <button class="btn-primary" id="btn-entrar-duelo" onclick="entrarDuelo()">▶ ENTRAR NO DUELO</button>
             </div>
             <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
         </div>
@@ -431,7 +430,6 @@
             { id: 'av_alien2', icone: '👾', nome: 'Invasor', desc: 'Avatar', preco: 6000, tipo: 'avatar' }
         ];
 
-        // RESTAURANDO OS DESAFIOS (O QUE ESTAVA FALTANDO)
         const DESAFIOS_DB = [ 
             { id: 1, nome: 'Desafio 1', serie: '5', tempo: 120, desc: '5º Ano • 2 Minutos' }, 
             { id: 2, nome: 'Desafio 2', serie: '6', tempo: 90,  desc: '6º Ano • 1m 30s' }, 
@@ -723,77 +721,83 @@
             }
         }
 
-        async function criarDuelo(event) {
-            if(!jogador.id) { alert("Erro: Você não está logado."); return; }
-            const serie = document.getElementById('select-serie') ? document.getElementById('select-serie').value : '5';
-            const questoes = [];
-            for(let i=0; i<10; i++) questoes.push(gerarQuestao(serie));
+        async function criarDuelo() {
+            const btn = document.getElementById('btn-criar-duelo');
+            try {
+                if(!jogador.id) { alert("Erro: Você não está logado."); return; }
+                const serie = document.getElementById('select-serie') ? document.getElementById('select-serie').value : '5';
+                const questoes = [];
+                for(let i=0; i<10; i++) questoes.push(gerarQuestao(serie));
 
-            const codigo = 'DUELO-' + Math.floor(1000 + Math.random() * 9000);
-            const btn = event.currentTarget;
-            btn.innerText = "CRIANDO...";
+                const codigo = 'DUELO-' + Math.floor(1000 + Math.random() * 9000);
+                btn.innerText = "CRIANDO...";
 
-            const { data, error } = await banco.from('duelos').insert([{
-                codigo: codigo,
-                criador_id: jogador.id,
-                questoes: questoes,
-                status: 'waiting'
-            }]).select();
+                const { data, error } = await banco.from('duelos').insert([{
+                    codigo: codigo,
+                    criador_id: jogador.id,
+                    questoes: questoes,
+                    status: 'waiting'
+                }]).select();
 
-            if(error) { 
-                alert("Erro ao criar duelo: " + error.message); 
-                console.error(error); 
+                if(error) { 
+                    alert("Erro ao criar duelo: " + error.message); 
+                    btn.innerText = "➕ CRIAR DUELO";
+                    return; 
+                }
+
+                if (data && data.length > 0) {
+                    dueloAtual = data[0];
+                    document.getElementById('codigo-gerado').innerText = codigo;
+                    mudarAba('tela-duelo-espera');
+                } else {
+                    alert("Erro desconhecido ao criar duelo.");
+                }
+            } catch(e) {
+                alert("Erro crítico: " + e.message);
+            } finally {
                 btn.innerText = "➕ CRIAR DUELO";
-                return; 
             }
-
-            if (data && data.length > 0) {
-                dueloAtual = data[0];
-                document.getElementById('codigo-gerado').innerText = codigo;
-                mudarAba('tela-duelo-espera');
-            } else {
-                alert("Erro desconhecido ao criar duelo.");
-            }
-            btn.innerText = "➕ CRIAR DUELO";
         }
 
-        async function entrarDuelo(event) {
-            const codigo = document.getElementById('input-codigo-duelo').value.trim().toUpperCase();
-            if(!codigo) { alert("Digite o código!"); return; }
+        async function entrarDuelo() {
+            const btn = document.getElementById('btn-entrar-duelo');
+            try {
+                const codigo = document.getElementById('input-codigo-duelo').value.trim().toUpperCase();
+                if(!codigo) { alert("Digite o código!"); return; }
 
-            const btn = event.currentTarget;
-            btn.innerText = "ENTRANDO...";
+                btn.innerText = "ENTRANDO...";
 
-            const { data, error } = await banco.from('duelos').select('*').eq('codigo', codigo).limit(1);
+                const { data, error } = await banco.from('duelos').select('*').eq('codigo', codigo).limit(1);
 
-            if(error || !data || data.length === 0) { 
-                alert("Duelo não encontrado!"); 
+                if(error || !data || data.length === 0) { 
+                    alert("Duelo não encontrado!"); 
+                    return; 
+                }
+                if(data[0].status === 'finished') { 
+                    alert("Este duelo já foi finalizado!"); 
+                    return; 
+                }
+                if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { 
+                    alert("Você já jogou sua parte deste duelo!"); 
+                    return; 
+                }
+
+                dueloAtual = data[0];
+                isDuelo = true;
+                filaPerguntas = dueloAtual.questoes;
+                
+                estado = { modo: 'duelo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+                
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+                document.getElementById('tela-jogo').classList.add('active');
+                document.getElementById('timer-box').classList.add('hidden'); 
+                document.getElementById('duel-result-box').classList.add('hidden');
+                carregarQuestao();
+            } catch(e) {
+                alert("Erro: " + e.message);
+            } finally {
                 btn.innerText = "▶ ENTRAR NO DUELO";
-                return; 
             }
-            if(data[0].status === 'finished') { 
-                alert("Este duelo já foi finalizado!"); 
-                btn.innerText = "▶ ENTRAR NO DUELO";
-                return; 
-            }
-            if(data[0].criador_id === jogador.id && data[0].pontos_criador > 0) { 
-                alert("Você já jogou sua parte deste duelo!"); 
-                btn.innerText = "▶ ENTRAR NO DUELO";
-                return; 
-            }
-
-            dueloAtual = data[0];
-            isDuelo = true;
-            filaPerguntas = dueloAtual.questoes;
-            
-            estado = { modo: 'duelo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
-            
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-            document.getElementById('tela-jogo').classList.add('active');
-            document.getElementById('timer-box').classList.add('hidden'); 
-            document.getElementById('duel-result-box').classList.add('hidden');
-            carregarQuestao();
-            btn.innerText = "▶ ENTRAR NO DUELO";
         }
 
         function iniciarDueloHost() {
@@ -900,24 +904,34 @@
         }
 
         function prepararJogo(modo) {
-            if (!jogador.nome) jogador.nome = 'Jogador'; 
-            const serie = document.getElementById('select-serie').value; filaPerguntas = [];
-            for(let i=0; i<20; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
-            estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
-            document.getElementById('timer-box').classList.add('hidden'); document.getElementById('duel-result-box').classList.add('hidden'); carregarQuestao();
+            try {
+                if (!jogador.nome) jogador.nome = 'Jogador'; 
+                const serie = document.getElementById('select-serie').value; filaPerguntas = [];
+                for(let i=0; i<20; i++) filaPerguntas.push(gerarQuestao(modo === 'rankeado' ? 'mix' : serie));
+                estado = { modo: modo, pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
+                document.getElementById('timer-box').classList.add('hidden'); document.getElementById('duel-result-box').classList.add('hidden'); carregarQuestao();
+            } catch(e) {
+                alert("Erro ao iniciar o jogo: " + e.message);
+            }
         }
 
         function iniciarDesafio(idDesafio) {
-            if (!jogador.nome) jogador.nome = 'Jogador';
-            const desafio = DESAFIOS_DB.find(d => d.id === idDesafio); filaPerguntas = [];
-            for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(desafio.serie));
-            estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
-            const timerBox = document.getElementById('timer-box'); timerBox.classList.remove('hidden'); tempoRestante = desafio.tempo; timerBox.innerText = `${tempoRestante}s`;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => { tempoRestante--; timerBox.innerText = `${tempoRestante}s`; if (tempoRestante <= 0) { clearInterval(timerInterval); finalizarJogo(); } }, 1000);
-            carregarQuestao();
+            try {
+                if (!jogador.nome) jogador.nome = 'Jogador';
+                const desafio = DESAFIOS_DB.find(d => d.id === idDesafio); 
+                if(!desafio) { alert("Desafio não encontrado."); return; }
+                filaPerguntas = [];
+                for(let i=0; i<100; i++) filaPerguntas.push(gerarQuestao(desafio.serie));
+                estado = { modo: 'tempo', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('tela-jogo').classList.add('active');
+                const timerBox = document.getElementById('timer-box'); timerBox.classList.remove('hidden'); tempoRestante = desafio.tempo; timerBox.innerText = `${tempoRestante}s`;
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => { tempoRestante--; timerBox.innerText = `${tempoRestante}s`; if (tempoRestante <= 0) { clearInterval(timerInterval); finalizarJogo(); } }, 1000);
+                carregarQuestao();
+            } catch(e) {
+                alert("Erro no desafio: " + e.message);
+            }
         }
 
         function carregarQuestao() {
