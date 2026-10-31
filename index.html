@@ -477,7 +477,8 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
     function renderizarLoja() {
-    document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
+document.getElementById('tela-loja').style.paddingBottom = '150px';
+        document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
     const container = document.getElementById('lista-loja');
     if (!container) return;
     container.innerHTML = '';
