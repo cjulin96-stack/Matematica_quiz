@@ -9,23 +9,18 @@
     <style>
         :root { --bg-dark: #070b14; --primary: #00f2fe; --secondary: #4facfe; --accent: #ff0844; --gold: #ffd700; --text-muted: #8892b0; --success: #00ff88; --warning: #ffbb00; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-dark); background-image: radial-gradient(circle at top right, #112240, transparent 40%), radial-gradient(circle at bottom left, #0a192f, transparent 40%); color: white; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .main-content { 
-    flex: 1; 
-    overflow-y: auto !important; 
-    padding: 20px 20px 120px 20px; /* Aumentei o padding de baixo para dar espaço */
-    display: flex; 
-    flex-direction: column; 
-    -webkit-overflow-scrolling: touch; 
-        }
+        body { background-color: var(--bg-dark); background-image: radial-gradient(circle at top right, #112240, transparent 40%), radial-gradient(circle at bottom left, #0a192f, transparent 40%); color: white; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        
+        .main-content { flex: 1; overflow-y: auto !important; padding: 20px 20px 120px 20px; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
         .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease-out forwards; }
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .glass { background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
         h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
         .text-gradient { background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .text-center { text-align: center; } .mb-20 { margin-bottom: 20px; } .mb-15 { margin-bottom: 15px; }
-        
+
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
         .toast { background: rgba(20, 25, 40, 0.95); border-left: 4px solid var(--primary); padding: 15px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideDown 0.3s ease-out; }
         .toast.success { border-left-color: var(--success); } .toast.error { border-left-color: var(--accent); }
@@ -36,9 +31,16 @@
         .user-info { display: flex; align-items: center; gap: 15px; }
         .avatar-wrapper { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; }
         .avatar-img { width: 46px; height: 46px; background: #1a2238; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; z-index: 2; }
-        .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; }
-        .frame-padrao { background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--primary)); animation: spin 3s linear infinite; }
+        
+        /* MOLDURAS PREMIUM */
+        .frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: transparent; box-sizing: border-box; }
+        .frame-padrao { border: 3px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .frame-ouro { border: 3px solid #ffd700; box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffd700; animation: spin 4s linear infinite; }
+        .frame-fogo { border: 3px solid #ff4500; box-shadow: 0 0 20px #ff4500, inset 0 0 10px #ff0000; animation: spin 1.5s linear infinite; }
+        .frame-gelo { border: 3px solid #00ffff; box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00bfff; animation: spin 3s linear infinite; }
+        .frame-neon { border: 3px solid #ff00ff; box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #8a2be2; animation: spin 2s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
         .user-name { font-weight: 800; font-size: 18px; } .user-level { font-size: 12px; color: var(--gold); font-weight: 600; }
         .header-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .badge { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; }
@@ -52,7 +54,6 @@
         button:active { transform: scale(0.97); }
         .btn-primary { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #000; border: none; border-radius: 12px; }
         .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-top: 10px; }
-        
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .btn-store { background: linear-gradient(135deg, #ff9e0b, #dd7700); color: #000; border: none; border-radius: 15px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 800; }
         .btn-store .icon { font-size: 30px; }
@@ -61,23 +62,22 @@
         .trilha-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .trilha-titulo { font-weight: 800; font-size: 15px; }
         .aula-conteudo { margin-top: 15px; display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-        
-        /* ESTILOS DA LOJA E DO VIP */
+
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .item-icon { font-size: 30px; width: 40px; text-align: center; }
-        .item-info { flex: 1 }
+        .item-info { flex: 1; }
         .item-info h3 { font-size: 14px; margin-bottom: 2px; font-family: 'Poppins'; font-weight: 800; }
         .item-info p { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
         .item-price { font-size: 13px; font-weight: bold; color: var(--gold); }
         .btn-buy { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 12px; }
         
-        @keyframes vip-glow {
-            0% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); }
-            50% { box-shadow: 0 0 20px #00d2ff, 0 0 30px rgba(0, 210, 255, 0.8); }
-            100% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); }
-        }
+        @keyframes vip-glow { 0% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); } 50% { box-shadow: 0 0 20px #00d2ff, 0 0 30px rgba(0, 210, 255, 0.8); } 100% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); } }
         .item-vip { animation: vip-glow 2s infinite alternate !important; border: 2px solid #00d2ff !important; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6) !important; z-index: 10 !important; text-transform: uppercase !important; font-family: monospace !important; white-space: nowrap !important; }
+
+        /* CONSERTO DA ROLAGEM DA LOJA */
+        #tela-loja { padding-bottom: 180px !important; }
+        #lista-loja { padding-bottom: 50px; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 15, 25, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: none; justify-content: space-around; padding: 10px 0 15px 0; z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-muted); font-size: 10px; font-weight: 800; cursor: pointer; }
@@ -86,40 +86,6 @@
         .auth-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         input { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; margin-bottom: 15px; font-size: 14px; outline: none; }
         input:focus { border-color: var(--primary); }
-
-    
-    /* === MOLDURAS PREMIUM (Bordas Brilhantes) === */
-.frame { 
-    position: absolute; width: 100%; height: 100%; border-radius: 50%; 
-    z-index: 1; background: transparent; box-sizing: border-box;
-}
-.frame-padrao { border: 3px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
-
-.frame-ouro { 
-    border: 3px solid #ffd700; 
-    box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffd700; 
-    animation: spin 4s linear infinite; 
-}
-.frame-fogo { 
-  border: 3px solid #ff4500;
- box-shadow: 0 0 20px #ff4500, inset 0 0 10px #ff0000;
-    animation: spin 1.5s linear infinite;
-}
-.frame-gelo {
-    border: 3px solid #00ffff;
-    box-shadow: 0 0 15px #00ffff, inset 0 0 10px #00bfff;
-    animation: spin 3s linear infinite;
-}
-.frame-neon {
-    border: 3px solid #ff00ff;
-    box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #8a2be2;
-    animation: spin 2s linear infinite;
-}
-
-/* === CONSERTO DA ROLAGEM DA LOJA === */
-#tela-loja { padding-bottom: 120px !important; }
-#lista-loja { padding-bottom: 50px; } 
-    
     </style>
 </head>
 <body>
@@ -194,7 +160,6 @@
             </div>
             <button class="btn-small" onclick="mudarAba('tela-missoes')">VER</button>
         </div>
-        
         <div id="calendario-container" class="glass"></div>
     </div>
 
@@ -252,11 +217,12 @@
     <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><div class="icon">👤</div>Perfil</div>
 </nav>
 <script>
-const SUPABASE_URL = 'https://zhciurzkzmdenuapzugj.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY2l1cnprem1kZW51YXB6dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NzM0ODIsImV4cCI6MjEwOTA0OTQ4Mn0.bLdz-6jMEXuEFoX9T5DRfRvR1huDY5I-awnutjiQ2dc';
-const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // CONEXÃO COM O SUPABASE (Projeto Novo)
+    const SUPABASE_URL = 'https://zhciurzkzmdenuapzugj.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY2l1cnprem1kZW51YXB6dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NzM0ODIsImV4cCI6MjEwOTA0OTQ4Mn0.bLdz-6jMEXuEFoX9T5DRfRvR1huDY5I-awnutjiQ2dc'; 
+    const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let jogador = { id: null, nome: 'Jogador', xp: 0, nivel: 1, moedas: 0, avatar: '🐱', moldura: 'frame-padrao', aulas_concluidas: [], streak: 0, multiplicador_expira: null, missoes: {} };
+    let jogador = { id: null, nome: 'Jogador', xp: 0, nivel: 1, moedas: 0, avatar: '🐱', moldura: 'frame-padrao', aulas_concluidas: [], streak: 0, multiplicador_expira: null, missoes: {}, molduras_compradas: [] };
 
     const ACADEMIA_DB = [
         { titulo: "Trilha 1: Frações", aulas: ["O que são frações? É a representação de uma parte de um todo.", "Soma de frações com denominadores iguais: soma-se os numeradores."] },
@@ -327,7 +293,21 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         localStorage.removeItem('mathArenaNome');
         location.reload();
     }
-      async function carregarPerfil() {
+
+    let timerSalvar;
+    function salvarNomeDelay() {
+        clearTimeout(timerSalvar);
+        timerSalvar = setTimeout(async () => {
+            const novoNome = document.getElementById('perfil-nome-input').value.trim();
+            if (novoNome === "") return;
+            jogador.nome = novoNome;
+            await banco.from('ranking').update({ nome: novoNome }).eq('user_id', jogador.id);
+            document.getElementById('home-nome').innerText = novoNome;
+            mostrarToast("Nome salvo!", "success");
+        }, 1500);
+    }
+
+    async function carregarPerfil() {
         if (!jogador.id) return;
         const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
         if (error) return;
@@ -338,13 +318,13 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             jogador.moedas = data.moedas || 0;
             jogador.avatar = data.avatar || '🐱';
             jogador.moldura = data.moldura || 'frame-padrao';
-            jogador.molduras_compradas = data.molduras_compradas || [];
             jogador.aulas_concluidas = data.aulas_concluidas || [];
             jogador.streak = data.streak || 0;
             jogador.multiplicador_expira = data.multiplicador_expira || null;
             jogador.missoes = data.missoes || { jogos: 0, acertos: 0, desafios: 0 };
+            jogador.molduras_compradas = data.molduras_compradas || [];
         } else {
-            await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, xp: 0, moedas: 0, avatar: '🐱', moldura: 'frame-padrao', aulas_concluidas: [] }]);
+            await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, xp: 0, moedas: 0, avatar: '🐱', moldura: 'frame-padrao', aulas_concluidas: [], molduras_compradas: [] }]);
         }
     }
 
@@ -492,90 +472,92 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
     function renderizarLoja() {
-document.getElementById('tela-loja').style.paddingBottom = '150px';
         document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
-    const container = document.getElementById('lista-loja');
-    if (!container) return;
-    container.innerHTML = '';
+        const container = document.getElementById('lista-loja');
+        if (!container) return;
+        container.innerHTML = '';
 
-    LOJA_DB.forEach(item => {
-        let isEquipado = false;
-        if (item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
-        if (item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
+        LOJA_DB.forEach(item => {
+            let isEquipado = false;
+            if (item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
+            if (item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
 
-        // Verifica se o jogador já comprou a moldura
-        let possui = (jogador.molduras_compradas && jogador.molduras_compradas.includes(item.id)) || isEquipado;
-        let podeComprar = jogador.moedas >= item.preco && !possui;
+            let possui = (jogador.molduras_compradas && jogador.molduras_compradas.includes(item.id)) || isEquipado;
+            let podeComprar = jogador.moedas >= item.preco && !possui;
 
-        let botaoTexto = isEquipado ? 'EQUIPADO' : (possui ? 'EQUIPAR' : (podeComprar ? 'COMPRAR' : 'FALTA 🪙'));
-        
-        let acaoBotao = '';
-        if (isEquipado) acaoBotao = ''; 
-        else if (possui) acaoBotao = `onclick="equiparItem('${item.id}')"`;
-        else if (podeComprar) acaoBotao = `onclick="comprarItem('${item.id}')"`;
+            let botaoTexto = isEquipado ? 'EQUIPADO' : (possui ? 'EQUIPAR' : (podeComprar ? 'COMPRAR' : 'FALTA 🪙'));
+            
+            let acaoBotao = '';
+            if (isEquipado) acaoBotao = ''; 
+            else if (possui) acaoBotao = `onclick="equiparItem('${item.id}')"`;
+            else if (podeComprar) acaoBotao = `onclick="comprarItem('${item.id}')"`;
 
-        const classeVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? 'item-vip' : '';
-        const seloVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? '<div class="tag-vip">👑 VIP</div>' : '';
+            const classeVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? 'item-vip' : '';
+            const seloVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? '<div class="tag-vip">👑 VIP</div>' : '';
 
-        container.innerHTML += `
-            <div class="store-item ${classeVip}" style="position: relative;">
-                ${seloVip}
-                <div class="item-icon">${item.icone}</div>
-                <div class="item-info">
-                    <h3>${item.nome}</h3>
-                    <p>${item.descricao}</p>
-                    <div class="item-price">🪙 ${item.preco}</div>
+            container.innerHTML += `
+                <div class="store-item ${classeVip}" style="position: relative;">
+                    ${seloVip}
+                    <div class="item-icon">${item.icone}</div>
+                    <div class="item-info">
+                        <h3>${item.nome}</h3>
+                        <p>${item.descricao}</p>
+                        <div class="item-price">🪙 ${item.preco}</div>
+                    </div>
+                    <button class="btn-buy" ${acaoBotao} style="${(!isEquipado && !possui && !podeComprar) ? 'opacity:0.5' : ''}">
+                        ${botaoTexto}
+                    </button>
                 </div>
-                <button class="btn-buy" ${acaoBotao} style="${(!isEquipado && !possui && !podeComprar) ? 'opacity:0.5' : ''}">
-                    ${botaoTexto}
-                </button>
-            </div>
-        `;
-    });
-            }
+            `;
+        });
+    }
 
     async function comprarItem(id) {
-    const item = LOJA_DB.find(i => i.id === id);
-    if (jogador.moedas >= item.preco) {
-        jogador.moedas -= item.preco;
-        
-        if (!jogador.molduras_compradas) jogador.molduras_compradas = [];
-        if (item.tipo === 'frame' && !jogador.molduras_compradas.includes(item.id)) {
-            jogador.molduras_compradas.push(item.id);
+        const item = LOJA_DB.find(i => i.id === id);
+        if (jogador.moedas >= item.preco) {
+            jogador.moedas -= item.preco;
+            
+            if (!jogador.molduras_compradas) jogador.molduras_compradas = [];
+            if (item.tipo === 'frame' && !jogador.molduras_compradas.includes(item.id)) {
+                jogador.molduras_compradas.push(item.id);
+            }
+
+            if (item.tipo === 'avatar') jogador.avatar = item.icone;
+            else if (item.tipo === 'frame') jogador.moldura = item.id;
+            
+            await banco.from('ranking').update({ 
+                avatar: jogador.avatar, 
+                moldura: jogador.moldura, 
+                moedas: jogador.moedas,
+                molduras_compradas: jogador.molduras_compradas
+            }).eq('user_id', jogador.id);
+            
+            mostrarToast(`Comprou: ${item.nome}!`, "success"); 
+            renderizarLoja(); 
+            atualizarDashboard();
+        }
+    }
+
+    async function equiparItem(id) {
+        const item = LOJA_DB.find(i => i.id === id);
+        if (!item) return;
+
+        if (item.tipo === 'frame') {
+            jogador.moldura = item.id;
+            await banco.from('ranking').update({ moldura: jogador.moldura }).eq('user_id', jogador.id);
+        } else if (item.tipo === 'avatar') {
+            jogador.avatar = item.icone;
+            await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
         }
 
-        if (item.tipo === 'avatar') jogador.avatar = item.icone;
-        else if (item.tipo === 'frame') jogador.moldura = item.id;
-        
-        await banco.from('ranking').update({ 
-            avatar: jogador.avatar, 
-            moldura: jogador.moldura, 
-            moedas: jogador.moedas,
-            molduras_compradas: jogador.molduras_compradas
-        }).eq('user_id', jogador.id);
-        
-        mostrarToast(`Comprou: ${item.nome}!`, "success"); 
-        renderizarLoja(); 
+        mostrarToast(`Item equipado!`, "success");
+        renderizarLoja();
         atualizarDashboard();
     }
-}
 
-async function equiparItem(id) {
-    const item = LOJA_DB.find(i => i.id === id);
-    if (!item) return;
-
-    if (item.tipo === 'frame') {
-        jogador.moldura = item.id;
-        await banco.from('ranking').update({ moldura: jogador.moldura }).eq('user_id', jogador.id);
-    } else if (item.tipo === 'avatar') {
-        jogador.avatar = item.icone;
-        await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+    function mostrarNotificacoes() {
+        mostrarToast("Bem-vindo ao Math Arena! Bora jogar?", "success");
     }
-
-    mostrarToast(`Item equipado!`, "success");
-    renderizarLoja();
-    atualizarDashboard();
-}
 
     window.onload = () => {
         banco.auth.onAuthStateChange((event, session) => {
@@ -588,23 +570,6 @@ async function equiparItem(id) {
             }
         });
     };
-let timerSalvar;
-function salvarNomeDelay() {
-    clearTimeout(timerSalvar);
-    timerSalvar = setTimeout(async () => {
-        const novoNome = document.getElementById('perfil-nome-input').value.trim();
-        if (novoNome === "") return;
-        
-        jogador.nome = novoNome;
-        
-        await banco.from('ranking').update({ nome: novoNome }).eq('user_id', jogador.id);
-        
-        document.getElementById('home-nome').innerText = novoNome;
-        mostrarToast("Nome salvo!", "success");
-    }, 1500);
-}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
 </body>
 </html>
