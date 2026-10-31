@@ -5,27 +5,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body style="background: #111; color: white; text-align: center; padding-top: 50px; font-family: sans-serif;">
-    <h1>Teste de Conexão</h1>
-    <button onclick="testar()" style="padding: 20px; font-size: 20px;">CLIQUE AQUI PARA TESTAR</button>
-    <h2 id="resultado" style="margin-top: 30px; color: yellow;">Aguardando...</h2>
+    <h1>Teste de Conexão V2</h1>
+    <button onclick="testarGithub()" style="padding: 15px; font-size: 16px; margin-bottom: 20px;">TESTAR GITHUB</button>
+    <br>
+    <button onclick="testarSupabase()" style="padding: 15px; font-size: 16px;">TESTAR SUPABASE</button>
+    
+    <h2 id="resultado1" style="margin-top: 30px; color: yellow;">Aguardando...</h2>
+    <h2 id="resultado2" style="margin-top: 30px; color: yellow;">Aguardando...</h2>
 
     <script>
         const SUPABASE_URL = 'https://yrypxrqflhuwmgvfyat.supabase.co';
-        // Essa é a chave antiga (Legacy anon) que funciona 100%
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyeWxweHJxZmxodXdtZ3ZmeWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMDc2MTgsImV4cCI6MjEwODg4MzYxOH0.I-z8yL3fA4a7ZWWMjBjEcYsljVfSvG_nn7wppU_WETk';
         const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function testar() {
-            document.getElementById('resultado').innerText = "Testando...";
-            
+        async function testarGithub() {
+            document.getElementById('resultado1').innerText = "Testando GitHub...";
+            try {
+                const res = await fetch('https://api.github.com');
+                document.getElementById('resultado1').innerText = "GITHUB OK! Status: " + res.status;
+                document.getElementById('resultado1').style.color = "green";
+            } catch (e) {
+                document.getElementById('resultado1').innerText = "GITHUB FALHOU: " + e.message;
+                document.getElementById('resultado1').style.color = "red";
+            }
+        }
+
+        async function testarSupabase() {
+            document.getElementById('resultado2').innerText = "Testando Supabase...";
             const { data, error } = await banco.from('ranking').select('*').limit(1);
-            
             if (error) {
-                document.getElementById('resultado').innerText = "ERRO: " + error.message;
-                document.getElementById('resultado').style.color = "red";
+                document.getElementById('resultado2').innerText = "SUPABASE FALHOU: " + error.message;
+                document.getElementById('resultado2').style.color = "red";
             } else {
-                document.getElementById('resultado').innerText = "SUCESSO! O celular conectou no banco!";
-                document.getElementById('resultado').style.color = "green";
+                document.getElementById('resultado2').innerText = "SUPABASE OK! Conectado!";
+                document.getElementById('resultado2').style.color = "green";
             }
         }
     </script>
