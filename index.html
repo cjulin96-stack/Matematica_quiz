@@ -854,7 +854,7 @@ async function concluirAula(index) {
         function renderizarLoja() {
     document.getElementById('loja-moedas').innerText = jogador.moedas || 0; 
     // Verifique se o ID do container é 'loja-itens' ou 'lista-loja' de acordo com o seu HTML
-    const container = document.getElementById('loja-itens'); 
+    const container = document.getElementById('lista-loja');
     if (!container) return; // Proteção para não dar erro se não achar o ID
 
     let multAtivo = false; 
