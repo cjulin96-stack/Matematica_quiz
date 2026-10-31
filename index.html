@@ -198,6 +198,34 @@
     color: var(--primary);
     box-shadow: 0 0 10px rgba(0,242,254,0.3);
 }
+   /* --- INÍCIO DO CÓDIGO VIP --- */
+@keyframes vip-glow {
+    0% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); border-color: #00d2ff; }
+    50% { box-shadow: 0 0 15px #00d2ff, 0 0 25px rgba(0, 210, 255, 0.8); border-color: #ffffff; }
+    100% { box-shadow: 0 0 5px #00d2ff, 0 0 10px rgba(0, 210, 255, 0.4); border-color: #00d2ff; }
+}
+
+.item-vip {
+    animation: vip-glow 2s infinite alternate;
+    border: 2px solid #00d2ff !important;
+}
+
+.tag-vip {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(45deg, #ffd700, #ff8c00);
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    z-index: 10;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+/* --- FIM DO CÓDIGO VIP --- */
     </style>
 </head>
 <body>
@@ -824,15 +852,49 @@ async function concluirAula(index) {
         }
 
         function renderizarLoja() {
-            document.getElementById('loja-moedas').innerText = jogador.moedas || 0; const container = document.getElementById('lista-loja'); container.innerHTML = '';
-            let multAtivo = false; if(jogador.multiplicador_expira) { if(new Date(jogador.multiplicador_expira.split('|').pop()) > new Date()) multAtivo = true; }
-            LOJA_DB.forEach(item => {
-                let isEquipado = false; if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true; if(item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true; if(item.tipo.includes('power') && multAtivo) isEquipado = true;
-                let podeComprar = jogador.moedas >= item.preco && !isEquipado, btnTexto = isEquipado ? 'EQUIPADO' : (!podeComprar ? 'FALTA 🪙' : 'COMPRAR');
-                let iconVisual = item.tipo === 'frame' ? `<div class="frame ${item.id}" style="position:relative; width:40px; height:40px; display:flex; justify-content:center; align-items:center;"><span style="font-size:20px; z-index:5;">${item.icone}</span></div>` : item.icone;
-                container.innerHTML += `<div class="store-item"><div style="display: flex; align-items: center; gap: 15px;"><div class="store-icon">${iconVisual}</div><div class="store-info"><h4>${item.nome}</h4><div style="font-size: 11px; color: var(--text-muted);">${item.desc}</div><div class="store-price">🪙 ${item.preco}</div></div></div><button class="btn-buy" onclick="comprarItem('${item.id}')" ${!podeComprar ? 'disabled' : ''}>${btnTexto}</button></div>`;
-            });
-        }
+    document.getElementById('loja-moedas').innerText = jogador.moedas || 0; 
+    // Verifique se o ID do container é 'loja-itens' ou 'lista-loja' de acordo com o seu HTML
+    const container = document.getElementById('loja-itens'); 
+    if (!container) return; // Proteção para não dar erro se não achar o ID
+
+    let multAtivo = false; 
+    if(jogador.multiplicador_expira) { 
+        if(new Date(jogador.multiplicador_expira) > new Date()) multAtivo = true; 
+    }
+    
+    container.innerHTML = ''; // Limpa a loja antes de desenhar
+
+    LOJA_DB.forEach(item => {
+        let isEquipado = false; 
+        if(item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
+        if(item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
+        
+        let podeComprar = jogador.moedas >= item.preco && !isEquipado;
+        let botaoTexto = isEquipado ? 'EQUIPADO' : (podeComprar ? 'COMPRAR' : 'FALTA 🪙');
+        
+        let iconVisual = item.tipo === 'frame' ? `<div class="frame ${item.id}" style="position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:50%; border: 2px solid var(--primary);">${jogador.avatar}</div>` : item.icone;
+
+        // 👇 Variáveis do VIP 👇
+        const classeVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? 'item-vip' : '';
+        const seloVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? '<div class="tag-vip">👑 VIP</div>' : '';
+
+        // 👇 O Card com o visual atualizado 👇
+        container.innerHTML += `
+            <div class="store-item ${classeVip}" style="position: relative; display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                ${seloVip}
+                <div class="item-icon" style="font-size: 30px;">${iconVisual}</div>
+                <div style="flex: 1">
+                    <div style="font-weight: 800; font-size: 15px; color: #fff; margin-bottom: 2px">${item.nome}</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px">${item.descricao}</div>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--warning)">🪙 ${item.preco}</div>
+                </div>
+                <button class="btn-primary" style="padding: 10px 15px; font-size: 12px; border-radius: 10px; ${podeComprar ? '' : 'opacity: 0.5; cursor: not-allowed;'}" ${podeComprar ? `onclick="comprarItem('${item.id}')"` : ''}>
+                    ${botaoTexto}
+                </button>
+            </div>
+        `;
+    });
+}
         async function comprarItem(id) {
             const item = LOJA_DB.find(i => i.id === id);
             if (jogador.moedas >= item.preco) {
