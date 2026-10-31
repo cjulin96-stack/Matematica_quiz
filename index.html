@@ -658,16 +658,36 @@
         }
 
         async function renderizarCalendario() {
-            const container = document.getElementById('calendario-streak'); if(!container) return; container.innerHTML = '';
-            ['D','S','T','Q','Q','S','S'].forEach(d => { container.innerHTML += `<div class="dia-semana">${d}</div>`; });
-            const hoje = new Date(), mes = hoje.getMonth(), ano = hoje.getFullYear(), primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate();
-            const { data: partidas } = await banco.from('partidas').select('data').eq('user_id', jogador.id);
-            const diasJogados = partidas ? partidas.map(p => new Date(p.data).getDate()) : [];
-            for (let i = 0; i < primeiroDia; i++) { container.innerHTML += `<div></div>`; }
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                let c = 'dia-calendario'; if (diasJogados.includes(dia)) c += ' jogou'; if (dia === hoje.getDate()) c += ' hoje';
-                container.innerHTML += `<div class="${c}">${dia}</div>`;
-            }
+    const container = document.getElementById('calendario-streak'); 
+    if(!container) return; 
+    
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    container.style.gap = '6px';
+    container.style.marginTop = '15px';
+    container.innerHTML = '';
+    
+    ['D','S','T','Q','Q','S','S'].forEach(d => { 
+        container.innerHTML += `<div style="font-size: 10px; color: var(--text-muted); text-align: center; font-weight: 800;">${d}</div>`; 
+    });
+    
+    const hoje = new Date(), mes = hoje.getMonth(), ano = hoje.getFullYear(), primeiroDia = new Date(ano, mes, 1).getDay(), diasNoMes = new Date(ano, mes + 1, 0).getDate();
+    const { data: partidas } = await banco.from('partidas').select('data').eq('user_id', jogador.id);
+    const diasJogados = partidas ? partidas.map(p => new Date(p.data).getDate()) : [];
+    
+    for (let i = 0; i < primeiroDia; i++) { container.innerHTML += `<div></div>`; }
+    
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+        let jogou = diasJogados.includes(dia);
+        let isHoje = dia === hoje.getDate();
+        
+        let bgColor = jogou ? 'rgba(255, 69, 0, 0.15)' : 'rgba(255,255,255,0.03)';
+        let corTexto = jogou ? '#ff4500' : 'var(--text-muted)';
+        let borda = isHoje ? '2px solid var(--primary)' : (jogou ? '1px solid rgba(255,69,0,0.5)' : 'none');
+        let sombra = isHoje ? '0 0 10px rgba(0,242,254,0.3)' : (jogou ? '0 0 10px rgba(255, 69, 0, 0.2)' : 'none');
+        
+        container.innerHTML += `<div style="width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; background: ${bgColor}; border-radius: 10px; font-size: 12px; font-weight: 700; color: ${corTexto}; border: ${borda}; box-shadow: ${sombra};">${dia}</div>`;
+    }
         }
 
         async function renderizarHistorico() {
