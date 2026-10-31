@@ -58,7 +58,7 @@
         /* ESTILOS DA LOJA E DO VIP */
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .item-icon { font-size: 30px; width: 40px; text-align: center; }
-        .item-info { flex: 1; }
+        .item-info { flex: 1 }
         .item-info h3 { font-size: 14px; margin-bottom: 2px; font-family: 'Poppins'; font-weight: 800; }
         .item-info p { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
         .item-price { font-size: 13px; font-weight: bold; color: var(--gold); }
@@ -517,6 +517,21 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
         });
     };
+let timerSalvar;
+function salvarNomeDelay() {
+    clearTimeout(timerSalvar);
+    timerSalvar = setTimeout(async () => {
+        const novoNome = document.getElementById('perfil-nome-input').value.trim();
+        if (novoNome === "") return;
+        
+        jogador.nome = novoNome;
+        
+        await banco.from('ranking').update({ nome: novoNome }).eq('user_id', jogador.id);
+        
+        document.getElementById('home-nome').innerText = novoNome;
+        mostrarToast("Nome salvo!", "success");
+    }, 1500);
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>eruda.init();</script>
