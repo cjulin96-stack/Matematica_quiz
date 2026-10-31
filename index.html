@@ -133,6 +133,20 @@
     filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); /* O brilho no ícone */
     transform: scale(1.1); 
 }
+  /* Efeitos do Pódio */
+.podium-crown { 
+    position: absolute; 
+    top: -35px; 
+    font-size: 28px; 
+    animation: float 2s infinite ease-in-out; 
+}
+@keyframes float { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-8px); } 
+}
+.podium-1 .podium-block { 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); /* Brilho dourado no 1º lugar */
+}
     </style>
 </head>
 <body>
@@ -616,21 +630,47 @@
         }
 
         async function carregarRanking(tipo, element) {
-            document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active')); if (element) element.classList.add('active');
-            const lista = document.getElementById('rank-list-container'); lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
-            const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
-            if (!data || data.length === 0) { lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogador.</p>'; return; }
-            lista.innerHTML = '';
-            let podium = '<div class="podium-container">';
-            if (data.length >= 2) { const j2 = data[1]; podium += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${j2.xp||0}</div></div></div>`; }
-            const j1 = data[0]; podium += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${j1.xp||0}</div></div></div>`;
-            if (data.length >= 3) { const j3 = data[2]; podium += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${j3.xp||0}</div></div></div>`; }
-            podium += '</div>'; lista.innerHTML += podium;
-            for(let i = 3; i < data.length; i++) {
-                const user = data[i]; lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i + 1}º</span><div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${user.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:14px;">${user.nome}</div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`;
-            }
+    document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active')); 
+    if (element) element.classList.add('active');
+    const lista = document.getElementById('rank-list-container'); 
+    lista.innerHTML = '<p class="text-center" style="color:var(--text-muted); font-weight:bold;">Buscando...</p>';
+    
+    const { data } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(10);
+    
+    if (!data || data.length === 0) { 
+        lista.innerHTML = '<p class="text-center" style="font-weight:bold; color:var(--text-muted);">Nenhum jogador encontrado.</p>'; 
+        return; 
+    }
+    
+    lista.innerHTML = '';
+    
+    if (tipo === 'semanal' && data.length >= 1) {
+        let podium = '<div class="podium-container">';
+        if (data.length >= 2) {
+            const j2 = data[1];
+            podium += `<div class="podium-item podium-2"><div class="podium-avatar-wrapper"><div class="frame ${j2.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j2.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j2.nome.split(' ')[0]}</div><div class="podium-score">${j2.xp||0}</div></div></div>`;
         }
-
+        const j1 = data[0];
+        podium += `<div class="podium-item podium-1"><div class="podium-crown">👑</div><div class="podium-avatar-wrapper"><div class="frame ${j1.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j1.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j1.nome.split(' ')[0]}</div><div class="podium-score">${j1.xp||0}</div></div></div>`;
+        if (data.length >= 3) {
+            const j3 = data[2];
+            podium += `<div class="podium-item podium-3"><div class="podium-avatar-wrapper"><div class="frame ${j3.moldura||'frame-padrao'}"></div><div class="podium-avatar">${j3.avatar||'🧑‍🚀'}</div></div><div class="podium-block"><div class="podium-name">${j3.nome.split(' ')[0]}</div><div class="podium-score">${j3.xp||0}</div></div></div>`;
+        }
+        podium += '</div>';
+        lista.innerHTML += podium;
+        
+        for(let i = 3; i < data.length; i++) {
+            const user = data[i];
+            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:16px; width:25px; color:var(--text-muted); font-weight:900;">${i + 1}º</span><div class="avatar-wrapper" style="width:45px; height:45px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:35px; height:35px; font-size:20px;">${user.avatar || '🧑‍🚀'}</div></div><div style="font-weight:800; font-size:14px;">${user.nome}</div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`;
+        }
+    } 
+    else {
+        data.forEach((user, index) => {
+            let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+            lista.innerHTML += `<div class="ranking-list-item"><div style="display:flex; gap: 10px; align-items:center;"><span style="font-size:18px; width:30px;">${medalha}</span><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="frame ${user.moldura||'frame-padrao'}"></div><div class="avatar-img" style="width:38px; height:38px; font-size:22px;">${user.avatar || '🧑‍🚀'}</div></div><div><div style="font-weight:800; font-size:15px;">${user.nome}</div><div style="font-size:11px; color:var(--text-muted);">Nível ${getNivel(user.xp||0).nivel}</div></div></div><div style="font-weight:900; color:var(--primary);">${user.xp || 0} XP</div></div>`;
+        });
+    }
+        }
         function renderizarTemporada() {
             let divName = "BRONZE", divIcon = "🥉", cor = "#cd7f32";
             if (jogador.nivel >= 10) { divName = "PRATA"; divIcon = "🥈"; cor = "#c0c0c0"; } if (jogador.nivel >= 20) { divName = "OURO"; divIcon = "🥇"; cor = "#ffd700"; }
