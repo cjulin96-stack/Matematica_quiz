@@ -84,6 +84,7 @@
 .frame-fogo { background: conic-gradient(from 0deg, #ff4500, #ff0000, #ff8c00, #ff4500); animation: spin 2s linear infinite; box-shadow: 0 0 10px #ff4500; }
 .frame-gelo { background: conic-gradient(from 0deg, #00ffff, #ffffff, #00bfff, #00ffff); animation: spin 4s linear infinite; box-shadow: 0 0 10px #00ffff; }
 .frame-neon { background: conic-gradient(from 0deg, #ff00ff, #8a2be2, #ff00ff, #8a2be2, #ff00ff); animation: spin 1.5s linear infinite; box-shadow: 0 0 15px #ff00ff; }
+    ALTER TABLE public.ranking ADD COLUMN molduras_compradas jsonb DEFAULT '[]'::jsonb;
     </style>
 </head>
 <body>
@@ -302,6 +303,7 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             jogador.moedas = data.moedas || 0;
             jogador.avatar = data.avatar || '🐱';
             jogador.moldura = data.moldura || 'frame-padrao';
+            jogador.molduras_compradas = data.molduras_compradas || [];
             jogador.aulas_concluidas = data.aulas_concluidas || [];
             jogador.streak = data.streak || 0;
             jogador.multiplicador_expira = data.multiplicador_expira || null;
@@ -455,62 +457,89 @@ const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
     function renderizarLoja() {
-        document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
-        const container = document.getElementById('lista-loja');
-        if (!container) return;
+    document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
+    const container = document.getElementById('lista-loja');
+    if (!container) return;
+    container.innerHTML = '';
+
+    LOJA_DB.forEach(item => {
+        let isEquipado = false;
+        if (item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
+        if (item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
+
+        // Verifica se o jogador já comprou a moldura
+        let possui = (jogador.molduras_compradas && jogador.molduras_compradas.includes(item.id)) || isEquipado;
+        let podeComprar = jogador.moedas >= item.preco && !possui;
+
+        let botaoTexto = isEquipado ? 'EQUIPADO' : (possui ? 'EQUIPAR' : (podeComprar ? 'COMPRAR' : 'FALTA 🪙'));
         
-        container.innerHTML = '';
+        let acaoBotao = '';
+        if (isEquipado) acaoBotao = ''; 
+        else if (possui) acaoBotao = `onclick="equiparItem('${item.id}')"`;
+        else if (podeComprar) acaoBotao = `onclick="comprarItem('${item.id}')"`;
 
-        LOJA_DB.forEach(item => {
-            let isEquipado = false;
-            if (item.tipo === 'avatar' && jogador.avatar === item.icone) isEquipado = true;
-            if (item.tipo === 'frame' && jogador.moldura === item.id) isEquipado = true;
+        const classeVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? 'item-vip' : '';
+        const seloVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? '<div class="tag-vip">👑 VIP</div>' : '';
 
-            let podeComprar = jogador.moedas >= item.preco && !isEquipado;
-            let botaoTexto = isEquipado ? 'EQUIPADO' : (podeComprar ? 'COMPRAR' : 'FALTA 🪙');
-
-            const classeVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? 'item-vip' : '';
-            const seloVip = (item.tipo === 'avatar' || item.tipo === 'frame') ? '<div class="tag-vip">👑 VIP</div>' : '';
-
-            container.innerHTML += `
-                <div class="store-item ${classeVip}" style="position: relative;">
-                    ${seloVip}
-                    <div class="item-icon">${item.icone}</div>
-                    <div class="item-info">
-                        <h3>${item.nome}</h3>
-                        <p>${item.descricao}</p>
-                        <div class="item-price">🪙 ${item.preco}</div>
-                    </div>
-                    <button class="btn-buy" ${podeComprar ? `onclick="comprarItem('${item.id}')"` : 'style="opacity:0.5"'}>
-                        ${botaoTexto}
-                    </button>
+        container.innerHTML += `
+            <div class="store-item ${classeVip}" style="position: relative;">
+                ${seloVip}
+                <div class="item-icon">${item.icone}</div>
+                <div class="item-info">
+                    <h3>${item.nome}</h3>
+                    <p>${item.descricao}</p>
+                    <div class="item-price">🪙 ${item.preco}</div>
                 </div>
-            `;
-        });
-    }
+                <button class="btn-buy" ${acaoBotao} style="${(!isEquipado && !possui && !podeComprar) ? 'opacity:0.5' : ''}">
+                    ${botaoTexto}
+                </button>
+            </div>
+        `;
+    });
+            }
 
     async function comprarItem(id) {
-        const item = LOJA_DB.find(i => i.id === id);
-        if (jogador.moedas >= item.preco) {
-            jogador.moedas -= item.preco;
-            if (item.tipo === 'avatar') jogador.avatar = item.icone;
-            else if (item.tipo === 'frame') jogador.moldura = item.id;
-            
-            await banco.from('ranking').update({ 
-                avatar: jogador.avatar, 
-                moldura: jogador.moldura, 
-                moedas: jogador.moedas 
-            }).eq('user_id', jogador.id);
-            
-            mostrarToast(`Comprou: ${item.nome}!`, "success"); 
-            renderizarLoja(); 
-            atualizarDashboard();
+    const item = LOJA_DB.find(i => i.id === id);
+    if (jogador.moedas >= item.preco) {
+        jogador.moedas -= item.preco;
+        
+        if (!jogador.molduras_compradas) jogador.molduras_compradas = [];
+        if (item.tipo === 'frame' && !jogador.molduras_compradas.includes(item.id)) {
+            jogador.molduras_compradas.push(item.id);
         }
+
+        if (item.tipo === 'avatar') jogador.avatar = item.icone;
+        else if (item.tipo === 'frame') jogador.moldura = item.id;
+        
+        await banco.from('ranking').update({ 
+            avatar: jogador.avatar, 
+            moldura: jogador.moldura, 
+            moedas: jogador.moedas,
+            molduras_compradas: jogador.molduras_compradas
+        }).eq('user_id', jogador.id);
+        
+        mostrarToast(`Comprou: ${item.nome}!`, "success"); 
+        renderizarLoja(); 
+        atualizarDashboard();
+    }
+}
+
+async function equiparItem(id) {
+    const item = LOJA_DB.find(i => i.id === id);
+    if (!item) return;
+
+    if (item.tipo === 'frame') {
+        jogador.moldura = item.id;
+        await banco.from('ranking').update({ moldura: jogador.moldura }).eq('user_id', jogador.id);
+    } else if (item.tipo === 'avatar') {
+        jogador.avatar = item.icone;
+        await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
     }
 
-    function mostrarNotificacoes() {
-        mostrarToast("Bem-vindo ao Math Arena! Bora jogar?", "success");
-    }
+    mostrarToast(`Item equipado!`, "success");
+    renderizarLoja();
+    atualizarDashboard();
+}
 
     window.onload = () => {
         banco.auth.onAuthStateChange((event, session) => {
