@@ -491,6 +491,19 @@
         <button class="btn-secondary" style="border-color: var(--gold); color: var(--gold);" onclick="mudarAba('tela-conquistas')">🏅 VER CONQUISTAS</button>
         <button class="btn-danger" style="margin-top: 20px;" onclick="sair()">SAIR DA CONTA</button>
     </div>
+    <!-- TELA: TEMPORADA -->
+<div id="tela-temporada" class="screen">
+    <h2 class="text-gradient text-center mb-20">TEMPORADA</h2>
+    <div class="glass text-center">
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Sua Divisão Atual</p>
+        <div style="font-size: 60px;" id="season-icon">🥉</div>
+        <h3 style="color: var(--gold); font-size: 24px; margin-bottom: 20px;" id="season-name">BRONZE</h3>
+        
+        <div class="progress-bar" style="margin-bottom: 10px;"><div class="progress-fill" id="season-progress-bar" style="width: 40%;"></div></div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;" id="season-progress-text">Faltam 600 XP para o PRATA</p>
+    </div>
+    <button class="btn-secondary" onclick="mudarAba('tela-home')">VOLTAR</button>
+</div>
 </div>
 
 <!-- MENU INFERIOR -->
