@@ -511,15 +511,15 @@
     <div class="nav-item active" onclick="mudarAba('tela-home', this)"><span class="nav-icon">🏠</span><span>Início</span></div>
     <div class="nav-item" onclick="mudarAba('tela-academia', this)"><span class="nav-icon">📖</span><span>Academia</span></div>
     <div class="nav-item" onclick="mudarAba('tela-ranking', this)"><span class="nav-icon">🏆</span><span>Ranking</span></div>
-    <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
-                                                                      </div>
-                                                                      
+    <div class="nav-item" onclick="mudarAba('tela-perfil', this)"><span class="nav-icon">👤</span><span>Perfil</span></div
+    </div>
+
 <script>
     const supabaseUrl = 'https://yrylpxrqflhuwmgvfyat.supabase.co';
     const supabaseKey = 'sb_publishable_ytcMgi4QgIkfQPlT_7a5fQ_PyuODEwD';
     const banco = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let jogador = { id: null, email: '', nome: 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, multiplicador_expira: null, nivel: 1, totalAcertos: 0, totalErros: 0, melhorSequencia: 0 };
+    let jogador = { id: null, email: '', nome: 'Jogador', xp: 0, pontos: 0, streak: 0, moedas: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', conquistas: [], stats: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, multiplicador_expira: null, nivel: 1, totalAcertos: 0, totalErros: 0, melhorSequencia: 0, aulas_concluidas: [] };
     let estado = { modo: 'classico', pontos: 0, acertos: 0, erros: 0, sequencia: 0, melhorSequencia: 0, questaoAtual: 0, respondidas: false };
     let isDuelo = false, dueloAtual = null, filaPerguntas = [], perguntaAtual = null, timerInterval = null, tempoRestante = 0, usarMultiplicador = false, somAtivado = true, animacoesAtivadas = true;
 
@@ -528,6 +528,8 @@
         while (xpTotal >= xpAcumulado + xpNecessario) { xpAcumulado += xpNecessario; nivel++; xpNecessario = nivel * 100; }
         return { nivel: nivel, xpAtual: xpTotal - xpAcumulado, xpProximo: xpNecessario };
     }
+
+    
     function getNomeNivel(nivel) {
         if (nivel >= 100) return "Divindade Matemática"; if (nivel >= 75) return "Lenda"; if (nivel >= 50) return "Gênio"; if (nivel >= 40) return "Mestre";
         if (nivel >= 30) return "Especialista"; if (nivel >= 20) return "Estrategista"; if (nivel >= 10) return "Calculista"; if (nivel >= 5) return "Aprendiz";
@@ -772,11 +774,46 @@
         }
 
         function renderizarAcademia() {
-            const container = document.getElementById('lista-academia'); container.innerHTML = '';
-            ACADEMIA_DB.forEach((aula, index) => {
-                container.innerHTML += `<div class="trilha-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);"><div onclick="toggleAula(${index})" style="cursor:pointer; display:flex; justify-content:space-between;"><span style="font-weight: 800; font-size: 15px; color:var(--primary);">${aula.titulo}</span><span style="color: var(--primary); font-size: 18px;">▼</span></div><div class="aula-conteudo" id="aula-${index}" style="display:none; margin-top: 10px; font-size: 14px; color: #ddd;">${aula.conteudo}</div></div>`;
-            });
-        }
+    const container = document.getElementById('lista-academia'); 
+    container.innerHTML = '';
+    
+    ACADEMIA_DB.forEach((aula, index) => {
+        const isConcluida = jogador.aulas_concluidas.includes(index);
+        
+        container.innerHTML += `
+        <div class="trilha-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid ${isConcluida ? 'var(--success)' : 'rgba(255,255,255,0.05)'};">
+            <div onclick="toggleAula(${index})" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight: 800; font-size: 15px; color:${isConcluida ? 'var(--success)' : 'var(--primary)'};">${aula.titulo}</span>
+                <span style="color: var(--primary); font-size: 18px;">▼</span>
+            </div>
+            <div class="aula-conteudo" id="aula-${index}" style="display:none; margin-top: 10px; font-size: 14px; color: #ddd;">
+                <p style="margin-bottom: 15px;">${aula.conteudo}</p>
+                ${isConcluida ? 
+                    `<p style="color: var(--success); font-weight: 800; text-align: center;">✅ Aula Concluída</p>` : 
+                    `<button class="btn-primary" style="padding: 10px; font-size: 14px;" onclick="concluirAula(${index})">Marcar como Lida (+20 XP)</button>`
+                }
+            </div>
+        </div>`;
+    });
+}
+
+async function concluirAula(index) {
+    if (jogador.aulas_concluidas.includes(index)) return; 
+    
+    jogador.aulas_concluidas.push(index);
+    const xpGanha = 20;
+    jogador.xp += xpGanha;
+    jogador.nivel = getNivel(jogador.xp).nivel;
+    
+    await banco.from('ranking').update({ 
+        aulas_concluidas: jogador.aulas_concluidas,
+        xp: jogador.xp
+    }).eq('user_id', jogador.id);
+    
+    mostrarToast(`Aula concluída! +${xpGanha} XP`, "success");
+    renderizarAcademia(); 
+    atualizarDashboard(); 
+}
         function toggleAula(index) { const c = document.getElementById(`aula-${index}`); if(c.style.display === 'none') c.style.display = 'block'; else c.style.display = 'none'; }
 
         function renderizarMissoes() {
