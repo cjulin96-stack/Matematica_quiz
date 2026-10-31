@@ -622,6 +622,7 @@
             let missoesDB = data.missoes || { acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0 };
             jogador.missoes = missoesDB; jogador.multiplicador_expira = data.multiplicador_expira; jogador.nivel = getNivel(jogador.xp).nivel;
             jogador.totalAcertos = data.acertos || 0; jogador.totalErros = data.erros || 0; jogador.melhorSequencia = data.melhor_sequencia || 0;
+            jogador.aulas_concluidas = data.aulas_concluidas || [];
         } else {
             await banco.from('ranking').insert([{ user_id: jogador.id, nome: jogador.nome, pontuacao: 0, xp: 0, avatar: '🧑‍🚀', moldura: 'frame-padrao', moedas: 0, streak: 0, conquistas: [], stats_materias: {}, missoes: {acertos: 0, jogos: 0, desafios: 0, pontos_dia: 0, last_chest: 0}, acertos: 0, erros: 0, melhor_sequencia: 0 }]);
         }
