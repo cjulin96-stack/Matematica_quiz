@@ -114,6 +114,25 @@
         .confetti-piece { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 9999; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
         .hidden { display: none !important; }
+    /* Barras de progresso */
+.ach-progress-bar { height: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; overflow: hidden; width: 100%; margin-top: 8px; }
+.ach-progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; box-shadow: 0 0 5px var(--primary); }
+.achievement-card.unlocked .ach-progress-fill { background: var(--gold); box-shadow: 0 0 5px var(--gold); }
+
+/* Efeito Neon Dourado para Conquistas Desbloqueadas */
+.achievement-card.unlocked { 
+    background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); 
+    border-color: rgba(255,215,0,0.5); 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); /* O brilho neon no card */
+}
+.achievement-card.unlocked::before { 
+    background: var(--gold); 
+    box-shadow: 0 0 10px var(--gold); 
+}
+.achievement-card.unlocked .ach-icon { 
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); /* O brilho no ícone */
+    transform: scale(1.1); 
+}
     </style>
 </head>
 <body>
