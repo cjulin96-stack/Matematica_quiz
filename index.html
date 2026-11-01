@@ -1,4 +1,4 @@
-eu<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -322,6 +322,7 @@ body {
         id: null, nome: 'Jogador', xp: 0, nivel: 1, moedas: 0, 
         avatar: '🐱', moldura_equipada: 'padrao', 
         molduras_desbloqueadas: ['padrao'],
+        avatares_desbloqueados: ['🐱'],
         streak: 0, ultimo_login: null
     };
 
@@ -481,6 +482,7 @@ function mudarAbaLoja(tipo, botao) {
             jogador.avatar = data.avatar || '🐱';
             jogador.moldura_equipada = data.moldura_equipada || 'padrao';
             jogador.molduras_desbloqueadas = data.molduras_compradas || ['padrao'];
+            jogador.avatares_desbloqueados = data.avatares_desbloqueados || ['🐱'];
             jogador.streak = data.streak || 0;
             jogador.ultimo_login = data.ultimo_login || null;
         } else {
@@ -791,10 +793,11 @@ if (abaLojaAtual === 'avatar') {
         // Verifica se o jogador já possui o item
 let possui = false;
 if (abaLojaAtual === 'avatar') {
-    possui = (jogador.avatar === item.icone);
+    possui = jogador.avatares_desbloqueados.includes(item.icone);
 } else {
     possui = jogador.molduras_desbloqueadas.includes(item.id);
-}
+                                               }
+} 
         
         let botaoHTML = '';
         if (possui) {
@@ -837,18 +840,22 @@ async function comprarMoldura(id) {
         
         // 2. Salva do jeito certo
         if (abaLojaAtual === 'avatar') {
-            jogador.avatar = item.icone; // Equipa o avatar novo
-        } else {
-            jogador.molduras_desbloqueadas.push(item.id);
-            jogador.moldura_equipada = item.id; // Equipa a moldura nova
-        }
-
+    jogador.avatar = item.icone; 
+    // Adiciona na mochila se ainda não tiver
+    if (!jogador.avatares_desbloqueados.includes(item.icone)) {
+        jogador.avatares_desbloqueados.push(item.icone);
+    }
+} else {
+    jogador.molduras_desbloqueadas.push(item.id);
+    jogador.moldura_equipada = item.id; 
+    }
         // 3. Manda pro banco de dados
         const { error } = await banco.from('ranking').update({ 
             moedas: jogador.moedas,
             avatar: jogador.avatar,
             molduras_compradas: jogador.molduras_desbloqueadas,
             moldura_equipada: jogador.moldura_equipada
+            avatares_desbloqueados: jogador.avatares_desbloqueados,
         }).eq('user_id', jogador.id);
 
         if (error) {
