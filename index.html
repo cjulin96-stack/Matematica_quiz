@@ -101,7 +101,7 @@ body {
         .btn-alternativa.correto { background: rgba(0, 255, 136, 0.2); border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
         .btn-alternativa.errado { background: rgba(255, 8, 68, 0.2); border-color: #ff0844; box-shadow: 0 0 15px #ff0844; }
 
-        .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+        .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; z-index: 10 !important; white-space: nowrap !important; }
     </style>
 </head>
@@ -527,7 +527,7 @@ function renderizarSeletorMolduras() {
             contentHTML = `<div style="width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--primary); margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #1a1a2e;">${jogador.avatar}</div>`;
         } else {
             contentHTML = `
-                <div style="width: 50px; height: 50px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center;">
+                <div style="width: 65px; height: 65px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 20px; z-index: 1;">${jogador.avatar}</div>
                     <img src="${moldura.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
                 </div>`;
@@ -720,7 +720,7 @@ function renderizarLoja() {
 
         container.innerHTML += `
             <div class="store-item" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
-                <div style="position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
                     <img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
                 </div>
