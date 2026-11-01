@@ -127,6 +127,32 @@
             border-color: #ff0844; 
             box-shadow: 0 0 15px #ff0844; 
         }
+ /* ESTILOS DA TELA INICIAL */
+.grid-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.btn-jogar, .btn-loja {
+    width: 100%;
+    padding: 20px 10px;
+    border-radius: 15px;
+    border: none;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.btn-jogar { background: linear-gradient(135deg, #00f0ff, #7000ff); color: white; }
+.btn-loja { background: linear-gradient(135deg, #ff9e0b, #dd7700); color: #000; }
+.btn-jogar:active, .btn-loja:active { transform: scale(0.95); }
     </style> <!-- Essa tag deve ficar aqui no finalzinho -->
 </head>
 <body>
@@ -175,13 +201,13 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20p
-            <button class="btn-primary" style="background: linear-gradient(135deg, #00f0ff, #7000ff);" onclick="iniciarJogo()">
-                <span style="font-size: 30px;">🎮</span><br>JOGAR
-            </button>
-            <button class="btn-secondary" style="background: linear-gradient(135deg, #ff9e0b, #dd7700); border: none; color: black;" onclick="mudarAba('tela-loja')">
-                <span style="font-size: 30px;">🛒</span><br>LOJA
-            </button>
+        <div class="grid-buttons">
+    <button class="btn-jogar" onclick="iniciarJogo()">
+        <span style="font-size: 30px;">🎮</span>JOGAR
+    </button>
+    <button class="btn-loja" onclick="mudarAba('tela-loja')">
+        <span style="font-size: 30px;">🛒</span>LOJA
+    </button>
         </div>
     </div>
     <!-- TELA DE JOGO (MATEMÁTICA) -->
@@ -501,15 +527,16 @@ function gerarPergunta() {
     const container = document.getElementById('jogo-alternativas');
     container.innerHTML = '';
     
-    opcoes.forEach(opcao => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-alternativa';
-        btn.innerText = opcao;
-        btn.onclick = () => verificarResposta(btn, opcao);
-        container.appendChild(btn);
-    });
+    const letras = ['A', 'B', 'C', 'D'];
+opcoes.forEach((opcao, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-alternativa';
+    btn.innerHTML = `<span style="font-size: 14px; color: var(--text-muted); margin-right: 10px;">${letras[index]}</span> ${opcao}`;
+    btn.onclick = () => verificarResposta(btn, opcao);
+    container.appendChild(btn);
+});
 }
-
+    
 function verificarResposta(botaoClicado, valorEscolhido) {
     const botoes = document.querySelectorAll('.btn-alternativa');
     botoes.forEach(b => b.onclick = null);
