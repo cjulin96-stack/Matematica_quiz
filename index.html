@@ -788,10 +788,16 @@ if (abaLojaAtual === 'avatar') {
     container.innerHTML = '';
 
     itensFiltrados.forEach(item => {
-        const temMoldura = jogador.molduras_desbloqueadas.includes(item.id);
+        // Verifica se o jogador já possui o item
+let possui = false;
+if (abaLojaAtual === 'avatar') {
+    possui = (jogador.avatar === item.icone);
+} else {
+    possui = jogador.molduras_desbloqueadas.includes(item.id);
+}
         
         let botaoHTML = '';
-        if (temMoldura) {
+        if (possui) {
             botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; background: rgba(0,255,136,0.2); color: #00ff88; border-color: #00ff88;">ADQUIRIDO</button>`;
         } else if (jogador.moedas >= item.preco) {
             botaoHTML = `<button class="btn-primary" style="width: auto; padding: 8px 15px; margin: 0;" onclick="comprarMoldura('${item.id}')">COMPRAR</button>`;
