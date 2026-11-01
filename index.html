@@ -212,8 +212,8 @@
     </div>
     <!-- TELA DE JOGO (MATEMÁTICA) -->
 <div id="tela-jogo" class="screen">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <button class="btn-secondary" style="width: auto; padding: 10px 15px; margin: 0;" onclick="mudarAba('tela-home')">Sair</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"
+        <button class="btn-secondary" style="width: auto; padding: 10px 15px; margin: 0;" onclick="sairDoJogo()">Sair</button>
         <div style="font-weight: bold; font-size: 18px; color: var(--gold);">🏆 <span id="jogo-pontos">0</span> pts</div>
     </div>
 
@@ -565,7 +565,20 @@ function verificarResposta(botaoClicado, valorEscolhido) {
         gerarPergunta();
     }, 1500);
 }
-
+async function sairDoJogo() {
+    if (pontosJogo !== 0) {
+        jogador.xp = (jogador.xp || 0) + pontosJogo;
+        
+        await banco.from('ranking').update({ 
+            xp: jogador.xp 
+        }).eq('user_id', jogador.id);
+        
+        mostrarToast(`Você ganhou ${pontosJogo} XP!`, "success");
+    }
+    
+    mudarAba('tela-home');
+    atualizarDashboard();
+    }
 window.onload = () => {
     banco.auth.onAuthStateChange((event, session) => {
         if (session) {
