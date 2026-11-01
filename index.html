@@ -823,16 +823,32 @@ if (abaLojaAtual === 'avatar') {
 }
 
 async function comprarMoldura(id) {
-    const item = LOJA_DB.find(i => i.id === id);
+    // 1. Procura o item na lista certa (Avatar ou Moldura)
+    let item;
+    if (abaLojaAtual === 'avatar') {
+        item = AVATARES_DB.find(i => i.id === id);
+    } else {
+        item = LOJA_DB.find(i => i.id === id);
+    }
     if (!item) return;
 
     if (jogador.moedas >= item.preco) {
         jogador.moedas -= item.preco;
-        jogador.molduras_desbloqueadas.push(item.id);
         
+        // 2. Salva do jeito certo
+        if (abaLojaAtual === 'avatar') {
+            jogador.avatar = item.icone; // Equipa o avatar novo
+        } else {
+            jogador.molduras_desbloqueadas.push(item.id);
+            jogador.moldura_equipada = item.id; // Equipa a moldura nova
+        }
+
+        // 3. Manda pro banco de dados
         const { error } = await banco.from('ranking').update({ 
             moedas: jogador.moedas,
-            molduras_compradas: jogador.molduras_desbloqueadas
+            avatar: jogador.avatar,
+            molduras_compradas: jogador.molduras_desbloqueadas,
+            moldura_equipada: jogador.moldura_equipada
         }).eq('user_id', jogador.id);
 
         if (error) {
@@ -840,8 +856,8 @@ async function comprarMoldura(id) {
             return;
         }
 
-        mostrarToast(`Você comprou a moldura ${item.nome}! 🎉`, "success");
-        renderizarLoja();
+        mostrarToast(`Você comprou: ${item.nome}! 🎉`, "success"); 
+        renderizarLoja(); 
         atualizarDashboard();
     }
 }
