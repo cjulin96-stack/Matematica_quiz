@@ -156,7 +156,22 @@
             </button>
         </div>
     </div>
+    <!-- TELA DE JOGO (MATEMÁTICA) -->
+<div id="tela-jogo" class="screen">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <button class="btn-secondary" style="width: auto; padding: 10px 15px; margin: 0;" onclick="mudarAba('tela-home')">Sair</button>
+        <div style="font-weight: bold; font-size: 18px; color: var(--gold);">🏆 <span id="jogo-pontos">0</span> pts</div>
+    </div>
 
+    <div class="glass mb-20" style="text-align: center; padding: 30px 20px;">
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Questão <span id="jogo-numero-questao">1</span></div>
+        <h2 id="jogo-pergunta" style="font-size: 32px; font-family: 'Orbitron';">2 + 2 = ?</h2>
+    </div>
+
+    <div id="jogo-alternativas" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <!-- As alternativas vão aparecer aqui depois -->
+    </div>
+</div>
     <!-- TELA LOJA -->
     <div id="tela-loja" class="screen">
         <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA VIP</h2>
