@@ -144,6 +144,9 @@ body {
 .efeito-epico { animation: anim-epica 2s ease-in-out infinite; }
 .efeito-lendario { animation: anim-lendaria 1.5s ease-in-out infinite; }
 .efeito-mitico { animation: anim-mitica 3s linear infinite; } 
+    #tela-loja { padding-bottom: 150px !important; }
+#tela-perfil { padding-bottom: 150px !important; }
+#tela-ranking { padding-bottom: 150px !important; }
     </style>
 </head>
 <body>
@@ -293,16 +296,32 @@ body {
             <input type="text" id="perfil-nome-input" placeholder="Seu nome" oninput="salvarNomeDelay()" style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 5px;">
         </div>
         
-        <div class="glass mb-20">
-            <h3 class="mb-15" style="font-size: 14px; color: var(--text-muted);">MOLDURAS DISPONÍVEIS</h3>
-            <div id="seletor-molduras" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
-        </div>
+        <div class="glass mb-20" style="text-align: center;">
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Personalize seu personagem!</p>
+    <button class="btn-primary" style="padding: 15px; font-size: 16px;" onclick="mudarAba('tela-guarda-roupa')">👕 Abrir Guarda-Roupa</button>
+</div>
 
         <button class="btn-secondary" style="background: rgba(255, 8, 68, 0.1); border-color: rgba(255,8,68,0.3); color: #ff0844;" onclick="sair()">SAIR DA CONTA</button>
         <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
     </div>
 </div>
 
+    <!-- TELA GUARDA-ROUPA -->
+<div id="tela-guarda-roupa" class="screen">
+    <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">MEU COFRE</h2>
+    
+    <div class="glass mb-20">
+        <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Avatares</h3>
+        <div id="seletor-avatares" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+    </div>
+
+    <div class="glass mb-20">
+        <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Molduras</h3>
+        <div id="seletor-molduras" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+    </div>
+
+    <button class="btn-secondary mt-20" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+</div>
 <!-- MENU INFERIOR -->
 <nav id="bottom-nav" class="bottom-nav">
     <div class="nav-item" onclick="mudarAba('tela-home', this)"><div class="icon">🏠</div>Início</div>
@@ -585,7 +604,41 @@ async function atualizarDashboard() {
     renderizarMoldura('perfil-frame', jogador.moldura_equipada);
     renderizarSeletorMolduras();
 }
+    
+function renderizarSeletorAvatares() {
+    const container = document.getElementById('seletor-avatares');
+    if (!container) return;
+    container.innerHTML = '';
 
+    AVATARES_DB.forEach(avatar => {
+        // Só mostra os avatares que o jogador comprou
+        const temAvatar = jogador.avatares_desbloqueados.includes(avatar.icone);
+        
+        if (temAvatar) {
+            const btn = document.createElement('div');
+            btn.style.cssText = 'cursor: pointer; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 2px solid rgba(255,255,255,0.1);';
+            
+            // Se o avatar estiver equipado, coloca a borda neon
+            if (jogador.avatar === avatar.icone) {
+                btn.style.borderColor = 'var(--primary)';
+                btn.style.boxShadow = '0 0 10px var(--primary)';
+                btn.style.background = 'rgba(0, 240, 255, 0.1)';
+            }
+
+            btn.innerHTML = `<div style="font-size: 35px;">${avatar.icone}</div>`;
+            
+            btn.onclick = async () => {
+                jogador.avatar = avatar.icone;
+                await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+                mostrarToast(`Avatar ${avatar.nome} equipado!`, "success");
+                atualizarDashboard();
+                renderizarSeletorAvatares(); 
+            };
+            
+            container.appendChild(btn);
+        }
+    });
+}
 // Desenha os quadradinhos de moldura na tela de Perfil
 function renderizarSeletorMolduras() {
     const container = document.getElementById('seletor-molduras');
@@ -661,6 +714,10 @@ function mudarAba(idTela, element) {
     if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') {
         atualizarDashboard();
    if (idTela === 'tela-loja') renderizarLoja();
+        if (idTela === 'tela-guarda-roupa') {
+    renderizarSeletorAvatares();
+    renderizarSeletorMolduras();
+       }
     }
   }
       // ==========================================
