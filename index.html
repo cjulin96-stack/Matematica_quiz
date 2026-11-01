@@ -20,27 +20,31 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            background-color: var(--bg-dark); 
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.15), transparent 25%);
-            color: white; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            overflow-x: hidden;
-        }
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Impede o efeito de borracha no celular */
+}
 
-        .main-content { 
-            flex: 1; 
-            overflow-y: auto !important; 
-            padding: 20px 20px 120px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            -webkit-overflow-scrolling: touch; 
-        }
+body {
+    background-color: var(--bg-dark);
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.15), transparent 25%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto !important;
+    padding: 20px 20px 160px 20px; /* Aumentei o padding para 160px */
+    display: flex;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch; 
+}
         
         .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .screen.active { display: block; }
@@ -99,7 +103,6 @@
 
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; z-index: 10 !important; white-space: nowrap !important; }
-  #tela-loja { padding-bottom: 120px !important; }
     </style>
 </head>
 <body>
