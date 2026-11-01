@@ -849,7 +849,7 @@
             container.innerHTML += `
                 <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
                     <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
-                        <div style="position: absolute; font-size: 24px; z-index: 3;">${jogador.avatar}</div>
+                    
                         ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
                     </div>
                     <div style="flex: 1;">
