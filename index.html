@@ -324,6 +324,63 @@
 
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; z-index: 10 !important; white-space: nowrap !important; }
+   /* ========================================== */
+/* ESTILOS DO RANKING                         */
+/* ========================================== */
+.podium-container { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 25px; }
+.podium-top { display: flex; align-items: flex-end; justify-content: center; gap: 10px; width: 100%; margin-top: 15px; }
+
+.podium-card { 
+    display: flex; flex-direction: column; align-items: center; 
+    background: var(--glass-bg); border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 15px; padding: 15px 10px; position: relative; 
+    width: 100px; transition: 0.3s;
+}
+
+.podium-avatar { position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
+
+/* Top 1 - Ouro */
+.podium-1 { 
+    transform: scale(1.15) translateY(-10px); z-index: 3; 
+    border-color: #ffd700; 
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); 
+    background: linear-gradient(180deg, rgba(255,215,0,0.15) 0%, rgba(15,15,25,0.9) 100%); 
+}
+.podium-1 .podium-avatar { width: 75px; height: 75px; }
+
+/* Top 2 - Prata */
+.podium-2 { 
+    transform: scale(1); z-index: 2; 
+    border-color: #c0c0c0; 
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.4); 
+}
+
+/* Top 3 - Bronze */
+.podium-3 { 
+    transform: scale(1); z-index: 1; 
+    border-color: #cd7f32; 
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.4); 
+}
+
+.podium-rank-badge { 
+    position: absolute; top: -15px; 
+    font-size: 24px; z-index: 10; 
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+}
+.podium-name { font-weight: 800; font-size: 12px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 4px; }
+.podium-xp { font-size: 12px; font-weight: bold; color: var(--gold); }
+
+/* Fileiras do Ranking (Top 4 em diante) */
+.ranking-row { 
+    display: flex; align-items: center; gap: 15px; 
+    padding: 12px 15px; margin-bottom: 10px; 
+    background: rgba(255,255,255,0.03); 
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); 
+}
+.ranking-row .rank-pos { font-family: 'Orbitron'; font-size: 16px; font-weight: 900; color: var(--text-muted); width: 30px; text-align: center; }
+.ranking-row .rank-avatar { position: relative; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; }
+.ranking-row .rank-name { flex: 1; font-weight: 800; font-size: 14px; }
+.ranking-row .rank-xp { font-weight: bold; color: var(--gold); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -474,11 +531,41 @@
     </div>
 
     <!-- TELA RANKING -->
-    <div id="tela-ranking" class="screen">
-        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">RANKING GLOBAL</h2>
-        <div id="lista-ranking" style="display: flex; flex-direction: column; gap: 10px;"></div>
-        <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
+<div id="tela-ranking" class="screen">
+    <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">RANKING GLOBAL</h2>
+    
+    <!-- O Pódio dos 3 Primeiros -->
+    <div class="podium-container">
+        <div class="podium-top">
+            <!-- 2º Lugar (Prata) -->
+            <div class="podium-card podium-2" id="rank-2">
+                <div class="podium-rank-badge">🥈</div>
+                <div class="podium-avatar"><div style="font-size: 30px;">🐱</div></div>
+                <div class="podium-name">Carregando...</div>
+                <div class="podium-xp">0 XP</div>
+            </div>
+            <!-- 1º Lugar (Ouro) -->
+            <div class="podium-card podium-1" id="rank-1">
+                <div class="podium-rank-badge">🥇</div>
+                <div class="podium-avatar"><div style="font-size: 40px;">🐱</div></div>
+                <div class="podium-name">Carregando...</div>
+                <div class="podium-xp">0 XP</div>
+            </div>
+            <!-- 3º Lugar (Bronze) -->
+            <div class="podium-card podium-3" id="rank-3">
+                <div class="podium-rank-badge">🥉</div>
+                <div class="podium-avatar"><div style="font-size: 30px;">🐱</div></div>
+                <div class="podium-name">Carregando...</div>
+                <div class="podium-xp">0 XP</div>
+            </div>
+        </div>
     </div>
+
+    <!-- Lista do 4º em diante -->
+    <div id="lista-ranking" style="display: flex; flex-direction: column;"></div>
+    
+    <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
+</div>
 
     <!-- TELA MISSÕES -->
     <div id="tela-missoes" class="screen">
@@ -916,6 +1003,52 @@
             mostrarToast("Nome salvo!", "success");
         }, 1500);
     }
+    async function renderizarRanking() {
+    const { data, error } = await banco.from('ranking').select('*').order('xp', { ascending: false }).limit(20);
+    if (error) { console.error(error); return; }
+
+    const rank1 = document.getElementById('rank-1');
+    const rank2 = document.getElementById('rank-2');
+    const rank3 = document.getElementById('rank-3');
+    const lista = document.getElementById('lista-ranking');
+    
+    lista.innerHTML = '';
+    
+    rank1.style.display = 'none';
+    rank2.style.display = 'none';
+    rank3.style.display = 'none';
+
+    data.forEach((user, index) => {
+        const pos = index + 1;
+        const avatarEmoji = user.avatar || '🐱';
+        
+        if (pos === 1) {
+            rank1.style.display = 'flex';
+            rank1.querySelector('.podium-name').innerText = user.nome;
+            rank1.querySelector('.podium-xp').innerText = `${user.xp} XP`;
+            rank1.querySelector('.podium-avatar').innerHTML = `<div style="font-size: 40px;">${avatarEmoji}</div>`;
+        } else if (pos === 2) {
+            rank2.style.display = 'flex';
+            rank2.querySelector('.podium-name').innerText = user.nome;
+            rank2.querySelector('.podium-xp').innerText = `${user.xp} XP`;
+            rank2.querySelector('.podium-avatar').innerHTML = `<div style="font-size: 30px;">${avatarEmoji}</div>`;
+        } else if (pos === 3) {
+            rank3.style.display = 'flex';
+            rank3.querySelector('.podium-name').innerText = user.nome;
+            rank3.querySelector('.podium-xp').innerText = `${user.xp} XP`;
+            rank3.querySelector('.podium-avatar').innerHTML = `<div style="font-size: 30px;">${avatarEmoji}</div>`;
+        } else {
+            lista.innerHTML += `
+                <div class="ranking-row">
+                    <div class="rank-pos">#${pos}</div>
+                    <div class="rank-avatar" style="font-size: 24px;">${avatarEmoji}</div>
+                    <div class="rank-name">${user.nome}</div>
+                    <div class="rank-xp">${user.xp} XP</div>
+                </div>
+            `;
+        }
+    });
+    }
 
     function mudarAba(idTela, element) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -930,11 +1063,12 @@
             atualizarDashboard();
         }
         if (idTela === 'tela-loja') renderizarLoja();
-        if (idTela === 'tela-guarda-roupa') {
-            renderizarSeletorAvatares();
-            renderizarSeletorMolduras();
-        }
-    }
+if (idTela === 'tela-ranking') renderizarRanking(); // <-- Tem que ficar aqui fora!
+
+if (idTela === 'tela-guarda-roupa') {
+    renderizarSeletorAvatares();
+    renderizarSeletorMolduras();
+}
         // ==========================================
     // MÓDULO 5: O MOTOR DO JOGO E INICIALIZAÇÃO
     // ==========================================
