@@ -99,10 +99,38 @@
         .toast.success { border-left-color: #00ff88; } .toast.error { border-left-color: #ff003c; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
-    </style>
+
+
+        /* ESTILOS DA TELA DE JOGO */
+        .btn-alternativa {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+        .btn-alternativa:active { transform: scale(0.95); }
+        .btn-alternativa.correto { 
+            background: rgba(0, 255, 136, 0.2); 
+            border-color: #00ff88; 
+            box-shadow: 0 0 15px #00ff88; 
+        }
+        .btn-alternativa.errado { 
+            background: rgba(255, 8, 68, 0.2); 
+            border-color: #ff0844; 
+            box-shadow: 0 0 15px #ff0844; 
+        }
+    </style> <!-- Essa tag deve ficar aqui no finalzinho -->
 </head>
 <body>
-
+    
 <div id="toast-container"></div>
 
 <div class="main-content">
@@ -147,8 +175,8 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <button class="btn-primary" style="background: linear-gradient(135deg, #00f0ff, #7000ff);" onclick="mostrarToast('Em breve!', 'error')">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20p
+            <button class="btn-primary" style="background: linear-gradient(135deg, #00f0ff, #7000ff);" onclick="iniciarJogo()">
                 <span style="font-size: 30px;">🎮</span><br>JOGAR
             </button>
             <button class="btn-secondary" style="background: linear-gradient(135deg, #ff9e0b, #dd7700); border: none; color: black;" onclick="mudarAba('tela-loja')">
@@ -409,6 +437,106 @@ function mudarAba(idTela, element) {
     }
 
     if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') atualizarDashboard();
+}
+function mudarAba(idTela, element) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(idTela).classList.add('active');
+    
+    if (element) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') atualizarDashboard();
+}
+
+// ==========================================
+// LÓGICA DO JOGO DE MATEMÁTICA
+// ==========================================
+let pontosJogo = 0;
+let questaoAtual = 1;
+let respostaCorretaAtual = 0;
+
+function iniciarJogo() {
+    pontosJogo = 0;
+    questaoAtual = 1;
+    document.getElementById('jogo-pontos').innerText = pontosJogo;
+    document.getElementById('jogo-numero-questao').innerText = questaoAtual;
+    
+    gerarPergunta();
+    mudarAba('tela-jogo');
+}
+
+function gerarPergunta() {
+    const num1 = Math.floor(Math.random() * 20) + 1;
+    const num2 = Math.floor(Math.random() * 20) + 1;
+    const isSoma = Math.random() > 0.5;
+    
+    let perguntaText = "";
+    let resultadoCerto = 0;
+
+    if (isSoma) {
+        perguntaText = `${num1} + ${num2} = ?`;
+        resultadoCerto = num1 + num2;
+    } else {
+        const maior = Math.max(num1, num2);
+        const menor = Math.min(num1, num2);
+        perguntaText = `${maior} - ${menor} = ?`;
+        resultadoCerto = maior - menor;
+    }
+
+    document.getElementById('jogo-pergunta').innerText = perguntaText;
+    respostaCorretaAtual = resultadoCerto;
+
+    let opcoes = [resultadoCerto];
+    while(opcoes.length < 4) {
+        let errada = resultadoCerto + Math.floor(Math.random() * 10) - 5;
+        if (errada >= 0 && !opcoes.includes(errada)) {
+            opcoes.push(errada);
+        }
+    }
+    
+    opcoes.sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById('jogo-alternativas');
+    container.innerHTML = '';
+    
+    opcoes.forEach(opcao => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-alternativa';
+        btn.innerText = opcao;
+        btn.onclick = () => verificarResposta(btn, opcao);
+        container.appendChild(btn);
+    });
+}
+
+function verificarResposta(botaoClicado, valorEscolhido) {
+    const botoes = document.querySelectorAll('.btn-alternativa');
+    botoes.forEach(b => b.onclick = null);
+
+    if (valorEscolhido === respostaCorretaAtual) {
+        botaoClicado.classList.add('correto');
+        pontosJogo += 10;
+        mostrarToast("Acertou! +10 pts", "success");
+    } else {
+        botaoClicado.classList.add('errado');
+        pontosJogo -= 4;
+        mostrarToast("Errou! -4 pts", "error");
+        
+        botoes.forEach(b => {
+            if (parseInt(b.innerText) === respostaCorretaAtual) {
+                b.classList.add('correto');
+            }
+        });
+    }
+
+    document.getElementById('jogo-pontos').innerText = pontosJogo;
+    questaoAtual++;
+    document.getElementById('jogo-numero-questao').innerText = questaoAtual;
+
+    setTimeout(() => {
+        gerarPergunta();
+    }, 1500);
 }
 
 window.onload = () => {
