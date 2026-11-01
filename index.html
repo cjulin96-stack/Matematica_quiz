@@ -873,6 +873,12 @@
             container.appendChild(btn);
         });
     }
+        function mudarAbaLoja(tipo, botao) {
+    abaLojaAtual = tipo;
+    document.querySelectorAll('.tab-loja').forEach(b => b.classList.remove('ativa'));
+    botao.classList.add('ativa');
+    renderizarLoja();
+}
 
     function renderizarLoja() {
         document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
