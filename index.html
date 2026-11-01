@@ -193,7 +193,7 @@
 
     <!-- TELA LOJA -->
     <div id="tela-loja" class="screen">
-        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA VIP</h2>
+        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA </h2>
         <div class="text-center mb-20" style="font-weight: bold; color: var(--gold);">
             Suas moedas: 🪙 <span id="loja-moedas">0</span>
         </div>
@@ -519,6 +519,7 @@ function mudarAba(idTela, element) {
 
     if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') {
         atualizarDashboard();
+   if (idTela === 'tela-loja') renderizarLoja();
     }
   }
       // ==========================================
@@ -627,7 +628,79 @@ function mudarAba(idTela, element) {
         mudarAba('tela-home');
         atualizarDashboard();
     }
+    
+// ==========================================
+// MÓDULO 6: A LOJA GERAL
+// ==========================================
+const LOJA_DB = [
+    { id: '01', nome: 'Folhas', preco: 500, img: 'moldura_01.png', raridade: 'Comum' },
+    { id: '02', nome: 'Madeira', preco: 500, img: 'moldura_02.png', raridade: 'Comum' },
+    { id: '03', nome: 'Azul Tech', preco: 800, img: 'moldura_03.png', raridade: 'Rara' },
+    { id: '04', nome: 'Roxa Mágica', preco: 800, img: 'moldura_04.png', raridade: 'Rara' },
+    { id: '05', nome: 'Neon Azul', preco: 1200, img: 'moldura_05.png', raridade: 'Épica' },
+    { id: '06', nome: 'Coroa Rosa', preco: 1200, img: 'moldura_06.png', raridade: 'Épica' },
+    { id: '20', nome: 'Dragão de Fogo', preco: 2500, img: 'moldura_20.png', raridade: 'Lendária' }
+];
 
+function renderizarLoja() {
+    document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
+    
+    const container = document.getElementById('lista-loja');
+    if (!container) return;
+    container.innerHTML = '';
+
+    LOJA_DB.forEach(item => {
+        const temMoldura = jogador.molduras_desbloqueadas.includes(item.id);
+        
+        let botaoHTML = '';
+        if (temMoldura) {
+            botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; background: rgba(0,255,136,0.2); color: #00ff88; border-color: #00ff88;">ADQUIRIDO</button>`;
+        } else if (jogador.moedas >= item.preco) {
+            botaoHTML = `<button class="btn-primary" style="width: auto; padding: 8px 15px; margin: 0;" onclick="comprarMoldura('${item.id}')">COMPRAR</button>`;
+        } else {
+            botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; opacity: 0.5;">FALTA 🪙</button>`;
+        }
+
+        container.innerHTML += `
+            <div class="store-item" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
+                <div style="position: relative; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                    <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
+                    <img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="font-size: 14px; font-weight: 800; color: white; margin-bottom: 2px;">${item.nome}</h3>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">Raridade: ${item.raridade}</p>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--gold);">🪙 ${item.preco}</div>
+                </div>
+                ${botaoHTML}
+            </div>
+        `;
+    });
+}
+
+async function comprarMoldura(id) {
+    const item = LOJA_DB.find(i => i.id === id);
+    if (!item) return;
+
+    if (jogador.moedas >= item.preco) {
+        jogador.moedas -= item.preco;
+        jogador.molduras_desbloqueadas.push(item.id);
+        
+        const { error } = await banco.from('ranking').update({ 
+            moedas: jogador.moedas,
+            molduras_compradas: jogador.molduras_desbloqueadas
+        }).eq('user_id', jogador.id);
+
+        if (error) {
+            mostrarToast("Erro ao comprar. Tente novamente.", "error");
+            return;
+        }
+
+        mostrarToast(`Você comprou a moldura ${item.nome}! 🎉`, "success");
+        renderizarLoja();
+        atualizarDashboard();
+    }
+}
     // INICIALIZAÇÃO DO SITE
     window.onload = () => {
         banco.auth.onAuthStateChange((event, session) => {
