@@ -117,6 +117,33 @@ body {
     box-shadow: 0 0 10px var(--primary) !important;
     font-weight: 800;
 }
+   /* ANIMAÇÕES DAS MOLDURAS */
+
+/* Épica: Respiração e Brilho Roxo */
+@keyframes anim-epica {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 15px #a700ff) brightness(1.1); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); }
+}
+
+/* Lendária: Pulsação Dourada e Leve Balanço */
+@keyframes anim-lendaria {
+    0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); }
+    50% { transform: scale(1.1) rotate(2deg); filter: drop-shadow(0 0 25px #ffb800) brightness(1.2); }
+    100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); }
+}
+
+/* Mítica: Mudança de Cor (Arco-íris) e Flutuação */
+@keyframes anim-mitica {
+    0% { transform: scale(1) translateY(0); filter: hue-rotate(0deg) drop-shadow(0 0 15px #ff003c); }
+    50% { transform: scale(1.1) translateY(-5px); filter: hue-rotate(180deg) drop-shadow(0 0 25px #00f0ff); }
+    100% { transform: scale(1) translateY(0); filter: hue-rotate(360deg) drop-shadow(0 0 15px #ff003c); }
+}
+
+/* Classes que vamos aplicar nos itens */
+.efeito-epico { animation: anim-epica 2s ease-in-out infinite; }
+.efeito-lendario { animation: anim-lendaria 1.5s ease-in-out infinite; }
+.efeito-mitico { animation: anim-mitica 3s linear infinite; } 
     </style>
 </head>
 <body>
@@ -519,7 +546,7 @@ function renderizarMoldura(elementId, molduraId) {
         el.className = 'frame frame-padrao';
     } else {
         el.className = `frame ${moldura.efeito || ''}`;
-        el.innerHTML = `<img src="${moldura.img}" alt="${moldura.nome}">`;
+        el.innerHTML = `<img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" alt="${moldura.nome}">`;
     }
 }
 
@@ -576,7 +603,7 @@ function renderizarSeletorMolduras() {
             contentHTML = `
                 <div style="width: 65px; height: 65px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 20px; z-index: 1;">${jogador.avatar}</div>
-                    <img src="${moldura.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
+                    <img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
                 </div>`;
         }
 
@@ -773,7 +800,7 @@ if (abaLojaAtual === 'avatar') {
         }
 
         container.innerHTML += `
-            <div class="store-item" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
+             <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
                 <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
                     ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
