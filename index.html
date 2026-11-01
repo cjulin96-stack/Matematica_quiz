@@ -781,24 +781,24 @@ function renderizarLoja() {
     const container = document.getElementById('lista-loja');
     if (!container) return;
     // Filtra os itens pela aba selecionada
-let itensFiltrados = LOJA_DB;
-if (abaLojaAtual === 'avatar') {
-    itensFiltrados = AVATARES_DB; // Vazio por enquanto
-} else if (abaLojaAtual === 'duplicador') {
-    itensFiltrados = []; // Vazio por enquanto
-}
+    let itensFiltrados = LOJA_DB;
+    if (abaLojaAtual === 'avatar') {
+        itensFiltrados = AVATARES_DB; 
+    } else if (abaLojaAtual === 'duplicador') {
+        itensFiltrados = []; 
+    }
+
     container.innerHTML = '';
 
     itensFiltrados.forEach(item => {
         // Verifica se o jogador já possui o item
-let possui = false;
-if (abaLojaAtual === 'avatar') {
-    possui = jogador.avatares_desbloqueados.includes(item.icone);
-} else {
-    possui = jogador.molduras_desbloqueadas.includes(item.id);
-                                               }
-} 
-        
+        let possui = false;
+        if (abaLojaAtual === 'avatar') {
+            possui = jogador.avatares_desbloqueados.includes(item.icone);
+        } else {
+            possui = jogador.molduras_desbloqueadas.includes(item.id);
+        }
+
         let botaoHTML = '';
         if (possui) {
             botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; background: rgba(0,255,136,0.2); color: #00ff88; border-color: #00ff88;">ADQUIRIDO</button>`;
@@ -809,7 +809,7 @@ if (abaLojaAtual === 'avatar') {
         }
 
         container.innerHTML += `
-             <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
+            <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
                 <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
                     ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
@@ -823,7 +823,7 @@ if (abaLojaAtual === 'avatar') {
             </div>
         `;
     });
-}
+    }
 
 async function comprarMoldura(id) {
     // 1. Procura o item na lista certa (Avatar ou Moldura)
