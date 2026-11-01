@@ -103,6 +103,20 @@ body {
 
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; z-index: 10 !important; white-space: nowrap !important; }
+   /* ESTILO DAS ABAS DA LOJA */
+.tab-loja {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+.tab-loja.ativa {
+    background: var(--primary) !important;
+    color: #000 !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 10px var(--primary) !important;
+    font-weight: 800;
+}
     </style>
 </head>
 <body>
@@ -200,6 +214,15 @@ body {
         <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA </h2>
         <div class="text-center mb-20" style="font-weight: bold; color: var(--gold);">
             Suas moedas: 🪙 <span id="loja-moedas">0</span>
+       <!-- 👇 NOVAS ABAS DA LOJA 👇 -->
+<div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px;">
+    <button id="aba-moldura" class="btn-secondary tab-loja ativa" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('moldura', this)">🖼️ Molduras</button>
+    
+    <button id="aba-avatar" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('avatar', this)">👤 Avatares</button>
+    
+    <button id="aba-duplicador" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('duplicador', this)">🚀 Duplicadores</button>
+</div>
+<!-- 👆 FIM DAS ABAS 👆 -->
         </div>
         <div id="lista-loja"></div>
         <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
@@ -345,6 +368,19 @@ const LOJA_DB = MOLDURAS_DB.map(item => {
     if (item.raridade === 'Mítica') preco = 10000;
     return { ...item, preco: preco };
 }).filter(item => item.id !== 'padrao'); // A moldura padrão não aparece na loja
+    let abaLojaAtual = 'moldura';
+
+function mudarAbaLoja(tipo, botao) {
+    abaLojaAtual = tipo;
+    
+    // Tira o brilho de todos os botões
+    document.querySelectorAll('.tab-loja').forEach(b => b.classList.remove('ativa'));
+    // Coloca o brilho no botão clicado
+    botao.classList.add('ativa');
+    
+    // Manda a loja se redesenhar
+    renderizarLoja();
+}
 
     // SISTEMA DE NOTIFICAÇÕES
     function mostrarToast(mensagem, tipo = 'success') {
@@ -704,9 +740,16 @@ function renderizarLoja() {
     
     const container = document.getElementById('lista-loja');
     if (!container) return;
+    // Filtra os itens pela aba selecionada
+let itensFiltrados = LOJA_DB;
+if (abaLojaAtual === 'avatar') {
+    itensFiltrados = []; // Vazio por enquanto
+} else if (abaLojaAtual === 'duplicador') {
+    itensFiltrados = []; // Vazio por enquanto
+}
     container.innerHTML = '';
 
-    LOJA_DB.forEach(item => {
+    itensFiltrados.forEach(item => {
         const temMoldura = jogador.molduras_desbloqueadas.includes(item.id);
         
         let botaoHTML = '';
