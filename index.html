@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -7,146 +7,323 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --bg-dark: #050508;
-            --primary: #00f0ff;
-            --secondary: #7000ff;
-            --accent: #ff003c;
-            --gold: #ffb800;
-            --text-muted: #8a8a9d;
-            --glass-bg: rgba(15, 15, 25, 0.7);
-            --glass-border: rgba(0, 240, 255, 0.2);
+        /* ========================================== */
+        /* VARIÁVEIS GLOBAIS E RESET                  */
+        /* ========================================== */
+        :root { 
+            --bg-dark: #050508; 
+            --primary: #00f0ff; 
+            --secondary: #7000ff; 
+            --accent: #ff003c; 
+            --gold: #ffb800; 
+            --text-muted: #8a8a9d; 
+            --glass-bg: rgba(15, 15, 25, 0.7); 
+            --glass-border: rgba(0, 240, 255, 0.2); 
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Poppins', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
-        html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Impede o efeito de borracha no celular */
-}
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+        }
 
-body {
-    background-color: var(--bg-dark);
-    background-image:
-        radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.15), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.15), transparent 25%);
-    color: white;
-    display: flex;
-    flex-direction: column;
-}
+        body { 
+            background-color: var(--bg-dark); 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.15), transparent 25%);
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+        }
 
-.main-content {
-    flex: 1;
-    overflow-y: auto !important;
-    padding: 20px 20px 160px 20px; /* Aumentei o padding para 160px */
-    display: flex;
-    flex-direction: column;
-    -webkit-overflow-scrolling: touch; 
-}
+        /* ========================================== */
+        /* LAYOUT E ROLAGEM                           */
+        /* ========================================== */
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto !important; 
+            padding: 20px 20px 150px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            -webkit-overflow-scrolling: touch; 
+        }
         
-        .screen { display: none; width: 100%; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        #tela-loja, #tela-perfil, #tela-ranking, #tela-guarda-roupa { 
+            padding-bottom: 200px !important; 
+            min-height: 100vh; 
+        }
 
-        .glass { background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        .text-gradient { background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.3)); }
-        .text-center { text-align: center; } .mb-20 { margin-bottom: 20px; } .mb-15 { margin-bottom: 15px; }
+        .screen { 
+            display: none; 
+            width: 100%; 
+            max-width: 500px; 
+            margin: 0 auto; 
+            animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+        
+        .screen.active { 
+            display: block; 
+        }
 
-        /* BOTÕES 3D */
-        button { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; transition: all 0.2s ease; border-radius: 12px; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px) scale(0.98); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        /* ========================================== */
+        /* EFEITOS VISUAIS E TIPOGRAFIA               */
+        /* ========================================== */
+        .glass { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 20px; 
+            padding: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+
+        h1, h2, h3 { 
+            font-family: 'Orbitron', sans-serif; 
+            letter-spacing: 1px; 
+        }
+
+        .text-gradient { 
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.3)); 
+        }
+
+        .text-center { text-align: center; } 
+        .mb-20 { margin-bottom: 20px; } 
+        .mb-15 { margin-bottom: 15px; }
+
+        /* ========================================== */
+        /* BOTÕES                                     */
+        /* ========================================== */
+        button { 
+            font-family: 'Poppins', sans-serif; 
+            font-weight: 800; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            border-radius: 12px; 
+        }
+        
         button:active { transform: scale(0.95); }
-        .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4), inset 0 2px 0 rgba(255,255,255,0.3); text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .btn-secondary { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .btn-small { background: var(--gold); color: #000; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 12px; }
 
-        /* AVATAR E MOLDURAS (IMAGENS) */
-        .avatar-wrapper { position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
-        .avatar-img { width: 46px; height: 46px; background: #1a1a2e; border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; border: 2px solid rgba(255,255,255,0.1); position: absolute; }
-        .frame { position: absolute; width: 100%; height: 100%; z-index: 3; pointer-events: none; display: flex; justify-content: center; align-items: center; }
-        .frame img { width: 100%; height: 100%; object-fit: contain; }
-        .frame-padrao { border: 3px solid var(--primary); box-shadow: 0 0 15px var(--primary); border-radius: 4px; }
+        .btn-primary { 
+            width: 100%; 
+            padding: 16px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: #fff; 
+            border: none; 
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4), inset 0 2px 0 rgba(255,255,255,0.3); 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+        }
+
+        .btn-secondary { 
+            width: 100%; 
+            padding: 15px; 
+            background: rgba(255,255,255,0.05); 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            margin-top: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+        }
+
+        /* ========================================== */
+        /* AVATAR E MOLDURAS (Z-INDEX CORRIGIDO)      */
+        /* ========================================== */
+        .avatar-wrapper { 
+            position: relative; 
+            width: 80px; 
+            height: 80px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 10px; 
+        }
+
+        .avatar-img { 
+            width: 62px; 
+            height: 62px; 
+            background: transparent; 
+            border: none; 
+            border-radius: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 46px; 
+            z-index: 3; 
+            position: absolute; 
+            text-shadow: 0 0 10px rgba(0,0,0,0.8); 
+        }
+
+        .frame { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 1; 
+            pointer-events: none; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+
+        .frame img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+        }
+
+        .frame-padrao { 
+            border: 3px solid var(--primary); 
+            box-shadow: 0 0 15px var(--primary); 
+            border-radius: 8px; 
+        }
+
+        /* ========================================== */
+        /* ANIMAÇÕES DAS MOLDURAS                     */
+        /* ========================================== */
+        @keyframes anim-epica { 
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); } 
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 15px #a700ff) brightness(1.1); } 
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); } 
+        }
         
-        @keyframes brilho-lendario { 0% { filter: drop-shadow(0 0 5px #ffb800); } 50% { filter: drop-shadow(0 0 20px #ffb800); } 100% { filter: drop-shadow(0 0 5px #ffb800); } }
-        .brilho-legendario { animation: brilho-lendario 2s infinite; }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+        @keyframes anim-lendaria { 
+            0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); } 
+            50% { transform: scale(1.1) rotate(2deg); filter: drop-shadow(0 0 25px #ffb800) brightness(1.2); } 
+            100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); } 
+        }
+        
+        @keyframes anim-mitica { 
+            0% { transform: scale(1) translateY(0); filter: hue-rotate(0deg) drop-shadow(0 0 15px #ff003c); } 
+            50% { transform: scale(1.1) translateY(-5px); filter: hue-rotate(180deg) drop-shadow(0 0 25px #00f0ff); } 
+            100% { transform: scale(1) translateY(0); filter: hue-rotate(360deg) drop-shadow(0 0 15px #ff003c); } 
+        }
+
+        .efeito-epico { animation: anim-epica 2s ease-in-out infinite; }
+        .efeito-lendario { animation: anim-lendaria 1.5s ease-in-out infinite; }
+        .efeito-mitico { animation: anim-mitica 3s linear infinite; }
+        
+        @keyframes float { 
+            0% { transform: translateY(0px); } 
+            50% { transform: translateY(-5px); } 
+            100% { transform: translateY(0px); } 
+        }
         .float-anim { animation: float 3s ease-in-out infinite; }
 
-        /* TOASTS (NOTIFICAÇÕES) */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
-        .toast { background: rgba(20, 25, 40, 0.95); border-left: 4px solid var(--primary); padding: 15px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideDown 0.3s ease-out; }
-        .toast.success { border-left-color: #00ff88; } .toast.error { border-left-color: #ff003c; }
+        /* ========================================== */
+        /* TOASTS (NOTIFICAÇÕES)                      */
+        /* ========================================== */
+        #toast-container { 
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 9999; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            width: 90%; 
+            max-width: 400px; 
+        }
+
+        .toast { 
+            background: rgba(20, 25, 40, 0.95); 
+            border-left: 4px solid var(--primary); 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            animation: slideDown 0.3s ease-out; 
+        }
+
+        .toast.success { border-left-color: #00ff88; } 
+        .toast.error { border-left-color: #ff003c; }
+        
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
 
-        /* NAV BAR INFERIOR */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 15, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); display: none; justify-content: space-around; padding: 12px 0 20px 0; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-muted); font-size: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        /* ========================================== */
+        /* NAV INFERIOR                               */
+        /* ========================================== */
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: rgba(10, 10, 15, 0.9); 
+            backdrop-filter: blur(20px); 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            display: none; 
+            justify-content: space-around; 
+            padding: 12px 0 20px 0; 
+            z-index: 100; 
+        }
+
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 5px; 
+            color: var(--text-muted); 
+            font-size: 10px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: 0.3s; 
+        }
+
         .nav-item .icon { font-size: 22px; }
         .nav-item.active { color: var(--primary); transform: translateY(-3px); filter: drop-shadow(0 0 8px var(--primary)); }
 
-        /* INPUTS */
-        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; margin-bottom: 15px; font-size: 14px; outline: none; transition: 0.3s; }
+        /* ========================================== */
+        /* INPUTS E LOJA                              */
+        /* ========================================== */
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; 
+            color: white; 
+            margin-bottom: 15px; 
+            font-size: 14px; 
+            outline: none; 
+            transition: 0.3s; 
+        }
+
         input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
 
-        /* JOGO E LOJA */
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .btn-jogar, .btn-loja { width: 100%; padding: 20px 10px; border-radius: 15px; border: none; font-size: 18px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .btn-jogar { background: linear-gradient(135deg, #00f0ff, #7000ff); color: white; }
         .btn-loja { background: linear-gradient(135deg, #ff9e0b, #dd7700); color: #000; }
         
+        .tab-loja { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .tab-loja.ativa { background: var(--primary) !important; color: #000 !important; border-color: var(--primary) !important; box-shadow: 0 0 10px var(--primary) !important; font-weight: 800; }
+
         .btn-alternativa { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: white; padding: 20px; border-radius: 15px; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-height: 80px; }
         .btn-alternativa.correto { background: rgba(0, 255, 136, 0.2); border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
         .btn-alternativa.errado { background: rgba(255, 8, 68, 0.2); border-color: #ff0844; box-shadow: 0 0 15px #ff0844; }
 
         .store-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .tag-vip { position: absolute !important; top: -12px !important; right: -5px !important; background: linear-gradient(45deg, #ffd700, #ff8c00) !important; color: #000 !important; font-size: 10px !important; font-weight: bold !important; padding: 4px 8px !important; border-radius: 20px !important; z-index: 10 !important; white-space: nowrap !important; }
-   /* ESTILO DAS ABAS DA LOJA */
-.tab-loja {
-    background: rgba(255,255,255,0.05);
-    color: var(--text-muted);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.3s;
-}
-.tab-loja.ativa {
-    background: var(--primary) !important;
-    color: #000 !important;
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 10px var(--primary) !important;
-    font-weight: 800;
-}
-   /* ANIMAÇÕES DAS MOLDURAS */
-
-/* Épica: Respiração e Brilho Roxo */
-@keyframes anim-epica {
-    0% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); }
-    50% { transform: scale(1.05); filter: drop-shadow(0 0 15px #a700ff) brightness(1.1); }
-    100% { transform: scale(1); filter: drop-shadow(0 0 5px #a700ff); }
-}
-
-/* Lendária: Pulsação Dourada e Leve Balanço */
-@keyframes anim-lendaria {
-    0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); }
-    50% { transform: scale(1.1) rotate(2deg); filter: drop-shadow(0 0 25px #ffb800) brightness(1.2); }
-    100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffb800); }
-}
-
-/* Mítica: Mudança de Cor (Arco-íris) e Flutuação */
-@keyframes anim-mitica {
-    0% { transform: scale(1) translateY(0); filter: hue-rotate(0deg) drop-shadow(0 0 15px #ff003c); }
-    50% { transform: scale(1.1) translateY(-5px); filter: hue-rotate(180deg) drop-shadow(0 0 25px #00f0ff); }
-    100% { transform: scale(1) translateY(0); filter: hue-rotate(360deg) drop-shadow(0 0 15px #ff003c); }
-}
-
-/* Classes que vamos aplicar nos itens */
-.efeito-epico { animation: anim-epica 2s ease-in-out infinite; }
-.efeito-lendario { animation: anim-lendaria 1.5s ease-in-out infinite; }
-.efeito-mitico { animation: anim-mitica 3s linear infinite; } 
-#tela-loja, #tela-perfil, #tela-ranking, #tela-guarda-roupa {
-    padding-bottom: 200px !important;
-}
     </style>
 </head>
 <body>
@@ -154,7 +331,6 @@ body {
 <div id="toast-container"></div>
 
 <div class="main-content">
-    
     <!-- TELA DE LOGIN -->
     <div id="tela-auth" class="screen active">
         <div class="glass auth-container" style="display: flex; flex-direction: column; justify-content: center; min-height: 80vh;">
@@ -205,14 +381,9 @@ body {
             </button>
         </div>
 
-        <!-- BOTÕES EXTRAS: ACADEMIA E RANKING -->
-        <div class="grid-buttons" style="grid-template-columns: 1fr 1fr;">
-            <button class="btn-secondary" style="margin-top: 0;" onclick="mudarAba('tela-academia')">
-                📚 ACADEMIA
-            </button>
-            <button class="btn-secondary" style="margin-top: 0;" onclick="mudarAba('tela-ranking')">
-                🏆 RANKING
-            </button>
+        <div class="grid-buttons">
+            <button class="btn-secondary" style="margin-top: 0;" onclick="mudarAba('tela-academia')">📚 ACADEMIA</button>
+            <button class="btn-secondary" style="margin-top: 0;" onclick="mudarAba('tela-ranking')">🏆 RANKING</button>
         </div>
 
         <div class="glass">
@@ -221,8 +392,7 @@ body {
             <button class="btn-secondary" onclick="mudarAba('tela-missoes')">Ver Missões</button>
         </div>
     </div>
-
-    <!-- TELA DE JOGO (MATEMÁTICA) -->
+        <!-- TELA DE JOGO (MATEMÁTICA) -->
     <div id="tela-jogo" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <button class="btn-secondary" style="width: auto; padding: 10px 15px; margin: 0;" onclick="sairDoJogo()">Sair</button>
@@ -241,20 +411,56 @@ body {
 
     <!-- TELA LOJA -->
     <div id="tela-loja" class="screen">
-        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA </h2>
+        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">LOJA</h2>
         <div class="text-center mb-20" style="font-weight: bold; color: var(--gold);">
             Suas moedas: 🪙 <span id="loja-moedas">0</span>
-       <!-- 👇 NOVAS ABAS DA LOJA 👇 -->
-<div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px;">
-    <button id="aba-moldura" class="btn-secondary tab-loja ativa" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('moldura', this)">🖼️ Molduras</button>
-    
-    <button id="aba-avatar" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('avatar', this)">👤 Avatares</button>
-    
-    <button id="aba-duplicador" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('duplicador', this)">🚀 Duplicadores</button>
-</div>
-<!-- 👆 FIM DAS ABAS 👆 -->
         </div>
+        
+        <!-- Abas da Loja -->
+        <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px;">
+            <button id="aba-moldura" class="btn-secondary tab-loja ativa" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('moldura', this)">🖼️ Molduras</button>
+            <button id="aba-avatar" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('avatar', this)">👤 Avatares</button>
+            <button id="aba-duplicador" class="btn-secondary tab-loja" style="width: auto; padding: 8px 15px; margin: 0; white-space: nowrap;" onclick="mudarAbaLoja('duplicador', this)">🚀 Duplicadores</button>
+        </div>
+
         <div id="lista-loja"></div>
+        <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
+    </div>
+
+    <!-- TELA GUARDA-ROUPA -->
+    <div id="tela-guarda-roupa" class="screen">
+        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">MEU COFRE</h2>
+        
+        <div class="glass mb-20">
+            <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Avatares</h3>
+            <div id="seletor-avatares" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+        </div>
+
+        <div class="glass mb-20">
+            <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Molduras</h3>
+            <div id="seletor-molduras" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+        </div>
+
+        <button class="btn-secondary mt-20" onclick="mudarAba('tela-perfil')">VOLTAR</button>
+    </div>
+
+    <!-- TELA PERFIL -->
+    <div id="tela-perfil" class="screen">
+        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL</h2>
+        <div class="glass text-center mb-20">
+            <div class="avatar-wrapper float-anim" style="margin: 0 auto 15px auto; width: 90px; height: 90px;">
+                <div class="frame frame-padrao" id="perfil-frame"></div>
+                <div class="avatar-img" id="perfil-avatar" style="width: 66px; height: 66px; font-size: 36px;">🐱</div>
+            </div>
+            <input type="text" id="perfil-nome-input" placeholder="Seu nome" oninput="salvarNomeDelay()" style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 5px;">
+        </div>
+        
+        <div class="glass mb-20" style="text-align: center;">
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Personalize seu personagem!</p>
+            <button class="btn-primary" style="padding: 15px; font-size: 16px;" onclick="mudarAba('tela-guarda-roupa')">👕 Abrir Guarda-Roupa</button>
+        </div>
+
+        <button class="btn-secondary" style="background: rgba(255, 8, 68, 0.1); border-color: rgba(255,8,68,0.3); color: #ff0844;" onclick="sair()">SAIR DA CONTA</button>
         <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
     </div>
 
@@ -270,9 +476,7 @@ body {
     <!-- TELA RANKING -->
     <div id="tela-ranking" class="screen">
         <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">RANKING GLOBAL</h2>
-        <div class="glass text-center mb-20">
-            <p style="color: var(--text-muted); font-size: 14px;">O ranking global com os melhores jogadores estará disponível em breve!</p>
-        </div>
+        <div id="lista-ranking" style="display: flex; flex-direction: column; gap: 10px;"></div>
         <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
     </div>
 
@@ -284,44 +488,8 @@ body {
         </div>
         <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
     </div>
+</div> <!-- Fim da main-content -->
 
-    <!-- TELA PERFIL -->
-    <div id="tela-perfil" class="screen">
-        <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">PERFIL</h2>
-        <div class="glass text-center mb-20">
-            <div class="avatar-wrapper float-anim" style="margin: 0 auto 15px auto; width: 90px; height: 90px;">
-                <div class="frame frame-padrao" id="perfil-frame"></div>
-                <div class="avatar-img" id="perfil-avatar" style="width: 66px; height: 66px; font-size: 36px;">🐱</div>
-            </div>
-            <input type="text" id="perfil-nome-input" placeholder="Seu nome" oninput="salvarNomeDelay()" style="text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 5px;">
-        </div>
-        
-        <div class="glass mb-20" style="text-align: center;">
-    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Personalize seu personagem!</p>
-    <button class="btn-primary" style="padding: 15px; font-size: 16px;" onclick="mudarAba('tela-guarda-roupa')">👕 Abrir Guarda-Roupa</button>
-</div>
-
-        <button class="btn-secondary" style="background: rgba(255, 8, 68, 0.1); border-color: rgba(255,8,68,0.3); color: #ff0844;" onclick="sair()">SAIR DA CONTA</button>
-        <button class="btn-secondary mt-20" onclick="mudarAba('tela-home')">VOLTAR</button>
-    </div>
-</div>
-
-    <!-- TELA GUARDA-ROUPA -->
-<div id="tela-guarda-roupa" class="screen">
-    <h2 class="text-gradient text-center mb-20" style="font-size: 28px;">MEU COFRE</h2>
-    
-    <div class="glass mb-20">
-        <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Avatares</h3>
-        <div id="seletor-avatares" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
-    </div>
-
-    <div class="glass mb-20">
-        <h3 class="mb-15" style="font-size: 16px; color: var(--primary);">Molduras</h3>
-        <div id="seletor-molduras" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
-    </div>
-
-    <button class="btn-secondary mt-20" onclick="mudarAba('tela-perfil')">VOLTAR</button>
-</div>
 <!-- MENU INFERIOR -->
 <nav id="bottom-nav" class="bottom-nav">
     <div class="nav-item" onclick="mudarAba('tela-home', this)"><div class="icon">🏠</div>Início</div>
@@ -330,13 +498,12 @@ body {
 </nav>
 <script>
     // ==========================================
-    // MÓDULO 3: CONEXÃO E AUTENTICAÇÃO
+    // MÓDULO 3: CONEXÃO E DADOS GLOBAIS
     // ==========================================
     const SUPABASE_URL = 'https://zhciurzkzmdenuapzugj.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoY2l1cnprem1kZW51YXB6dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NzM0ODIsImV4cCI6MjEwOTA0OTQ4Mn0.bLdz-6jMEXuEFoX9T5DRfRvR1huDY5I-awnutjiQ2dc';
+    const SUPABASE_KEY = 'COLE_SUA_CHAVE_AQUI'; 
     const banco = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // VARIÁVEIS GLOBAIS DO JOGADOR
     let jogador = { 
         id: null, nome: 'Jogador', xp: 0, nivel: 1, moedas: 0, 
         avatar: '🐱', moldura_equipada: 'padrao', 
@@ -346,101 +513,88 @@ body {
     };
 
     // ==========================================
-// BANCO DE DADOS COMPLETO DAS MOLDURAS (45 ITENS)
-// ==========================================
-const MOLDURAS_DB = [
-    // --- COMUM (Verde) ---
-    { id: 'padrao', nome: 'Iniciante', img: '', tipo: 'css', raridade: 'Comum' },
-    { id: '01', nome: 'Folhas', img: 'moldura_01.png', tipo: 'img', raridade: 'Comum' },
-    { id: '02', nome: 'Madeira', img: 'moldura_02.png', tipo: 'img', raridade: 'Comum' },
-    { id: '03', nome: 'Azul Tech', img: 'moldura_03.png', tipo: 'img', raridade: 'Comum' },
-    { id: '04', nome: 'Roxa Mágica', img: 'moldura_04.png', tipo: 'img', raridade: 'Comum' },
-    { id: '05', nome: 'Neon Azul', img: 'moldura_05.png', tipo: 'img', raridade: 'Comum' },
-    { id: '06', nome: 'Coroa Rosa', img: 'moldura_06.png', tipo: 'img', raridade: 'Comum' },
-    { id: '07', nome: 'Folhas de Outono', img: 'moldura_07.png', tipo: 'img', raridade: 'Comum' },
-    { id: '08', nome: 'Pedra', img: 'moldura_08.png', tipo: 'img', raridade: 'Comum' },
-    { id: '09', nome: 'Troféu Bronze', img: 'moldura_09.png', tipo: 'img', raridade: 'Comum' },
-    { id: '10', nome: 'Calculadora', img: 'moldura_10.png', tipo: 'img', raridade: 'Comum' },
-    
-    // --- RARA (Azul/Roxo) ---
-    { id: '11', nome: 'Estrelas', img: 'moldura_11.png', tipo: 'img', raridade: 'Rara' },
-    { id: '12', nome: 'Magia Roxa', img: 'moldura_12.png', tipo: 'img', raridade: 'Rara' },
-    { id: '13', nome: 'Livros', img: 'moldura_13.png', tipo: 'img', raridade: 'Rara' },
-    { id: '14', nome: 'Gelo', img: 'moldura_14.png', tipo: 'img', raridade: 'Rara' },
-    { id: '15', nome: 'Fogo', img: 'moldura_15.png', tipo: 'img', raridade: 'Rara' },
-    { id: '16', nome: 'Mestre', img: 'moldura_16.png', tipo: 'img', raridade: 'Rara' },
-    { id: '17', nome: 'Anel', img: 'moldura_17.png', tipo: 'img', raridade: 'Rara' },
-    { id: '18', nome: 'Corrente', img: 'moldura_18.png', tipo: 'img', raridade: 'Rara' },
-    { id: '19', nome: 'Coroa Prata', img: 'moldura_19.png', tipo: 'img', raridade: 'Rara' },
-    
-    // --- ÉPICA (Roxo Escuro/Rosa) ---
-    { id: '20', nome: 'Dragão de Fogo', img: 'moldura_20.png', tipo: 'img', raridade: 'Épica' },
-    { id: '21', nome: 'Coração', img: 'moldura_21.png', tipo: 'img', raridade: 'Épica' },
-    { id: '22', nome: 'Tronco', img: 'moldura_22.png', tipo: 'img', raridade: 'Épica' },
-    { id: '23', nome: 'Coroa Ouro', img: 'moldura_23.png', tipo: 'img', raridade: 'Épica' },
-    { id: '24', nome: 'Flor de Cerejeira', img: 'moldura_24.png', tipo: 'img', raridade: 'Épica' },
-    { id: '25', nome: 'Engrenagens', img: 'moldura_25.png', tipo: 'img', raridade: 'Épica' },
-    { id: '26', nome: 'Colunas Gregas', img: 'moldura_26.png', tipo: 'img', raridade: 'Épica' },
-    { id: '27', nome: 'Neon Verde', img: 'moldura_27.png', tipo: 'img', raridade: 'Épica' },
-    { id: '28', nome: 'Asas de Anjo', img: 'moldura_28.png', tipo: 'img', raridade: 'Épica' },
-    { id: '29', nome: 'Neon Rosa', img: 'moldura_29.png', tipo: 'img', raridade: 'Épica' },
-    { id: '30', nome: 'Fogo Verde', img: 'moldura_30.png', tipo: 'img', raridade: 'Épica' },
-    { id: '31', nome: 'Relâmpago', img: 'moldura_31.png', tipo: 'img', raridade: 'Épica' },
-    { id: '32', nome: 'Cyberpunk', img: 'moldura_32.png', tipo: 'img', raridade: 'Épica' },
-    { id: '33', nome: 'Dragão Roxo', img: 'moldura_33.png', tipo: 'img', raridade: 'Épica' },
-    { id: '34', nome: 'Água', img: 'moldura_34.png', tipo: 'img', raridade: 'Épica' },
-    { id: '35', nome: 'Planeta', img: 'moldura_35.png', tipo: 'img', raridade: 'Épica' },
-    
-    // --- LENDÁRIA (Dourado/Brilhante) ---
-    { id: '36', nome: 'Troféu Ouro', img: 'moldura_36.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
-    { id: '37', nome: 'Demoníaco', img: 'moldura_37.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
-    { id: '38', nome: 'Anjo Dourado', img: 'moldura_38.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
-    { id: '39', nome: 'Espinhos', img: 'moldura_39.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
-    { id: '40', nome: 'Estrela Cadente', img: 'moldura_40.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
-    
-    // --- MÍTICA (Eventos Especiais) ---
-    { id: '41', nome: 'Halloween', img: 'moldura_41_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
-    { id: '42', nome: 'Natal', img: 'moldura_42_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
-    { id: '43', nome: 'Praia', img: 'moldura_43_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
-    { id: '44', nome: 'Neve', img: 'moldura_44_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
-    { id: '45', nome: 'Gamer', img: 'moldura_45_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' }
-];
+    // BANCO DE DADOS DAS MOLDURAS (45 ITENS)
+    // ==========================================
+    const MOLDURAS_DB = [
+        // Comum
+        { id: 'padrao', nome: 'Iniciante', img: '', tipo: 'css', raridade: 'Comum' },
+        { id: '01', nome: 'Folhas', img: 'moldura_01.png', tipo: 'img', raridade: 'Comum' },
+        { id: '02', nome: 'Madeira', img: 'moldura_02.png', tipo: 'img', raridade: 'Comum' },
+        { id: '03', nome: 'Azul Tech', img: 'moldura_03.png', tipo: 'img', raridade: 'Comum' },
+        { id: '04', nome: 'Roxa Mágica', img: 'moldura_04.png', tipo: 'img', raridade: 'Comum' },
+        { id: '05', nome: 'Neon Azul', img: 'moldura_05.png', tipo: 'img', raridade: 'Comum' },
+        { id: '06', nome: 'Coroa Rosa', img: 'moldura_06.png', tipo: 'img', raridade: 'Comum' },
+        { id: '07', nome: 'Folhas de Outono', img: 'moldura_07.png', tipo: 'img', raridade: 'Comum' },
+        { id: '08', nome: 'Pedra', img: 'moldura_08.png', tipo: 'img', raridade: 'Comum' },
+        { id: '09', nome: 'Troféu Bronze', img: 'moldura_09.png', tipo: 'img', raridade: 'Comum' },
+        { id: '10', nome: 'Calculadora', img: 'moldura_10.png', tipo: 'img', raridade: 'Comum' },
+        // Rara
+        { id: '11', nome: 'Estrelas', img: 'moldura_11.png', tipo: 'img', raridade: 'Rara' },
+        { id: '12', nome: 'Magia Roxa', img: 'moldura_12.png', tipo: 'img', raridade: 'Rara' },
+        { id: '13', nome: 'Livros', img: 'moldura_13.png', tipo: 'img', raridade: 'Rara' },
+        { id: '14', nome: 'Gelo', img: 'moldura_14.png', tipo: 'img', raridade: 'Rara' },
+        { id: '15', nome: 'Fogo', img: 'moldura_15.png', tipo: 'img', raridade: 'Rara' },
+        { id: '16', nome: 'Mestre', img: 'moldura_16.png', tipo: 'img', raridade: 'Rara' },
+        { id: '17', nome: 'Anel', img: 'moldura_17.png', tipo: 'img', raridade: 'Rara' },
+        { id: '18', nome: 'Corrente', img: 'moldura_18.png', tipo: 'img', raridade: 'Rara' },
+        { id: '19', nome: 'Coroa Prata', img: 'moldura_19.png', tipo: 'img', raridade: 'Rara' },
+        // Épica
+        { id: '20', nome: 'Dragão de Fogo', img: 'moldura_20.png', tipo: 'img', raridade: 'Épica' },
+        { id: '21', nome: 'Coração', img: 'moldura_21.png', tipo: 'img', raridade: 'Épica' },
+        { id: '22', nome: 'Tronco', img: 'moldura_22.png', tipo: 'img', raridade: 'Épica' },
+        { id: '23', nome: 'Coroa Ouro', img: 'moldura_23.png', tipo: 'img', raridade: 'Épica' },
+        { id: '24', nome: 'Flor de Cerejeira', img: 'moldura_24.png', tipo: 'img', raridade: 'Épica' },
+        { id: '25', nome: 'Engrenagens', img: 'moldura_25.png', tipo: 'img', raridade: 'Épica' },
+        { id: '26', nome: 'Colunas Gregas', img: 'moldura_26.png', tipo: 'img', raridade: 'Épica' },
+        { id: '27', nome: 'Neon Verde', img: 'moldura_27.png', tipo: 'img', raridade: 'Épica' },
+        { id: '28', nome: 'Asas de Anjo', img: 'moldura_28.png', tipo: 'img', raridade: 'Épica' },
+        { id: '29', nome: 'Neon Rosa', img: 'moldura_29.png', tipo: 'img', raridade: 'Épica' },
+        { id: '30', nome: 'Fogo Verde', img: 'moldura_30.png', tipo: 'img', raridade: 'Épica' },
+        { id: '31', nome: 'Relâmpago', img: 'moldura_31.png', tipo: 'img', raridade: 'Épica' },
+        { id: '32', nome: 'Cyberpunk', img: 'moldura_32.png', tipo: 'img', raridade: 'Épica' },
+        { id: '33', nome: 'Dragão Roxo', img: 'moldura_33.png', tipo: 'img', raridade: 'Épica' },
+        { id: '34', nome: 'Água', img: 'moldura_34.png', tipo: 'img', raridade: 'Épica' },
+        { id: '35', nome: 'Planeta', img: 'moldura_35.png', tipo: 'img', raridade: 'Épica' },
+        // Lendária
+        { id: '36', nome: 'Troféu Ouro', img: 'moldura_36.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
+        { id: '37', nome: 'Demoníaco', img: 'moldura_37.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
+        { id: '38', nome: 'Anjo Dourado', img: 'moldura_38.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
+        { id: '39', nome: 'Espinhos', img: 'moldura_39.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
+        { id: '40', nome: 'Estrela Cadente', img: 'moldura_40.png', tipo: 'img', raridade: 'Lendária', efeito: 'brilho-legendario' },
+        // Mítica
+        { id: '41', nome: 'Halloween', img: 'moldura_41_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
+        { id: '42', nome: 'Natal', img: 'moldura_42_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
+        { id: '43', nome: 'Praia', img: 'moldura_43_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
+        { id: '44', nome: 'Neve', img: 'moldura_44_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' },
+        { id: '45', nome: 'Gamer', img: 'moldura_45_temporaria.png', tipo: 'img', raridade: 'Mítica', efeito: 'brilho-legendario' }
+    ];
 
-// A LOJA USA A MESMA LISTA, MAS ADICIONA OS PREÇOS
-const LOJA_DB = MOLDURAS_DB.map(item => {
-    let preco = 500;
-    if (item.raridade === 'Rara') preco = 1000;
-    if (item.raridade === 'Épica') preco = 2000;
-    if (item.raridade === 'Lendária') preco = 5000;
-    if (item.raridade === 'Mítica') preco = 10000;
-    return { ...item, preco: preco };
-}).filter(item => item.id !== 'padrao'); // A moldura padrão não aparece na loja
+    const LOJA_DB = MOLDURAS_DB.map(item => {
+        let preco = 500;
+        if (item.raridade === 'Rara') preco = 1000;
+        if (item.raridade === 'Épica') preco = 2000;
+        if (item.raridade === 'Lendária') preco = 5000;
+        if (item.raridade === 'Mítica') preco = 10000;
+        return { ...item, preco: preco };
+    }).filter(item => item.id !== 'padrao');
+
     // BANCO DE DADOS DOS AVATARES
-const AVATARES_DB = [
-    { id: 'av_gato', nome: 'Gatinho', icone: '🐱', preco: 0, raridade: 'Comum' },
-    { id: 'av_cachorro', nome: 'Cachorro', icone: '🐶', preco: 500, raridade: 'Comum' },
-    { id: 'av_raposa', nome: 'Raposa', icone: '🦊', preco: 1000, raridade: 'Rara' },
-    { id: 'av_panda', nome: 'Panda', icone: '🐼', preco: 1500, raridade: 'Épica' },
-    { id: 'av_sapo', nome: 'Sapo', icone: '🐸', preco: 800, raridade: 'Rara' },
-    { id: 'av_alien', nome: 'Alienígena', icone: '👽', preco: 2500, raridade: 'Lendária' },
-    { id: 'av_robo', nome: 'Robô', icone: '🤖', preco: 3000, raridade: 'Lendária' },
-    { id: 'av_dragao', nome: 'Dragão', icone: '🐉', preco: 5000, raridade: 'Mítica' }
-];
+    const AVATARES_DB = [
+        { id: 'av_gato', nome: 'Gatinho', icone: '🐱', preco: 0, raridade: 'Comum' },
+        { id: 'av_cachorro', nome: 'Cachorro', icone: '🐶', preco: 500, raridade: 'Comum' },
+        { id: 'av_raposa', nome: 'Raposa', icone: '🦊', preco: 1000, raridade: 'Rara' },
+        { id: 'av_panda', nome: 'Panda', icone: '🐼', preco: 1500, raridade: 'Épica' },
+        { id: 'av_sapo', nome: 'Sapo', icone: '🐸', preco: 800, raridade: 'Rara' },
+        { id: 'av_alien', nome: 'Alienígena', icone: '👽', preco: 2500, raridade: 'Lendária' },
+        { id: 'av_robo', nome: 'Robô', icone: '🤖', preco: 3000, raridade: 'Lendária' },
+        { id: 'av_dragao', nome: 'Dragão', icone: '🐉', preco: 5000, raridade: 'Mítica' }
+    ];
+
     let abaLojaAtual = 'moldura';
-
-function mudarAbaLoja(tipo, botao) {
-    abaLojaAtual = tipo;
+    // ==========================================
+    // MÓDULO 4: FUNÇÕES DE SISTEMA E TELAS
+    // ==========================================
     
-    // Tira o brilho de todos os botões
-    document.querySelectorAll('.tab-loja').forEach(b => b.classList.remove('ativa'));
-    // Coloca o brilho no botão clicado
-    botao.classList.add('ativa');
-    
-    // Manda a loja se redesenhar
-    renderizarLoja();
-}
-
-    // SISTEMA DE NOTIFICAÇÕES
     function mostrarToast(mensagem, tipo = 'success') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -451,27 +605,19 @@ function mudarAbaLoja(tipo, botao) {
         setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-out forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // AUTENTICAÇÃO (LOGIN E CADASTRO)
     async function fazerCadastro() {
         const email = document.getElementById('auth-email').value.trim();
         const senha = document.getElementById('auth-pass').value;
         if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-        
         const { error } = await banco.auth.signUp({ email, password: senha });
-        if (error) { 
-            mostrarToast(error.message, "error"); 
-        } else { 
-            mostrarToast("Conta criada! Faça login.", "success"); 
-        }
+        if (error) { mostrarToast(error.message, "error"); } else { mostrarToast("Conta criada! Faça login.", "success"); }
     }
 
     async function fazerLogin() {
         const email = document.getElementById('auth-email').value.trim();
         const senha = document.getElementById('auth-pass').value;
         if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-        
         const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
-        
         if (error) { 
             mostrarToast(error.message, "error"); 
         } else { 
@@ -487,11 +633,9 @@ function mudarAbaLoja(tipo, botao) {
         location.reload();
     }
 
-    // CARREGAR DADOS DO BANCO
     async function carregarPerfil() {
         if (!jogador.id) return;
         const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
-        
         if (error) { console.error(error); return; }
         
         if (data) {
@@ -505,222 +649,293 @@ function mudarAbaLoja(tipo, botao) {
             jogador.streak = data.streak || 0;
             jogador.ultimo_login = data.ultimo_login || null;
         } else {
-            // Cria a conta no banco se não existir
             await banco.from('ranking').insert([{ 
                 user_id: jogador.id, nome: jogador.nome, xp: 0, moedas: 0, 
                 avatar: '🐱', moldura_equipada: 'padrao', molduras_compradas: ['padrao'],
-                streak: 0
+                avatares_desbloqueados: ['🐱'], streak: 0
             }]);
         }
     }
-  // ==========================================
-// MÓDULO 4: LÓGICA DA INTERFACE E MOLDURAS
-// ==========================================
 
-function getNivel(xp) {
-    if (xp >= 5000) return { nivel: 10, nome: 'Mestre', xpAtual: xp, xpProx: 10000 };
-    if (xp >= 2500) return { nivel: 8, nome: 'Diamante', xpAtual: xp, xpProx: 5000 };
-    if (xp >= 1000) return { nivel: 5, nome: 'Platina', xpAtual: xp, xpProx: 2500 };
-    if (xp >= 300) return { nivel: 3, nome: 'Prata', xpAtual: xp, xpProx: 1000 };
-    return { nivel: 1, nome: 'Bronze', xpAtual: xp, xpProx: 300 };
-}
-
-// Sistema de Login Diário (Foguinho)
-async function verificarLoginDiario() {
-    const hoje = new Date().toLocaleDateString('pt-BR');
-    
-    if (jogador.ultimo_login !== hoje) {
-        const ontem = new Date();
-        ontem.setDate(ontem.getDate() - 1);
-        const ontemStr = ontem.toLocaleDateString('pt-BR');
-
-        if (jogador.ultimo_login === ontemStr) {
-            jogador.streak += 1; // Jogou ontem e hoje, aumenta o fogo!
-        } else if (jogador.ultimo_login !== null) {
-            jogador.streak = 1; // Ficou dias sem jogar, reseta para 1
-        } else {
-            jogador.streak = 1; // Primeiro dia de jogo
-        }
-
-        jogador.ultimo_login = hoje;
-        
-        // Salva no banco de dados
-        await banco.from('ranking').update({ 
-            streak: jogador.streak, 
-            ultimo_login: jogador.ultimo_login 
-        }).eq('user_id', jogador.id);
-        
-        if (jogador.streak > 1) {
-            mostrarToast(`Sequência de ${jogador.streak} dias! 🔥`, "success");
-        }
+    function getNivel(xp) {
+        if (xp >= 5000) return { nivel: 10, nome: 'Mestre', xpAtual: xp, xpProx: 10000 };
+        if (xp >= 2500) return { nivel: 8, nome: 'Diamante', xpAtual: xp, xpProx: 5000 };
+        if (xp >= 1000) return { nivel: 5, nome: 'Platina', xpAtual: xp, xpProx: 2500 };
+        if (xp >= 300) return { nivel: 3, nome: 'Prata', xpAtual: xp, xpProx: 1000 };
+        return { nivel: 1, nome: 'Bronze', xpAtual: xp, xpProx: 300 };
     }
-}
 
-// Aplica a moldura no avatar (seja imagem ou CSS)
-function renderizarMoldura(elementId, molduraId) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    const moldura = MOLDURAS_DB.find(m => m.id === molduraId) || MOLDURAS_DB[0];
-    
-    if (moldura.tipo === 'css') {
-        el.innerHTML = ''; 
-        el.className = 'frame frame-padrao';
-    } else {
-        el.className = `frame ${moldura.efeito || ''}`;
-        el.innerHTML = `<img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" alt="${moldura.nome}">`;
-    }
-}
+    async function verificarLoginDiario() {
+        const hoje = new Date().toLocaleDateString('pt-BR');
+        if (jogador.ultimo_login !== hoje) {
+            const ontem = new Date();
+            ontem.setDate(ontem.getDate() - 1);
+            const ontemStr = ontem.toLocaleDateString('pt-BR');
 
-// Atualiza toda a tela Home
-async function atualizarDashboard() {
-    if (!jogador.id) return;
-    await carregarPerfil();
-    await verificarLoginDiario();
-    
-    document.getElementById('home-nome').innerText = jogador.nome;
-    document.getElementById('home-avatar').innerText = jogador.avatar;
-    document.getElementById('perfil-avatar').innerText = jogador.avatar;
-    document.getElementById('perfil-nome-input').value = jogador.nome;
-    document.getElementById('home-moedas').innerText = jogador.moedas;
-    document.getElementById('loja-moedas').innerText = jogador.moedas;
-    document.getElementById('home-streak').innerText = `🔥 ${jogador.streak || 0}`;
-    
-    const infoNivel = getNivel(jogador.xp);
-    
-    // Lógica de Subir de Nível
-    if (infoNivel.nivel > jogador.nivel && jogador.nivel !== 1) {
-        jogador.moedas += 100; // Ganha 100 moedas ao subir de nível
-        await banco.from('ranking').update({ moedas: jogador.moedas }).eq('user_id', jogador.id);
-        mostrarToast(`NÍVEL UP! Você é Nível ${infoNivel.nivel} e ganhou 100 moedas! 🎉`, "success");
-    }
-    
-    jogador.nivel = infoNivel.nivel;
-    
-    document.getElementById('home-nivel').innerText = `Nível ${infoNivel.nivel} - ${infoNivel.nome}`;
-    document.getElementById('home-xp-txt').innerText = `${infoNivel.xpAtual} / ${infoNivel.xpProx} XP`;
-    document.getElementById('home-xp-bar').style.width = `${(infoNivel.xpAtual / infoNivel.xpProx) * 100}%`;
-    
-    renderizarMoldura('home-frame', jogador.moldura_equipada);
-    renderizarMoldura('perfil-frame', jogador.moldura_equipada);
-    renderizarSeletorMolduras();
-}
-    
-function renderizarSeletorAvatares() {
-    const container = document.getElementById('seletor-avatares');
-    if (!container) return;
-    container.innerHTML = '';
-
-    AVATARES_DB.forEach(avatar => {
-        // Só mostra os avatares que o jogador comprou
-        const temAvatar = jogador.avatares_desbloqueados.includes(avatar.icone);
-        
-        if (temAvatar) {
-            const btn = document.createElement('div');
-            btn.style.cssText = 'cursor: pointer; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 2px solid rgba(255,255,255,0.1);';
-            
-            // Se o avatar estiver equipado, coloca a borda neon
-            if (jogador.avatar === avatar.icone) {
-                btn.style.borderColor = 'var(--primary)';
-                btn.style.boxShadow = '0 0 10px var(--primary)';
-                btn.style.background = 'rgba(0, 240, 255, 0.1)';
+            if (jogador.ultimo_login === ontemStr) {
+                jogador.streak += 1; 
+            } else if (jogador.ultimo_login !== null) {
+                jogador.streak = 1; 
+            } else {
+                jogador.streak = 1; 
             }
 
-            btn.innerHTML = `<div style="font-size: 35px;">${avatar.icone}</div>`;
+            jogador.ultimo_login = hoje;
+            await banco.from('ranking').update({ streak: jogador.streak, ultimo_login: jogador.ultimo_login }).eq('user_id', jogador.id);
             
-            btn.onclick = async () => {
-                jogador.avatar = avatar.icone;
-                await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
-                mostrarToast(`Avatar ${avatar.nome} equipado!`, "success");
-                atualizarDashboard();
-                renderizarSeletorAvatares(); 
-            };
-            
-            container.appendChild(btn);
+            if (jogador.streak > 1) {
+                mostrarToast(`Sequência de ${jogador.streak} dias! 🔥`, "success");
+            }
         }
-    });
-}
-// Desenha os quadradinhos de moldura na tela de Perfil
-function renderizarSeletorMolduras() {
-    const container = document.getElementById('seletor-molduras');
-    if (!container) return;
-    container.innerHTML = '';
+    }
 
-    MOLDURAS_DB.forEach(moldura => {
-        const temMoldura = jogador.molduras_desbloqueadas.includes(moldura.id) || moldura.id === 'padrao';
+    function renderizarMoldura(elementId, molduraId) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const moldura = MOLDURAS_DB.find(m => m.id === molduraId) || MOLDURAS_DB[0];
         
-        const btn = document.createElement('div');
-        btn.style.cssText = 'cursor: pointer; text-align: center; position: relative; padding: 5px;';
-        
-        let contentHTML = '';
         if (moldura.tipo === 'css') {
-            contentHTML = `<div style="width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--primary); margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #1a1a2e;">${jogador.avatar}</div>`;
+            el.innerHTML = ''; 
+            el.className = 'frame frame-padrao';
         } else {
-            contentHTML = `
-                <div style="width: 65px; height: 65px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center;">
-                    <div style="position: absolute; font-size: 20px; z-index: 1;">${jogador.avatar}</div>
-                    <img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
-                </div>`;
+            el.className = `frame ${moldura.efeito || ''}`;
+            el.innerHTML = `<img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" alt="${moldura.nome}">`;
         }
+    }
 
-        if (!temMoldura) {
-            btn.style.opacity = '0.3';
-            contentHTML += `<div style="font-size: 20px; position: absolute; top: 15px; left: 15px; z-index: 3;">🔒</div>`;
-        }
-
-        if (jogador.moldura_equipada === moldura.id) {
-            btn.style.transform = 'scale(1.1)';
-            btn.style.filter = 'drop-shadow(0 0 8px var(--primary))';
-        }
-
-        btn.innerHTML = contentHTML;
+    async function atualizarDashboard() {
+        if (!jogador.id) return;
+        await carregarPerfil();
+        await verificarLoginDiario();
         
-        if (temMoldura) {
-            btn.onclick = async () => {
-                jogador.moldura_equipada = moldura.id;
-                await banco.from('ranking').update({ moldura_equipada: moldura.id }).eq('user_id', jogador.id);
-                mostrarToast(`Moldura ${moldura.nome} equipada!`);
-                atualizarDashboard();
-            };
+        document.getElementById('home-nome').innerText = jogador.nome;
+        document.getElementById('home-avatar').innerText = jogador.avatar;
+        document.getElementById('perfil-avatar').innerText = jogador.avatar;
+        document.getElementById('perfil-nome-input').value = jogador.nome;
+        document.getElementById('home-moedas').innerText = jogador.moedas;
+        document.getElementById('loja-moedas').innerText = jogador.moedas;
+        document.getElementById('home-streak').innerText = `🔥 ${jogador.streak || 0}`;
+        
+        const infoNivel = getNivel(jogador.xp);
+        if (infoNivel.nivel > jogador.nivel && jogador.nivel !== 1) {
+            jogador.moedas += 100; 
+            await banco.from('ranking').update({ moedas: jogador.moedas }).eq('user_id', jogador.id);
+            mostrarToast(`NÍVEL UP! Você é Nível ${infoNivel.nivel} e ganhou 100 moedas! 🎉`, "success");
+        }
+        
+        jogador.nivel = infoNivel.nivel;
+        
+        document.getElementById('home-nivel').innerText = `Nível ${infoNivel.nivel} - ${infoNivel.nome}`;
+        document.getElementById('home-xp-txt').innerText = `${infoNivel.xpAtual} / ${infoNivel.xpProx} XP`;
+        document.getElementById('home-xp-bar').style.width = `${(infoNivel.xpAtual / infoNivel.xpProx) * 100}%`;
+        
+        renderizarMoldura('home-frame', jogador.moldura_equipada);
+        renderizarMoldura('perfil-frame', jogador.moldura_equipada);
+        renderizarSeletorMolduras();
+        renderizarSeletorAvatares();
+    }
+
+    function renderizarSeletorAvatares() {
+        const container = document.getElementById('seletor-avatares');
+        if (!container) return;
+        container.innerHTML = '';
+
+        AVATARES_DB.forEach(avatar => {
+            const temAvatar = jogador.avatares_desbloqueados.includes(avatar.icone);
+            if (temAvatar) {
+                const btn = document.createElement('div');
+                btn.style.cssText = 'cursor: pointer; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; border: 2px solid rgba(255,255,255,0.1);';
+                
+                if (jogador.avatar === avatar.icone) {
+                    btn.style.borderColor = 'var(--primary)';
+                    btn.style.boxShadow = '0 0 10px var(--primary)';
+                    btn.style.background = 'rgba(0, 240, 255, 0.1)';
+                }
+
+                btn.innerHTML = `<div style="font-size: 35px;">${avatar.icone}</div>`;
+                btn.onclick = async () => {
+                    jogador.avatar = avatar.icone;
+                    await banco.from('ranking').update({ avatar: jogador.avatar }).eq('user_id', jogador.id);
+                    mostrarToast(`Avatar ${avatar.nome} equipado!`, "success");
+                    atualizarDashboard(); 
+                };
+                container.appendChild(btn);
+            }
+        });
+    }
+
+    function renderizarSeletorMolduras() {
+        const container = document.getElementById('seletor-molduras');
+        if (!container) return;
+        container.innerHTML = '';
+
+        MOLDURAS_DB.forEach(moldura => {
+            const temMoldura = jogador.molduras_desbloqueadas.includes(moldura.id) || moldura.id === 'padrao';
+            const btn = document.createElement('div');
+            btn.style.cssText = 'cursor: pointer; text-align: center; padding: 5px; position: relative;';
+            
+            let contentHTML = '';
+            if (moldura.tipo === 'css') {
+                contentHTML = `<div style="width: 50px; height: 50px; border-radius: 8px; border: 3px solid var(--primary); margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #1a1a2e;">${jogador.avatar}</div>`;
+            } else {
+                contentHTML = `
+                    <div style="width: 65px; height: 65px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center;">
+                        <div style="position: absolute; font-size: 20px; z-index: 3;">${jogador.avatar}</div>
+                        <img src="${moldura.img}" class="${moldura.raridade === 'Épica' ? 'efeito-epico' : moldura.raridade === 'Lendária' ? 'efeito-lendario' : moldura.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
+                    </div>`;
+            }
+
+            if (!temMoldura) {
+                btn.style.opacity = '0.3';
+                contentHTML += `<div style="font-size: 20px; position: absolute; top: 15px; left: 15px; z-index: 4;">🔒</div>`;
+            }
+
+            if (jogador.moldura_equipada === moldura.id) {
+                btn.style.transform = 'scale(1.1)';
+                btn.style.filter = 'drop-shadow(0 0 8px var(--primary))';
+            }
+
+            btn.innerHTML = contentHTML;
+            if (temMoldura) {
+                btn.onclick = async () => {
+                    jogador.moldura_equipada = moldura.id;
+                    await banco.from('ranking').update({ moldura_equipada: moldura.id }).eq('user_id', jogador.id);
+                    mostrarToast(`Moldura ${moldura.nome} equipada!`);
+                    atualizarDashboard();
+                };
+            }
+            container.appendChild(btn);
+        });
+    }
+
+    function mudarAbaLoja(tipo, botao) {
+        abaLojaAtual = tipo;
+        document.querySelectorAll('.tab-loja').forEach(b => b.classList.remove('ativa'));
+        botao.classList.add('ativa');
+        renderizarLoja();
+    }
+
+    function renderizarLoja() {
+        document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
+        const container = document.getElementById('lista-loja');
+        if (!container) return;
+        
+        let itensFiltrados = LOJA_DB;
+        if (abaLojaAtual === 'avatar') {
+            itensFiltrados = AVATARES_DB; 
+        } else if (abaLojaAtual === 'duplicador') {
+            itensFiltrados = []; 
         }
 
-        container.appendChild(btn);
-    });
-}
+        container.innerHTML = '';
 
-// Sistema de Salvar Nome com Delay (Debounce)
-let timerSalvar;
-function salvarNomeDelay() {
-    clearTimeout(timerSalvar);
-    timerSalvar = setTimeout(async () => {
-        const novoNome = document.getElementById('perfil-nome-input').value.trim();
-        if (novoNome === "") return;
-        jogador.nome = novoNome;
-        await banco.from('ranking').update({ nome: novoNome }).eq('user_id', jogador.id);
-        document.getElementById('home-nome').innerText = novoNome;
-        mostrarToast("Nome salvo!", "success");
-    }, 1500);
-}
+        itensFiltrados.forEach(item => {
+            let possui = false;
+            if (abaLojaAtual === 'avatar') {
+                possui = jogador.avatares_desbloqueados.includes(item.icone);
+            } else {
+                possui = jogador.molduras_desbloqueadas.includes(item.id);
+            }
 
-// Navegação entre as abas
-function mudarAba(idTela, element) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(idTela).classList.add('active');
-    
-    if (element) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        element.classList.add('active');
+            let botaoHTML = '';
+            if (possui) {
+                botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; background: rgba(0,255,136,0.2); color: #00ff88; border-color: #00ff88;">ADQUIRIDO</button>`;
+            } else if (jogador.moedas >= item.preco) {
+                botaoHTML = `<button class="btn-primary" style="width: auto; padding: 8px 15px; margin: 0;" onclick="comprarMoldura('${item.id}')">COMPRAR</button>`;
+            } else {
+                botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; opacity: 0.5;">FALTA 🪙</button>`;
+            }
+
+            container.innerHTML += `
+                <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
+                    <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
+                        <div style="position: absolute; font-size: 24px; z-index: 3;">${jogador.avatar}</div>
+                        ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="font-size: 14px; font-weight: 800; color: white; margin-bottom: 2px;">${item.nome}</h3>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">Raridade: ${item.raridade}</p>
+                        <div style="font-size: 14px; font-weight: bold; color: var(--gold);">🪙 ${item.preco}</div>
+                    </div>
+                    ${botaoHTML}
+                </div>
+            `;
+        });
     }
 
-    if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') {
-        atualizarDashboard();
-   if (idTela === 'tela-loja') renderizarLoja();
+    async function comprarMoldura(id) {
+        let item;
+        if (abaLojaAtual === 'avatar') {
+            item = AVATARES_DB.find(i => i.id === id);
+        } else {
+            item = LOJA_DB.find(i => i.id === id);
+        }
+        if (!item) return;
+
+        if (jogador.moedas >= item.preco) {
+            jogador.moedas -= item.preco;
+            
+            if (abaLojaAtual === 'avatar') {
+                jogador.avatar = item.icone; 
+                if (!jogador.avatares_desbloqueados.includes(item.icone)) {
+                    jogador.avatares_desbloqueados.push(item.icone);
+                }
+            } else {
+                jogador.molduras_desbloqueadas.push(item.id);
+                jogador.moldura_equipada = item.id; 
+            }
+
+            const { error } = await banco.from('ranking').update({ 
+                moedas: jogador.moedas,
+                avatar: jogador.avatar,
+                molduras_compradas: jogador.molduras_desbloqueadas,
+                moldura_equipada: jogador.moldura_equipada,
+                avatares_desbloqueados: jogador.avatares_desbloqueados
+            }).eq('user_id', jogador.id);
+
+            if (error) {
+                mostrarToast("Erro ao comprar. Tente novamente.", "error");
+                return;
+            }
+
+            mostrarToast(`Você comprou: ${item.nome}! 🎉`, "success"); 
+            renderizarLoja(); 
+            atualizarDashboard();
+        }
+    }
+
+    let timerSalvar;
+    function salvarNomeDelay() {
+        clearTimeout(timerSalvar);
+        timerSalvar = setTimeout(async () => {
+            const novoNome = document.getElementById('perfil-nome-input').value.trim();
+            if (novoNome === "") return;
+            jogador.nome = novoNome;
+            await banco.from('ranking').update({ nome: novoNome }).eq('user_id', jogador.id);
+            document.getElementById('home-nome').innerText = novoNome;
+            mostrarToast("Nome salvo!", "success");
+        }, 1500);
+    }
+
+    function mudarAba(idTela, element) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(idTela).classList.add('active'); // Correção aqui
+        
+        if (element) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        if (idTela === 'tela-home' || idTela === 'tela-perfil' || idTela === 'tela-loja') {
+            atualizarDashboard();
+        }
+        if (idTela === 'tela-loja') renderizarLoja();
         if (idTela === 'tela-guarda-roupa') {
-    renderizarSeletorAvatares();
-    renderizarSeletorMolduras();
-       }
+            renderizarSeletorAvatares();
+            renderizarSeletorMolduras();
+        }
     }
-  }
-      // ==========================================
+        // ==========================================
     // MÓDULO 5: O MOTOR DO JOGO E INICIALIZAÇÃO
     // ==========================================
     let pontosJogo = 0;
@@ -738,7 +953,6 @@ function mudarAba(idTela, element) {
     }
 
     function gerarPergunta() {
-        // Gera números de 1 a 20
         const num1 = Math.floor(Math.random() * 20) + 1;
         const num2 = Math.floor(Math.random() * 20) + 1;
         const isSoma = Math.random() > 0.5;
@@ -759,10 +973,9 @@ function mudarAba(idTela, element) {
         document.getElementById('jogo-pergunta').innerText = perguntaText;
         respostaCorretaAtual = resultadoCerto;
 
-        // Cria as alternativas (1 certa, 3 erradas)
         let opcoes = [resultadoCerto];
         while(opcoes.length < 4) {
-            let errada = resultadoCerto + Math.floor(Math.random() * 10) - 5; // +/- 5
+            let errada = resultadoCerto + Math.floor(Math.random() * 10) - 5;
             if (errada >= 0 && !opcoes.includes(errada)) {
                 opcoes.push(errada);
             }
@@ -785,7 +998,7 @@ function mudarAba(idTela, element) {
 
     function verificarResposta(botaoClicado, valorEscolhido) {
         const botoes = document.querySelectorAll('.btn-alternativa');
-        botoes.forEach(b => b.onclick = null); // Desabilita cliques duplos
+        botoes.forEach(b => b.onclick = null); 
 
         if (valorEscolhido === respostaCorretaAtual) {
             botaoClicado.classList.add('correto');
@@ -826,105 +1039,7 @@ function mudarAba(idTela, element) {
         mudarAba('tela-home');
         atualizarDashboard();
     }
-    
-// ==========================================
-// MÓDULO 6: A LOJA GERAL
-// ==========================================
 
-
-function renderizarLoja() {
-    document.getElementById('loja-moedas').innerText = jogador.moedas || 0;
-    
-    const container = document.getElementById('lista-loja');
-    if (!container) return;
-    // Filtra os itens pela aba selecionada
-    let itensFiltrados = LOJA_DB;
-    if (abaLojaAtual === 'avatar') {
-        itensFiltrados = AVATARES_DB; 
-    } else if (abaLojaAtual === 'duplicador') {
-        itensFiltrados = []; 
-    }
-
-    container.innerHTML = '';
-
-    itensFiltrados.forEach(item => {
-        // Verifica se o jogador já possui o item
-        let possui = false;
-        if (abaLojaAtual === 'avatar') {
-            possui = jogador.avatares_desbloqueados.includes(item.icone);
-        } else {
-            possui = jogador.molduras_desbloqueadas.includes(item.id);
-        }
-
-        let botaoHTML = '';
-        if (possui) {
-            botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; background: rgba(0,255,136,0.2); color: #00ff88; border-color: #00ff88;">ADQUIRIDO</button>`;
-        } else if (jogador.moedas >= item.preco) {
-            botaoHTML = `<button class="btn-primary" style="width: auto; padding: 8px 15px; margin: 0;" onclick="comprarMoldura('${item.id}')">COMPRAR</button>`;
-        } else {
-            botaoHTML = `<button class="btn-secondary" style="width: auto; padding: 8px 15px; margin: 0; opacity: 0.5;">FALTA 🪙</button>`;
-        }
-
-        container.innerHTML += `
-            <div class="store-item ${item.raridade === 'Épica' ? 'efeito-epico' : item.raridade === 'Lendária' ? 'efeito-lendario' : item.raridade === 'Mítica' ? 'efeito-mitico' : ''}" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
-                <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
-                    <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
-                    ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
-                </div>
-                <div style="flex: 1;">
-                    <h3 style="font-size: 14px; font-weight: 800; color: white; margin-bottom: 2px;">${item.nome}</h3>
-                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">Raridade: ${item.raridade}</p>
-                    <div style="font-size: 14px; font-weight: bold; color: var(--gold);">🪙 ${item.preco}</div>
-                </div>
-                ${botaoHTML}
-            </div>
-        `;
-    });
-    }
-
-async function comprarMoldura(id) {
-    // 1. Procura o item na lista certa (Avatar ou Moldura)
-    let item;
-    if (abaLojaAtual === 'avatar') {
-        item = AVATARES_DB.find(i => i.id === id);
-    } else {
-        item = LOJA_DB.find(i => i.id === id);
-    }
-    if (!item) return;
-
-    if (jogador.moedas >= item.preco) {
-        jogador.moedas -= item.preco;
-        
-        // 2. Salva do jeito certo
-        if (abaLojaAtual === 'avatar') {
-    jogador.avatar = item.icone; 
-    // Adiciona na mochila se ainda não tiver
-    if (!jogador.avatares_desbloqueados.includes(item.icone)) {
-        jogador.avatares_desbloqueados.push(item.icone);
-    }
-} else {
-    jogador.molduras_desbloqueadas.push(item.id);
-    jogador.moldura_equipada = item.id; 
-    }
-        // 3. Manda pro banco de dados
-        const { error } = await banco.from('ranking').update({ 
-            moedas: jogador.moedas,
-            avatar: jogador.avatar,
-            molduras_compradas: jogador.molduras_desbloqueadas,
-            moldura_equipada: jogador.moldura_equipada,
-            avatares_desbloqueados: jogador.avatares_desbloqueados,
-        }).eq('user_id', jogador.id);
-
-        if (error) {
-            mostrarToast("Erro ao comprar. Tente novamente.", "error");
-            return;
-        }
-
-        mostrarToast(`Você comprou: ${item.nome}! 🎉`, "success"); 
-        renderizarLoja(); 
-        atualizarDashboard();
-    }
-}
     // INICIALIZAÇÃO DO SITE
     window.onload = () => {
         banco.auth.onAuthStateChange((event, session) => {
