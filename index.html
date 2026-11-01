@@ -368,6 +368,17 @@ const LOJA_DB = MOLDURAS_DB.map(item => {
     if (item.raridade === 'Mítica') preco = 10000;
     return { ...item, preco: preco };
 }).filter(item => item.id !== 'padrao'); // A moldura padrão não aparece na loja
+    // BANCO DE DADOS DOS AVATARES
+const AVATARES_DB = [
+    { id: 'av_gato', nome: 'Gatinho', icone: '🐱', preco: 0, raridade: 'Comum' },
+    { id: 'av_cachorro', nome: 'Cachorro', icone: '🐶', preco: 500, raridade: 'Comum' },
+    { id: 'av_raposa', nome: 'Raposa', icone: '🦊', preco: 1000, raridade: 'Rara' },
+    { id: 'av_panda', nome: 'Panda', icone: '🐼', preco: 1500, raridade: 'Épica' },
+    { id: 'av_sapo', nome: 'Sapo', icone: '🐸', preco: 800, raridade: 'Rara' },
+    { id: 'av_alien', nome: 'Alienígena', icone: '👽', preco: 2500, raridade: 'Lendária' },
+    { id: 'av_robo', nome: 'Robô', icone: '🤖', preco: 3000, raridade: 'Lendária' },
+    { id: 'av_dragao', nome: 'Dragão', icone: '🐉', preco: 5000, raridade: 'Mítica' }
+];
     let abaLojaAtual = 'moldura';
 
 function mudarAbaLoja(tipo, botao) {
@@ -743,7 +754,7 @@ function renderizarLoja() {
     // Filtra os itens pela aba selecionada
 let itensFiltrados = LOJA_DB;
 if (abaLojaAtual === 'avatar') {
-    itensFiltrados = []; // Vazio por enquanto
+    itensFiltrados = AVATARES_DB; // Vazio por enquanto
 } else if (abaLojaAtual === 'duplicador') {
     itensFiltrados = []; // Vazio por enquanto
 }
@@ -765,7 +776,7 @@ if (abaLojaAtual === 'avatar') {
             <div class="store-item" style="border: 1px solid ${item.raridade === 'Lendária' ? '#ffb800' : item.raridade === 'Épica' ? '#a700ff' : 'rgba(255,255,255,0.05)'};">
                 <div style="position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;">
                     <div style="position: absolute; font-size: 24px; z-index: 1;">${jogador.avatar}</div>
-                    <img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">
+                    ${item.img ? `<img src="${item.img}" style="width: 100%; height: 100%; position: absolute; z-index: 2;">` : `<div style="font-size: 40px; position: absolute; z-index: 2;">${item.icone}</div>`}
                 </div>
                 <div style="flex: 1;">
                     <h3 style="font-size: 14px; font-weight: 800; color: white; margin-bottom: 2px;">${item.nome}</h3>
