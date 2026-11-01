@@ -683,67 +683,66 @@
     // ==========================================
     
     function mostrarToast(mensagem, tipo = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast ${tipo}`;
-        const icone = tipo === 'success' ? '✅' : '❌';
-        toast.innerHTML = `<span style="font-size: 20px;">${icone}</span><span>${mensagem}</span>`;
-        container.appendChild(toast);
-        setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-out forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
-    }
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    const icone = tipo === 'success' ? '✅' : '❌';
+    toast.innerHTML = `<span style="font-size: 20px;">${icone}</span><span>${mensagem}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-out forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
 
-    async function fazerCadastro() {
-        const email = document.getElementById('auth-email').value.trim();
-        const senha = document.getElementById('auth-pass').value;
-        if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-        const { error } = await banco.auth.signUp({ email, password: senha });
-        if (error) { mostrarToast(error.message, "error"); } else { mostrarToast("Conta criada! Faça login.", "success"); }
-    }
+async function fazerCadastro() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-pass').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    const { error } = await banco.auth.signUp({ email, password: senha });
+    if (error) { mostrarToast(error.message, "error"); } else { mostrarToast("Conta criada! Faça login.", "success"); }
+}
 
-    async function fazerLogin() {
-        const email = document.getElementById('auth-email').value.trim();
-        const senha = document.getElementById('auth-pass').value;
-        if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
-        const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
-        if (error) { 
-            mostrarToast(error.message, "error"); 
-        } else { 
-            jogador.id = data.user.id; 
-            document.getElementById('tela-auth').classList.remove('active');
-            document.getElementById('bottom-nav').style.display = 'flex';
-            mudarAba('tela-home');
-        }
+async function fazerLogin() {
+    const email = document.getElementById('auth-email').value.trim();
+    const senha = document.getElementById('auth-pass').value;
+    if (!email || !senha) { mostrarToast("Preencha e-mail e senha.", "error"); return; }
+    const { data, error } = await banco.auth.signInWithPassword({ email, password: senha });
+    if (error) { 
+        mostrarToast(error.message, "error"); 
+    } else { 
+        jogador.id = data.user.id; 
+        document.getElementById('tela-auth').classList.remove('active');
+        document.getElementById('bottom-nav').style.display = 'flex';
+        mudarAba('tela-home');
     }
+}
 
-    async function sair() {
-        await banco.auth.signOut();
-        location.reload();
+async function sair() {
+    await banco.auth.signOut();
+    location.reload();
+}
+
+async function carregarPerfil() {
+    if (!jogador.id) return;
+    const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
+    if (error) { console.error(error); return; }
+    
+    if (data) {
+        jogador.nome = data.nome || 'Jogador';
+        jogador.xp = data.xp || 0;
+        jogador.moedas = data.moedas || 0;
+        jogador.avatar = data.avatar || '🐱';
+        jogador.moldura_equipada = data.moldura_equipada || 'padrao';
+        jogador.molduras_desbloqueadas = data.molduras_compradas || ['padrao'];
+        jogador.avatares_desbloqueados = data.avatares_desbloqueados || ['🐱'];
+        jogador.streak = data.streak || 0;
+        jogador.ultimo_login = data.ultimo_login || null;
+    } else {
+        await banco.from('ranking').insert([{ 
+            user_id: jogador.id, nome: jogador.nome, xp: 0, moedas: 0, 
+            avatar: '🐱', moldura_equipada: 'padrao', molduras_compradas: ['padrao'],
+            avatares_desbloqueados: ['🐱'], streak: 0
+        }]);
     }
-
-    async function carregarPerfil() {
-        if (!jogador.id) return;
-        const { data, error } = await banco.from('ranking').select('*').eq('user_id', jogador.id).maybeSingle();
-        if (error) { console.error(error); return; }
-        
-        if (data) {
-            jogador.nome = data.nome || 'Jogador';
-            jogador.xp = data.xp || 0;
-            jogador.moedas = data.moedas || 0;
-            jogador.avatar = data.avatar || '🐱';
-            jogador.moldura_equipada = data.moldura_equipada || 'padrao';
-            jogador.molduras_desbloqueadas = data.molduras_compradas || ['padrao'];
-            jogador.avatares_desbloqueados = data.avatares_desbloqueados || ['🐱'];
-            jogador.streak = data.streak || 0;
-            jogador.ultimo_login = data.ultimo_login || null;
-        } else {
-            await banco.from('ranking').insert([{ 
-                user_id: jogador.id, nome: jogador.nome, xp: 0, moedas: 0, 
-                avatar: '🐱', moldura_equipada: 'padrao', molduras_compradas: ['padrao'],
-                avatares_desbloqueados: ['🐱'], streak: 0
-            }]);
-        }
-    }
-
+}
     function getNivel(xp) {
         if (xp >= 5000) return { nivel: 10, nome: 'Mestre', xpAtual: xp, xpProx: 10000 };
         if (xp >= 2500) return { nivel: 8, nome: 'Diamante', xpAtual: xp, xpProx: 5000 };
