@@ -667,6 +667,39 @@
         { id: 'av_robo', nome: 'Robô', icone: '🤖', preco: 3000, raridade: 'Lendária' },
         { id: 'av_dragao', nome: 'Dragão', icone: '🐉', preco: 5000, raridade: 'Mítica' }
     ];
+        // ==========================================
+// BANCO DE DADOS DA ACADEMIA (AULAS)
+// ==========================================
+const ACADEMIA_DB = [
+    { 
+        id: 1, 
+        titulo: "Frações Básicas", 
+        descricao: "Aprenda o que é uma fração.", 
+        xp: 20, 
+        conteudo: "Uma fração representa uma parte de um todo. Por exemplo, se você divide uma pizza em 4 pedaços e come 1, você comeu 1/4 da pizza. O número de cima é o numerador (o que você tem) e o de baixo é o denominador (o total)." 
+    },
+    { 
+        id: 2, 
+        titulo: "Soma de Frações", 
+        descricao: "Como somar frações iguais.", 
+        xp: 30, 
+        conteudo: "Para somar frações com o mesmo denominador, basta somar os numeradores e manter o denominador. Exemplo: 1/5 + 2/5 = 3/5. Simples assim!" 
+    },
+    { 
+        id: 3, 
+        titulo: "Equações 1º Grau", 
+        descricao: "O famoso X da questão.", 
+        xp: 40, 
+        conteudo: "Uma equação é uma igualdade com uma incógnita (geralmente 'x'). Exemplo: x + 2 = 5. Para resolver, passamos o 2 para o outro lado subtraindo: x = 5 - 2, logo x = 3." 
+    },
+    { 
+        id: 4, 
+        titulo: "Porcentagem", 
+        descricao: "O que é 20% de algo?", 
+        xp: 50, 
+        conteudo: "Porcentagem é uma fração com denominador 100. 20% significa 20/100 ou 0.2. Para calcular 20% de 50, basta multiplicar 50 por 0.2, que dá 10." 
+    }
+];
 
     let abaLojaAtual = 'moldura';
     let pontosJogo = 0;
